@@ -1,0 +1,267 @@
+@import "tailwindcss";
+
+@theme {
+  /* Color tokens */
+  --color-bg:         #0a0a0a;
+  --color-surface:    #111111;
+  --color-surface-2:  #1a1a1a;
+  --color-border:     #2a2a2a;
+  --color-border-hot: #3d3d3d;
+  --color-ink:        #e8e2d9;
+  --color-muted:      #7a7065;
+  --color-accent:     #c8f542;
+  --color-accent-2:   #f5a623;
+  --color-red:        #e84040;
+
+  /* Font families */
+  --font-display: "Space Mono", monospace;
+  --font-body:    "IBM Plex Mono", monospace;
+  --font-label:   "Bebas Neue", sans-serif;
+  --font-mono:    "IBM Plex Mono", monospace;
+  --font-sans:    "IBM Plex Mono", monospace;
+
+  /* Animation */
+  --animate-scroll-indicator: scroll-indicator 2s ease-in-out infinite;
+  --animate-ticker:           ticker 30s linear infinite;
+  --animate-glitch:           glitch 0.4s steps(1);
+  --animate-fade-up:          fadeUp 0.6s ease forwards;
+}
+
+
+@keyframes glitch {
+  0% {
+    clip-path: inset(0% 0 0% 0);
+    transform: translate(0, 0);
+  }
+  15% {
+    clip-path: inset(40% 0 55% 0);
+    transform: translate(-3px, 0);
+  }
+  30% {
+    clip-path: inset(70% 0 10% 0);
+    transform: translate(3px, 0);
+  }
+  45% {
+    clip-path: inset(15% 0 75% 0);
+    transform: translate(-2px, 0);
+  }
+  60% {
+    clip-path: inset(80% 0 5% 0);
+    transform: translate(2px, 0);
+  }
+  75% {
+    clip-path: inset(10% 0 80% 0);
+    transform: translate(-1px, 0);
+  }
+  90% {
+    clip-path: inset(30% 0 50% 0);
+    transform: translate(1px, 0);
+  }
+  100% {
+    clip-path: inset(0% 0 0% 0);
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scroll-indicator {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 0.5;
+  }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+:root {
+  /* Light mode grunge palette */
+  --color-bg: #f8f7f4;
+  --color-surface: #ffffff;
+  --color-surface-2: #f0eee8;
+  --color-border: #d6d0c4;
+  --color-border-hot: #b8b1a2;
+  --color-ink: #1c1c1a;
+  --color-ink-muted: #6b665c;
+  --color-accent: #628c17;
+  --color-accent-2: #d68910;
+  --color-red: #cc3333;
+  --shadow: 0 10px 30px rgba(0,0,0,0.1);
+
+  /* Legacy tokens for light mode */
+  --background: #f8f7f4;
+  --foreground: #1c1c1a;
+  --card: #ffffff;
+  --card-foreground: #1c1c1a;
+  --popover: #ffffff;
+  --popover-foreground: #1c1c1a;
+  --primary: #628c17;
+  --primary-foreground: #f8f7f4;
+  --secondary: #f0eee8;
+  --secondary-foreground: #1c1c1a;
+  --muted: #6b665c;
+  --muted-foreground: #6b665c;
+  --accent: #628c17;
+  --accent-foreground: #f8f7f4;
+  --destructive: #cc3333;
+  --destructive-foreground: #f8f7f4;
+  --border: #d6d0c4;
+  --input: #ffffff;
+  --ring: #628c17;
+  --radius: 4px;
+}
+
+.dark {
+  /* Dark mode grunge palette */
+  --color-bg: #0a0a0a;
+  --color-surface: #111111;
+  --color-surface-2: #1a1a1a;
+  --color-border: #2a2a2a;
+  --color-border-hot: #3d3d3d;
+  --color-ink: #e8e2d9;
+  --color-ink-muted: #7a7065;
+  --color-accent: #c8f542;
+  --color-accent-2: #f5a623;
+  --color-red: #e84040;
+  --shadow: 0 10px 30px rgba(0,0,0,0.5);
+
+  /* Legacy tokens for dark mode */
+  --background: #0a0a0a;
+  --foreground: #e8e2d9;
+  --card: #111111;
+  --card-foreground: #e8e2d9;
+  --popover: #111111;
+  --popover-foreground: #e8e2d9;
+  --primary: #c8f542;
+  --primary-foreground: #0a0a0a;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #e8e2d9;
+  --muted: #7a7065;
+  --muted-foreground: #7a7065;
+  --accent: #c8f542;
+  --accent-foreground: #0a0a0a;
+  --destructive: #e84040;
+  --destructive-foreground: #e8e2d9;
+  --border: #2a2a2a;
+  --input: #111111;
+  --ring: #c8f542;
+}
+
+@layer base {
+  * {
+    @apply box-border border-border;
+  }
+
+  html {
+    @apply bg-bg;
+  }
+
+  body {
+    @apply bg-bg text-ink font-mono;
+    position: relative;
+  }
+
+  /* Refined grain overlay */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='400' height='400' fill='white' filter='url(%23noiseFilter)' /%3E%3C/svg%3E");
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: overlay;
+  }
+
+  /* Scan lines overlay */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9998;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.015) 2px,
+      rgba(255, 255, 255, 0.015) 3px
+    );
+    opacity: 1; /* Gradient opacity is handled inside the rgba */
+  }
+  /* Distressed divider */
+  hr {
+    border: none;
+    height: 1px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--color-border) 0px,
+      var(--color-border) 3px,
+      transparent 3px,
+      transparent 7px
+    );
+  }
+}
+
+@layer components {
+  .font-display {
+    font-family: "Space Mono", monospace;
+  }
+
+  .font-body {
+    font-family: "IBM Plex Mono", monospace;
+  }
+
+  .font-label {
+    font-family: "Bebas Neue", sans-serif;
+    @apply uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .animate-scroll-indicator {
+    animation: scroll-indicator 2s ease-in-out infinite;
+  }
+
+  /* Accessibility: focus-visible ring */
+  :focus-visible {
+    outline: 2px solid #c8f542;
+    outline-offset: 2px;
+  }
+
+  /* prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-scroll-indicator,
+    .animate-glitch,
+    .animate-ticker,
+    .animate-fade-up {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+}
