@@ -126,14 +126,13 @@ export default function Home() {
   useEffect(() => {
     const fetchGithubData = async () => {
       try {
-        const isDev = process.env.NODE_ENV === "development";
-        const primaryUrl = isDev
-          ? "http://localhost:5000/api/github/contributions"
-          : "https://portfolio-tvyp.vercel.app/api/github/contributions";
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const primaryUrl = `${apiBaseUrl}/api/github/contributions`;
 
         let response = await fetch(primaryUrl);
 
-        if (!response.ok && isDev) {
+        // If local API or primary URL fetch fails in development, try fetching from the Vercel deployed backup
+        if (!response.ok && apiBaseUrl !== "https://portfolio-tvyp.vercel.app") {
           response = await fetch("https://portfolio-tvyp.vercel.app/api/github/contributions");
         }
 
@@ -187,18 +186,15 @@ export default function Home() {
   useEffect(() => {
     const fetchVisits = async () => {
       try {
-        // Try local server at port 5000 first (default for local API), then fall back to deployed Vercel API
-        const isDev = process.env.NODE_ENV === "development";
-        const primaryUrl = isDev
-          ? "http://localhost:5000/api/visitor-count"
-          : "https://portfolio-tvyp.vercel.app/api/visitor-count";
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const primaryUrl = `${apiBaseUrl}/api/visitor-count`;
 
         let response = await fetch(primaryUrl);
 
-        // If primary call fails in development, try fetching from the Vercel API as a live backup
-        if (!response.ok && isDev) {
+        // If primary call fails, try fetching from the Vercel deployed API as a live backup
+        if (!response.ok && apiBaseUrl !== "https://portfolio-tvyp.vercel.app") {
           response = await fetch(
-            "https://portfolio-tvyp.vercel.app/api/visitor-count",
+            "https://portfolio-tvyp.vercel.app/api/visitor-count"
           );
         }
 

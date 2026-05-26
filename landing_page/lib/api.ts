@@ -1,5 +1,5 @@
 const LOCAL_API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+  process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 const PRODUCTION_API_BASE_URL = "https://portfolio-tvyp.vercel.app";
 
 const normalizePath = (path: string) =>

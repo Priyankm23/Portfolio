@@ -16,6 +16,8 @@ node_modules
 .DS_Store
 *.md
 
+*.env
+
 public/simple_database_1.png
 public/simple_router_1.png
 public/simple_server_1.png
