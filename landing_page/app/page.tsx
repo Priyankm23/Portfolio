@@ -96,6 +96,19 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [words.length]);
 
+  const HELP_LINES = [
+    "Available commands (OS-style shortcuts):",
+    "  h        - Display this help menu",
+    "  faq      - View common questions pool (e.g., 'faq 1')",
+    "  lib      - View my reading recommendations (library)",
+    "  net      - View tech friends from my network",
+    "  yt       - View favorite developer channels",
+    "  cur      - View my active personal project",
+    "  ls       - List my recent deployments",
+    "  cat      - Initiate communication protocol (contact)",
+    "  cls      - Purge terminal output",
+  ];
+
   // States and fetching for visitor count & interactive terminal
   const [visitorCount, setVisitorCount] = useState<number | null>(null);
   const [playInput, setPlayInput] = useState("");
@@ -103,16 +116,7 @@ export default function Home() {
     "[SYSTEM BOOT SUCCESSFUL]",
     "Welcome visitor! Established secure terminal session.",
     "",
-    "Available commands:",
-    "  faq        - View common questions pool",
-    "  books      - View my reading recommendations",
-    "  friends    - View tech friends from my network",
-    "  youtubers  - View favorite EdTech channels",
-    "  project    - View my active personal project",
-    "  projects   - List my recent deployments",
-    "  stack      - View my technology matrix",
-    "  contact    - Initiate communication protocol",
-    "  clear      - Purge terminal output",
+    ...HELP_LINES
   ]);
   const terminalBodyRef = useRef<HTMLDivElement>(null);
 
@@ -206,16 +210,7 @@ export default function Home() {
               "[SYSTEM BOOT SUCCESSFUL]",
               `Welcome visitor #${data.visit_count}! Established secure terminal session.`,
               "",
-              "Available commands:",
-              "  faq        - View common questions pool",
-              "  books      - View my reading recommendations",
-              "  friends    - View tech friends from my network",
-              "  youtubers  - View favorite EdTech channels",
-              "  project    - View my active personal project",
-              "  projects   - List my recent deployments",
-              "  stack      - View my technology matrix",
-              "  contact    - Initiate communication protocol",
-              "  clear      - Purge terminal output",
+              ...HELP_LINES
             ]);
             return;
           }
@@ -239,16 +234,7 @@ export default function Home() {
                 "[SYSTEM BOOT SUCCESSFUL]",
                 `Welcome visitor #${data.visit_count}! Established secure terminal session.`,
                 "",
-                "Available commands:",
-                "  faq        - View common questions pool",
-                "  books      - View my reading recommendations",
-                "  friends    - View tech friends from my network",
-                "  youtubers  - View favorite EdTech channels",
-                "  project    - View my active personal project",
-                "  projects   - List my recent deployments",
-                "  stack      - View my technology matrix",
-                "  contact    - Initiate communication protocol",
-                "  clear      - Purge terminal output",
+                ...HELP_LINES
               ]);
               return;
             }
@@ -264,16 +250,7 @@ export default function Home() {
         "[SYSTEM BOOT SUCCESSFUL]",
         "Welcome visitor #1243! Established secure terminal session.",
         "",
-        "Available commands:",
-        "  faq        - View common questions pool",
-        "  books      - View my reading recommendations",
-        "  friends    - View tech friends from my network",
-        "  youtubers  - View favorite EdTech channels",
-        "  project    - View my active personal project",
-        "  projects   - List my recent deployments",
-        "  stack      - View my technology matrix",
-        "  contact    - Initiate communication protocol",
-        "  clear      - Purge terminal output",
+        ...HELP_LINES
       ]);
     };
     fetchVisits();
@@ -338,18 +315,8 @@ export default function Home() {
     let lines: string[] = [];
     switch (command) {
       case "help":
-        lines = [
-          "Available commands:",
-          "  faq        - View common questions pool",
-          "  books      - View my reading recommendations",
-          "  friends    - View tech friends from my network",
-          "  youtubers  - View favorite EdTech channels",
-          "  project    - View my active personal project",
-          "  projects   - List my recent deployments",
-          "  stack      - View my technology matrix",
-          "  contact    - Initiate communication protocol",
-          "  clear      - Purge terminal output",
-        ];
+      case "h":
+        lines = HELP_LINES;
         break;
       case "faq":
         if (!argument) {
@@ -383,6 +350,7 @@ export default function Home() {
         }
         break;
       case "books":
+      case "lib":
         lines = [
           "Reading list for developers & backend engineers:",
           "  - 'Designing Data-Intensive Applications' by Martin Kleppmann (Must-read for distributed systems)",
@@ -391,31 +359,35 @@ export default function Home() {
         ];
         break;
       case "friends":
+      case "net":
         lines = [
           "Tech friends in my circle:",
-          "  - Dev (Frontend Specialist)  : Master of React, Next.js, and premium interactive animations.",
-          "  - Yash (DevOps & Infra)      : Guru of Docker, Kubernetes, and automated cloud pipelines.",
-          "  - Aarav (AI/ML Engineer)     : Building data streams, PyTorch pipelines, and custom LLMs.",
+          "  - Meet Patel (AI Engineer)   : If a solution is doable by any means, it will be done by him. Currently at ISRO.",
+          "  - Utsav Bhalani (ML Systems) : True ML system optimizer and my roommate. Keeps track of the AI industry at its tip.",
+          "  - Dhir Agarwal / RYUK (ML)   : Learning and improving for what can make him better as ML engineer. Makes crazy edits.",
+          "  - Yajush Gorasiya (Full Stack) : Aspiring full-stack engineer and my high-throughput movie recommendation engine.",
         ];
         break;
       case "youtubers":
+      case "yt":
         lines = [
-          "Favorite EdTech channels I learn from:",
-          "  - Chai aur Code (Hitesh Choudhary) : Excellent structural tutorials in programming & Node.js.",
-          "  - Hussein Nasser                   : Masterclass in networking, database indexing, and core backend concepts.",
-          "  - ByteByteGo (Alex Xu)             : Incredible visual breakdowns of system design at scale.",
-          "  - ArjanCodes                       : Master of Python design patterns and software architectural practices.",
+          "Favorite developer channels I learn from:",
+          "  - Piyush Garg : Master of modern Javascript, system design, and production-grade full-stack patterns.",
+          "  - Manu Arora  : Premium UI builder, interactive animations, and Next.js crafting.",
+          "  - Coder's Gyan: Excellent structural tutorials in Node.js, API design, and clean backend systems.",
         ];
         break;
       case "project":
+      case "cur":
         lines = [
           "What I'm building right now:",
-          "  - Markivo v2 (Active)",
-          "  - Description: Upgrading commerce backend to support Redis Pub/Sub events for real-time order status tracking and scalable distributed microservices.",
-          "  - Current Progress: ~75% complete",
+          "  - Cadence (Active)",
+          "  - Description: Working on RAG (Retrieval-Augmented Generation) to get answers across the meetings and making it compatible for scalable use as well as for Hindi voice meetings to get accurate transcript for Hindi voice.",
+          "  - Current Progress: ~60% complete",
         ];
         break;
       case "projects":
+      case "ls":
         lines = [
           "Deployments matrix:",
           "  - Markivo: High-throughput e-commerce backend built with TypeScript, Express, PostgreSQL, Redis, and BullMQ.",
@@ -423,16 +395,8 @@ export default function Home() {
           "  - Cadence: Real-time FastAPI meeting audio capture and AI intelligence platform streaming via Socket.IO.",
         ];
         break;
-      case "stack":
-        lines = [
-          "Technology Matrix:",
-          "  Languages   : Python, Go, TypeScript, JavaScript, SQL, Bash",
-          "  Databases   : PostgreSQL, Redis, MongoDB, Elasticsearch",
-          "  DevOps/Infra: Docker, Kubernetes, AWS, PM2, BullMQ, Git",
-          "  Frameworks  : Node.js, Express, FastAPI, NestJS, Next.js, Prisma",
-        ];
-        break;
       case "contact":
+      case "cat":
         lines = [
           "Comms protocol initiated:",
           "  - Email   : priyankmoradiya41@gmail.com",
@@ -441,11 +405,12 @@ export default function Home() {
         ];
         break;
       case "clear":
+      case "cls":
         setPlayHistory([]);
         setPlayInput("");
         return;
       default:
-        lines = [`sh: command not found: '${input}'. Type 'help' for options.`];
+        lines = [`sh: command not found: '${command}'. Type 'h' or 'help' for options.`];
     }
 
     setPlayHistory((prev) => [
@@ -611,7 +576,7 @@ export default function Home() {
           </div>
 
           <div className="max-w-6xl mx-auto w-full flex flex-col md:flex-row items-center md:items-stretch relative z-10 gap-12 md:gap-gutter">
-            <div className="flex flex-col gap-6 md:w-[45%] justify-center">
+            <div className="flex flex-col gap-6 w-full md:w-[45%] justify-center">
               <div className="inline-block border border-1px border-primary px-3 py-1 bg-primary/10 text-primary font-mono-code text-mono-code w-max mx-auto md:mx-0 uppercase relative z-10">
                 BACKEND DEVELOPER
               </div>
@@ -683,7 +648,9 @@ export default function Home() {
                 </a>
                 {/* X */}
                 <a
-                  href="#"
+                  href="https://x.com/priyank_M73"
+                  target="_blank"
+                  rel="noreferrer"
                   aria-label="X (Twitter)"
                   title="X (Twitter)"
                   className="w-14 h-14 border border-1px border-on-surface bg-transparent text-primary flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(27,28,28,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-on-surface hover:text-[#D9D3C7]"
@@ -1321,7 +1288,7 @@ export default function Home() {
                       spellCheck="false"
                       value={playInput}
                       onChange={(e) => setPlayInput(e.target.value)}
-                      placeholder="type help..."
+                      placeholder="type h..."
                       className="bg-transparent border-none outline-none w-full text-[#D9D3C7] font-mono-code text-[14px] focus:ring-0 p-0"
                       suppressHydrationWarning
                     />
