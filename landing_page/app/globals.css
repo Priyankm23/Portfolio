@@ -1,267 +1,224 @@
 @import "tailwindcss";
 
 @theme {
-  /* Color tokens */
-  --color-bg:         #0a0a0a;
-  --color-surface:    #111111;
-  --color-surface-2:  #1a1a1a;
-  --color-border:     #2a2a2a;
-  --color-border-hot: #3d3d3d;
-  --color-ink:        #e8e2d9;
-  --color-muted:      #7a7065;
-  --color-accent:     #c8f542;
-  --color-accent-2:   #f5a623;
-  --color-red:        #e84040;
+  /* Design system colors from SYS_ARCH design */
+  --color-surface: #fbf9f8;
+  --color-tertiary-container: #78746a;
+  --color-on-surface: #1b1c1c;
+  --color-surface-dim: #dbd9d9;
+  --color-on-primary-fixed-variant: #8a1c00;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-bright: #fbf9f8;
+  --color-surface-tint: #b42800;
+  --color-on-tertiary: #ffffff;
+  --color-error: #ba1a1a;
+  --color-tertiary-fixed: #e8e2d6;
+  --color-surface-container-high: #eae8e7;
+  --color-on-secondary-container: #656464;
+  --color-on-error-container: #93000a;
+  --color-outline-variant: #e6bdb4;
+  --color-surface-container-highest: #e4e2e2;
+  --color-inverse-on-surface: #f2f0f0;
+  --color-tertiary-fixed-dim: #ccc6ba;
+  --color-secondary-fixed-dim: #c8c6c5;
+  --color-primary-fixed-dim: #ffb4a2;
+  --color-tertiary: #5f5c52;
+  --color-on-error: #ffffff;
+  --color-surface-container: #f0eded;
+  --color-on-primary: #ffffff;
+  --color-on-background: #1b1c1c;
+  --color-on-surface-variant: #5c4039;
+  --color-on-secondary-fixed: #1c1b1b;
+  --color-on-secondary: #ffffff;
+  --color-inverse-surface: #303030;
+  --color-on-secondary-fixed-variant: #474646;
+  --color-error-container: #ffdad6;
+  --color-surface-variant: #e4e2e2;
+  --color-on-primary-fixed: #3c0700;
+  --color-on-tertiary-fixed-variant: #4a473e;
+  --color-surface-container-low: #f5f3f3;
+  --color-background: #fbf9f8;
+  --color-primary-fixed: #ffdad2;
+  --color-primary: #b02600;
+  --color-on-primary-container: #fffbff;
+  --color-secondary-fixed: #e5e2e1;
+  --color-inverse-primary: #ffb4a2;
+  --color-on-tertiary-fixed: #1e1b14;
+  --color-secondary-container: #e5e2e1;
+  --color-secondary: #5f5e5e;
+  --color-primary-container: #dc3200;
+  --color-outline: #916f67;
+  --color-on-tertiary-container: #fffbff;
 
-  /* Font families */
-  --font-display: "Space Mono", monospace;
-  --font-body:    "IBM Plex Mono", monospace;
-  --font-label:   "Bebas Neue", sans-serif;
-  --font-mono:    "IBM Plex Mono", monospace;
-  --font-sans:    "IBM Plex Mono", monospace;
+  /* Custom spacings */
+  --spacing-container-max: 1440px;
+  --spacing-margin-desktop: 64px;
+  --spacing-margin-mobile: 16px;
+  --spacing-base: 8px;
+  --spacing-gutter: 24px;
+  --spacing-section-gap: 128px;
+}
 
-  /* Animation */
-  --animate-scroll-indicator: scroll-indicator 2s ease-in-out infinite;
-  --animate-ticker:           ticker 30s linear infinite;
-  --animate-glitch:           glitch 0.4s steps(1);
-  --animate-fade-up:          fadeUp 0.6s ease forwards;
+/* Custom classes for fonts and viewports */
+@utility font-headline-md {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 48px;
+  line-height: 48px;
+  font-weight: 700;
+}
+@utility font-label-sm {
+  font-family: "Space Mono", monospace;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+}
+@utility font-body-md {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+}
+@utility font-headline-lg {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 64px;
+  line-height: 64px;
+  font-weight: 700;
+}
+@utility font-mono-code {
+  font-family: "Space Mono", monospace;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+@utility font-display-xl-mobile {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 72px;
+  line-height: 68px;
+  font-weight: 700;
+}
+@utility font-body-lg {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 400;
+}
+@utility font-display-xl {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 120px;
+  line-height: 110px;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+@utility scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
 }
 
 
-@keyframes glitch {
-  0% {
-    clip-path: inset(0% 0 0% 0);
-    transform: translate(0, 0);
-  }
-  15% {
-    clip-path: inset(40% 0 55% 0);
-    transform: translate(-3px, 0);
-  }
-  30% {
-    clip-path: inset(70% 0 10% 0);
-    transform: translate(3px, 0);
-  }
-  45% {
-    clip-path: inset(15% 0 75% 0);
-    transform: translate(-2px, 0);
-  }
-  60% {
-    clip-path: inset(80% 0 5% 0);
-    transform: translate(2px, 0);
-  }
-  75% {
-    clip-path: inset(10% 0 80% 0);
-    transform: translate(-1px, 0);
-  }
-  90% {
-    clip-path: inset(30% 0 50% 0);
-    transform: translate(1px, 0);
-  }
-  100% {
-    clip-path: inset(0% 0 0% 0);
-    transform: translate(0, 0);
-  }
+/* Custom background styles for Priyank Moradiya portfolio */
+.bg-d9d3c7 {
+  background-color: #D9D3C7;
+}
+.text-d9d3c7 {
+  color: #D9D3C7;
+}
+.border-d9d3c7 {
+  border-color: #D9D3C7;
+}
+.border-1px {
+  border-width: 1px;
 }
 
-@keyframes ticker {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
+/* Brutalist Helper utilities */
+.border-brutal {
+  border: 1px solid #C4BDB2;
 }
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(60px);
-  }
+.border-brutal-dark {
+  border: 1px solid #5c4039;
+}
+
+.blink {
+  animation: blink-animation 1s steps(2, start) infinite;
+}
+
+@keyframes blink-animation {
   to {
-    opacity: 1;
-    transform: translateY(0);
+    visibility: hidden;
   }
 }
 
-@keyframes scroll-indicator {
-  0%, 100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  50% {
-    transform: translateY(6px);
-    opacity: 0.5;
-  }
+@keyframes scan-animation {
+  0% { top: 0%; }
+  50% { top: 100%; }
+  100% { top: 0%; }
 }
 
-@keyframes cursor-blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
+@utility animate-scan {
+  animation: scan-animation 3s linear infinite;
 }
 
-:root {
-  /* Light mode grunge palette */
-  --color-bg: #f8f7f4;
-  --color-surface: #ffffff;
-  --color-surface-2: #f0eee8;
-  --color-border: #d6d0c4;
-  --color-border-hot: #b8b1a2;
-  --color-ink: #1c1c1a;
-  --color-ink-muted: #6b665c;
-  --color-accent: #628c17;
-  --color-accent-2: #d68910;
-  --color-red: #cc3333;
-  --shadow: 0 10px 30px rgba(0,0,0,0.1);
 
-  /* Legacy tokens for light mode */
-  --background: #f8f7f4;
-  --foreground: #1c1c1a;
-  --card: #ffffff;
-  --card-foreground: #1c1c1a;
-  --popover: #ffffff;
-  --popover-foreground: #1c1c1a;
-  --primary: #628c17;
-  --primary-foreground: #f8f7f4;
-  --secondary: #f0eee8;
-  --secondary-foreground: #1c1c1a;
-  --muted: #6b665c;
-  --muted-foreground: #6b665c;
-  --accent: #628c17;
-  --accent-foreground: #f8f7f4;
-  --destructive: #cc3333;
-  --destructive-foreground: #f8f7f4;
-  --border: #d6d0c4;
-  --input: #ffffff;
-  --ring: #628c17;
-  --radius: 4px;
+/* Simulated Heatmap styles */
+.heat-0 {
+  background-color: #303030;
+  border: 1px solid #1A1A1A;
 }
-
-.dark {
-  /* Dark mode grunge palette */
-  --color-bg: #0a0a0a;
-  --color-surface: #111111;
-  --color-surface-2: #1a1a1a;
-  --color-border: #2a2a2a;
-  --color-border-hot: #3d3d3d;
-  --color-ink: #e8e2d9;
-  --color-ink-muted: #7a7065;
-  --color-accent: #c8f542;
-  --color-accent-2: #f5a623;
-  --color-red: #e84040;
-  --shadow: 0 10px 30px rgba(0,0,0,0.5);
-
-  /* Legacy tokens for dark mode */
-  --background: #0a0a0a;
-  --foreground: #e8e2d9;
-  --card: #111111;
-  --card-foreground: #e8e2d9;
-  --popover: #111111;
-  --popover-foreground: #e8e2d9;
-  --primary: #c8f542;
-  --primary-foreground: #0a0a0a;
-  --secondary: #1a1a1a;
-  --secondary-foreground: #e8e2d9;
-  --muted: #7a7065;
-  --muted-foreground: #7a7065;
-  --accent: #c8f542;
-  --accent-foreground: #0a0a0a;
-  --destructive: #e84040;
-  --destructive-foreground: #e8e2d9;
-  --border: #2a2a2a;
-  --input: #111111;
-  --ring: #c8f542;
+.heat-1 {
+  background-color: #b02600;
+  opacity: 0.3;
+}
+.heat-2 {
+  background-color: #b02600;
+  opacity: 0.6;
+}
+.heat-3 {
+  background-color: #b02600;
+  opacity: 0.8;
+}
+.heat-4 {
+  background-color: #dc3200;
 }
 
 @layer base {
   * {
-    @apply box-border border-border;
-  }
-
-  html {
-    @apply bg-bg;
+    @apply box-border border-outline/30;
   }
 
   body {
-    @apply bg-bg text-ink font-mono;
+    background-color: #fbf9f8;
+    color: #1b1c1c;
     position: relative;
   }
 
-  /* Refined grain overlay */
+  /* Distressed grain overlay (as specified in guidelines for rich aesthetics) */
   body::after {
     content: "";
     position: fixed;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='400' height='400' fill='white' filter='url(%23noiseFilter)' /%3E%3C/svg%3E");
-    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4' /%3E%3C/filter%3E%3Crect width='400' height='400' fill='white' filter='url(%23noiseFilter)' /%3E%3C/svg%3E");
+    opacity: 0.045;
     pointer-events: none;
     z-index: 9999;
-    mix-blend-mode: overlay;
+    mix-blend-mode: multiply;
   }
 
-  /* Scan lines overlay */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 9998;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(255, 255, 255, 0.015) 2px,
-      rgba(255, 255, 255, 0.015) 3px
-    );
-    opacity: 1; /* Gradient opacity is handled inside the rgba */
+  /* Brutalist code layout custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
   }
-  /* Distressed divider */
-  hr {
-    border: none;
-    height: 1px;
-    background: repeating-linear-gradient(
-      90deg,
-      var(--color-border) 0px,
-      var(--color-border) 3px,
-      transparent 3px,
-      transparent 7px
-    );
+  ::-webkit-scrollbar-track {
+    background: #1b1c1c;
   }
-}
-
-@layer components {
-  .font-display {
-    font-family: "Space Mono", monospace;
+  ::-webkit-scrollbar-thumb {
+    background: #b02600;
   }
-
-  .font-body {
-    font-family: "IBM Plex Mono", monospace;
-  }
-
-  .font-label {
-    font-family: "Bebas Neue", sans-serif;
-    @apply uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .animate-scroll-indicator {
-    animation: scroll-indicator 2s ease-in-out infinite;
-  }
-
-  /* Accessibility: focus-visible ring */
-  :focus-visible {
-    outline: 2px solid #c8f542;
-    outline-offset: 2px;
-  }
-
-  /* prefers-reduced-motion */
-  @media (prefers-reduced-motion: reduce) {
-    .animate-scroll-indicator,
-    .animate-glitch,
-    .animate-ticker,
-    .animate-fade-up {
-      animation: none !important;
-      opacity: 1 !important;
-      transform: none !important;
-    }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #dc3200;
   }
 }

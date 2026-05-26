@@ -61,7 +61,7 @@ export const Experience = () => {
                   href="https://bit.ly/Priyank-InfosysCert" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="font-body text-sm text-accent underline transition-opacity hover:opacity-60 inline-flex items-center gap-1"
+                  className="font-body text-sm text-accent no-underline transition-all hover:underline hover:text-[var(--color-accent)] inline-flex items-center gap-1"
                 >
                   View Certificate ↗
                 </a>

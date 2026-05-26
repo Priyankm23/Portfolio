@@ -115,8 +115,8 @@ export const Hero = () => {
         style={{
           fontFamily: '"Bebas Neue", sans-serif',
           fontSize: "28vw",
-          color: "var(--ink)",
-          opacity: 0.04,
+          color: "#1a1612",
+          opacity: 0.06,
           zIndex: 0,
         }}
       >
@@ -129,8 +129,8 @@ export const Hero = () => {
         style={{
           fontFamily: '"Bebas Neue", sans-serif',
           fontSize: "22vw",
-          color: "var(--ink)",
-          opacity: 0.035,
+          color: "#1a1612",
+          opacity: 0.06,
           zIndex: 0,
         }}
       >

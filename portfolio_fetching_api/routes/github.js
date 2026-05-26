@@ -5,10 +5,15 @@ const router = Router();
 // Fetches contribution data using GitHub GraphQL API
 router.get("/api/github/contributions", async (req, res) => {
   try {
+    const now = new Date();
+    const year = now.getUTCFullYear();
+    const from = `${year}-01-01T00:00:00Z`;
+    const to = `${year}-12-31T23:59:59Z`;
+
     const query = `
       query {
         user(login: "Priyankm23") {
-          contributionsCollection(from: "2026-01-01T00:00:00Z", to: "2026-12-31T23:59:59Z") {
+          contributionsCollection(from: "${from}", to: "${to}") {
             contributionCalendar {
               totalContributions
               weeks {
@@ -44,23 +49,24 @@ router.get("/api/github/contributions", async (req, res) => {
 
     const calendar = data.data.user.contributionsCollection.contributionCalendar;
 
-    // Flatten weeks -> days, return all days for the specified year
+    // Flatten weeks -> days, then discard future dates so consumers can render a real trailing window.
     const allDays = calendar.weeks.flatMap(w => w.contributionDays);
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    const availableDays = allDays.filter(day => new Date(day.date) <= today);
 
     // Compute streak
     let streak = 0;
-    for (let i = allDays.length - 1; i >= 0; i--) {
-      // Ignore future days that might have 0 count (if GitHub returns the whole year)
-      if (new Date(allDays[i].date) > new Date()) continue;
-      
-      if (allDays[i].contributionCount > 0) streak++;
+    for (let i = availableDays.length - 1; i >= 0; i--) {
+      if (availableDays[i].contributionCount > 0) streak++;
       else break;
     }
 
     return res.json({
+      year,
       total: calendar.totalContributions,
       streak,
-      days: allDays.map(d => ({
+      days: availableDays.map(d => ({
         date: d.date,
         count: d.contributionCount
       }))

@@ -64,12 +64,13 @@ const Tag = ({ name, slug, fallback }: { name: string; slug?: string; fallback?:
   <span
     className="group/tag flex items-center gap-3"
     style={{
-      border: '1px dashed var(--border)',
+      border: '1px solid #b8b0a0',
+      background: '#e8e2d4',
       padding: '10px 20px',
       fontFamily: '"Space Mono", monospace',
       fontSize: '0.85rem',
       fontWeight: 700,
-      color: 'var(--muted)',
+      color: '#6b6358',
       cursor: 'default',
       transition: 'all 0.2s ease',
       letterSpacing: '0.05em',
@@ -85,8 +86,8 @@ const Tag = ({ name, slug, fallback }: { name: string; slug?: string; fallback?:
     }}
     onMouseLeave={(e) => {
       const el = e.currentTarget as HTMLElement;
-      el.style.color = 'var(--muted)';
-      el.style.borderColor = 'var(--border)';
+      el.style.color = '#6b6358';
+      el.style.borderColor = '#b8b0a0';
       el.style.transform = 'translateY(0)';
     }}
   >
@@ -101,7 +102,7 @@ export const TechStack = () => {
       id="stack"
       style={{
         width: '100%',
-        background: 'var(--bg)',
+        background: 'var(--color-bg)',
         padding: 'clamp(56px, 8vw, 96px) clamp(20px, 5vw, 80px)',
       }}
     >

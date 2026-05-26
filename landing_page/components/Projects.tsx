@@ -19,28 +19,43 @@ export const Projects = () => {
 
         {/* Project cards */}
         <div className="space-y-8 md:space-y-12 mt-8 md:mt-12">
+          {/* Cadence */}
+          <ProjectCard
+            title="Cadence"
+            dates="May 2026 – Present"
+            tech="Python · FastAPI"
+            description="A real-time microservices platform capturing and analyzing meeting audio. Streams audio seamlessly via Socket.IO, transcribes speech using Whisper v3 via Groq API, and automatically extracts summaries and action items with Llama 3.3."
+            tags={['FastAPI', 'Socket.IO', 'Groq API', 'Redis', 'PostgreSQL', 'Docker']}
+            githubUrl="https://github.com/Priyankm23/Cadence-backend"
+            liveUrl="https://cadence-meeting-intelligence.vercel.app/"
+            image="/cadence.png"
+            logoUrl="/cadence_logo.png"
+          />
+
+          {/* Markivo */}
+          <ProjectCard
+            title="Markivo"
+            dates="Mar 2026 – Present"
+            tech="TypeScript · Express"
+            description="A high-throughput multi-vendor e-commerce API managing complex order lifecycles and idempotent Stripe payments. Uses PostgreSQL row-level locking to prevent inventory overselling, offloading intensive tasks to Redis and BullMQ queues."
+            tags={['Express', 'PostgreSQL', 'Redis', 'BullMQ', 'Prisma', 'Zod']}
+            githubUrl="https://github.com/Priyankm23/marketflow"
+            liveUrl="https://marketflow-your-one-stop-shop.vercel.app/"
+            image="/marketflow.png"
+            logoUrl="/markivo_logo.png"
+          />
+
           {/* SafeTrail */}
           <ProjectCard
             title="SafeTrail"
             dates="Jan – Feb 2026"
-            tech="Node.js · MongoDB"
-            description="Architected a REST API for a tourist safety platform with digital identity stored on Polygon via Ethers.js. Engineered a Risk Engine computing dynamic proximity-wise safety scores from SOS alerts and crowdsourced incidents using Haversine distance. Built an itinerary-driven safe zone system generating auto-expiring geofences. Integrated Socket.IO for real-time live SOS dashboard streaming to authorities."
-            tags={['Node.js', 'MongoDB', 'Socket.IO', 'Ethers.js', 'Redis']}
+            tech="JavaScript · Node.js"
+            description="A tourist safety API featuring decentralized identity on Polygon. Dynamically computes proximity-based safety scores using Haversine distance, operates auto-expiring itinerary geofences, and streams live SOS alerts via WebSockets."
+            tags={['Express', 'MongoDB', 'Socket.IO', 'Ethers.js', 'Redis']}
             githubUrl="https://github.com/Priyankm23/safetrail"
             liveUrl="https://safetrail-your-safety-in-your-mobile.vercel.app/"
             image="/safetrail.png"
-          />
-
-          {/* MarketFlow */}
-          <ProjectCard
-            title="MarketFlow"
-            dates="Mar 2026 – Present"
-            tech="TypeScript · Node.js"
-            description="Built a multi-vendor REST API backend serving Customers, Vendors, and Delivery Partners with role-based JWT auth. Implemented the end-to-end order lifecycle including cart, active reservations, and Stripe payments with idempotency. Prevented inventory overselling via PostgreSQL row-level locking. Offloaded emails and scheduled syncs to BullMQ and cached product searches in Redis with TTL."
-            tags={['PostgreSQL', 'Redis', 'BullMQ', 'PM2', 'Prisma', 'Zod']}
-            githubUrl="https://github.com/Priyankm23/marketflow"
-            liveUrl="https://marketflow-your-one-stop-shop.vercel.app/"
-            image="/marketflow.png"
+            logoUrl="/safetrail_logo.png"
           />
         </div>
       </div>

@@ -1,19 +1,19 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import priyankRouter from './routes/priyank.js';
+import visitorRouter from './routes/visitor.js';
 import githubRouter from './routes/github.js';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 5000;
 
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors());
 app.use(express.json());
 
 // Register routes
-app.use(priyankRouter);
+app.use(visitorRouter);
 app.use(githubRouter);
 
 app.listen(PORT, () => {

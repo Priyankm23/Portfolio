@@ -50,7 +50,7 @@ export const Navigation = () => {
             {pathname === '/work' && (
               <Link
                 href="/"
-                className="font-label text-lg text-muted tracking-[0.15em] hover:text-ink"
+                className="font-bold text-lg md:text-xl tracking-wider text-muted hover:text-ink"
                 style={{ transition: "color 0s" }}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -59,14 +59,14 @@ export const Navigation = () => {
             )}
             <button
               onClick={() => scrollToSection("about")}
-              className="font-label text-lg text-muted tracking-[0.15em] hover:text-ink"
+              className="font-bold text-lg md:text-xl tracking-wider text-muted hover:text-ink cursor-pointer"
               style={{ transition: "color 0s" }}
             >
               ABOUT
             </button>
             <Link
               href="/work"
-              className="font-label text-lg text-muted tracking-[0.15em] hover:text-ink"
+              className="font-bold text-lg md:text-xl tracking-wider text-muted hover:text-ink"
               style={{ transition: "color 0s" }}
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -74,14 +74,14 @@ export const Navigation = () => {
             </Link>
             <button
               onClick={() => scrollToSection("stack")}
-              className="font-label text-lg text-muted tracking-[0.15em] hover:text-ink"
+              className="font-bold text-lg md:text-xl tracking-wider text-muted hover:text-ink cursor-pointer"
               style={{ transition: "color 0s" }}
             >
               STACK
             </button>
             <button
               onClick={() => scrollToSection("experience")}
-              className="font-label text-lg text-muted tracking-[0.15em] hover:text-ink"
+              className="font-bold text-lg md:text-xl tracking-wider text-muted hover:text-ink cursor-pointer"
               style={{ transition: "color 0s" }}
             >
               EXPERIENCE

@@ -45,7 +45,7 @@ export const Contact = () => {
         <div className="space-y-3">
           <a
             href="mailto:priyankmoradiya41@gmail.com"
-            className="block font-body text-base md:text-lg text-accent underline transition-opacity hover:opacity-60"
+            className="block font-body text-base md:text-lg text-accent no-underline transition-all hover:underline"
           >
             priyankmoradiya41@gmail.com
           </a>
@@ -53,7 +53,7 @@ export const Contact = () => {
             href="https://github.com/Priyankm23"
             target="_blank"
             rel="noopener noreferrer"
-            className="block font-body text-base md:text-lg text-muted transition-colors hover:text-ink"
+            className="block font-body text-base md:text-lg text-muted transition-colors hover:text-[var(--color-accent)] hover:underline"
           >
             github.com/Priyankm23
           </a>
@@ -61,7 +61,7 @@ export const Contact = () => {
             href="https://linkedin.com/in/priyankmoradiya"
             target="_blank"
             rel="noopener noreferrer"
-            className="block font-body text-base md:text-lg text-muted transition-colors hover:text-ink"
+            className="block font-body text-base md:text-lg text-muted transition-colors hover:text-[var(--color-accent)] hover:underline"
           >
             linkedin.com/in/priyankmoradiya
           </a>
@@ -71,7 +71,7 @@ export const Contact = () => {
         <div className="pt-4">
           <a
             href="mailto:priyankmoradiya41@gmail.com"
-            className="inline-block border border-accent text-accent font-label text-sm px-6 md:px-8 py-3 md:py-4 uppercase tracking-widest hover:bg-accent hover:text-[var(--bg)] transition-all active:scale-95"
+            className="inline-block border border-[var(--color-accent)] text-[var(--color-accent)] font-label text-sm px-6 md:px-8 py-3 md:py-4 uppercase tracking-widest hover:bg-[var(--color-accent)] hover:text-[var(--color-bg)] transition-all active:scale-95"
           >
             [ SEND A MESSAGE → ]
           </a>

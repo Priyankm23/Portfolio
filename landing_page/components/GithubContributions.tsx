@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Github, Flame, Info } from "lucide-react";
 import { GitHubCalendar } from "react-github-calendar";
 import { useTheme } from "next-themes";
+import { fetchPortfolioApi } from "@/lib/api";
 
 interface Day {
   date: string;
@@ -27,12 +28,7 @@ export const GithubContributions = () => {
     setMounted(true);
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:5000/api/github/contributions",
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        const response = await fetchPortfolioApi("/api/github/contributions");
         const jsonData = await response.json();
         setData(jsonData);
       } catch (err) {
@@ -59,11 +55,11 @@ export const GithubContributions = () => {
   };
 
   const lightColors = [
-    "var(--color-surface-2)",
-    "rgba(143, 184, 36, 0.3)",
-    "rgba(143, 184, 36, 0.5)",
-    "rgba(143, 184, 36, 0.8)",
-    "var(--color-accent)",
+    "#d5cfc4",
+    "#a8c494",
+    "#72a85a",
+    "#4a8a32",
+    "#2d5a1b",
   ];
 
   const darkColors = [
@@ -117,7 +113,10 @@ export const GithubContributions = () => {
         </div>
 
         {/* Heatmap Area */}
-        <div className="bg-surface border border-border p-6 md:p-8 rounded-sm relative overflow-hidden shadow-sm flex justify-center min-h-[200px] items-center [&_article]:![scrollbar-width:none] [&_article::-webkit-scrollbar]:!hidden">
+        <div
+          className="bg-surface border border-border p-6 md:p-8 rounded-sm relative overflow-hidden flex justify-center min-h-[200px] items-center [&_article]:![scrollbar-width:none] [&_article::-webkit-scrollbar]:!hidden"
+          style={{ boxShadow: "var(--shadow)" }}
+        >
           {loading ? (
             <div className="text-muted font-mono animate-pulse">
               [ SYNCING_COMMIT_HISTORY... ]

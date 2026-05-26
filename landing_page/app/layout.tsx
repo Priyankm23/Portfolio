@@ -4,11 +4,11 @@ import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Priyank Moradiya | Backend Engineer',
+  title: 'Priyank Moradiya // Portfolio',
   description: 'Backend developer specializing in Node.js, PostgreSQL, and Python. Building production systems with modern tech stacks.',
   generator: 'v0.app',
   openGraph: {
-    title: 'Priyank Moradiya | Backend Engineer',
+    title: 'Priyank Moradiya // Portfolio',
     description: 'Backend developer specializing in Node.js, PostgreSQL, and Python.',
     type: 'website',
   },
@@ -31,11 +31,15 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=Bebas+Neue&display=swap"
           rel="stylesheet"
         />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body className="antialiased">
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
