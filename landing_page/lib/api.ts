@@ -1,7 +1,5 @@
 const LOCAL_API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  "http://localhost:5000";
+  (process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000").replace(/\/+$/, "");
 const PRODUCTION_API_BASE_URL = "https://portfolio-vq3d.vercel.app";
 
 const normalizePath = (path: string) =>

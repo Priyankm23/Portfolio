@@ -126,14 +126,14 @@ export default function Home() {
   useEffect(() => {
     const fetchGithubData = async () => {
       try {
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(/\/+$/, "");
         const primaryUrl = `${apiBaseUrl}/api/github/contributions`;
 
         let response = await fetch(primaryUrl);
 
         // If local API or primary URL fetch fails in development, try fetching from the Vercel deployed backup
-        if (!response.ok && apiBaseUrl !== "https://portfolio-tvyp.vercel.app") {
-          response = await fetch("https://portfolio-tvyp.vercel.app/api/github/contributions");
+        if (!response.ok && apiBaseUrl !== "https://portfolio-vq3d.vercel.app") {
+          response = await fetch("https://portfolio-vq3d.vercel.app/api/github/contributions");
         }
 
         if (response.ok) {
@@ -186,15 +186,15 @@ export default function Home() {
   useEffect(() => {
     const fetchVisits = async () => {
       try {
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(/\/+$/, "");
         const primaryUrl = `${apiBaseUrl}/api/visitor-count`;
 
         let response = await fetch(primaryUrl);
 
         // If primary call fails, try fetching from the Vercel deployed API as a live backup
-        if (!response.ok && apiBaseUrl !== "https://portfolio-tvyp.vercel.app") {
+        if (!response.ok && apiBaseUrl !== "https://portfolio-vq3d.vercel.app") {
           response = await fetch(
-            "https://portfolio-tvyp.vercel.app/api/visitor-count"
+            "https://portfolio-vq3d.vercel.app/api/visitor-count"
           );
         }
 
