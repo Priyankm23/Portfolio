@@ -1,10 +1,8 @@
+import 'dotenv/config';
 import express from 'express';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import visitorRouter from './routes/visitor.js';
 import githubRouter from './routes/github.js';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
