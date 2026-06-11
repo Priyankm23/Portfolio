@@ -14,6 +14,7 @@ interface Project {
   liveUrl?: string;
   image?: string;
   logoUrl?: string;
+  screenshot?: string;
 }
 
 // BrandIcon component using simpleicons mask
@@ -87,6 +88,14 @@ const techStack = [
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState("hero");
+  const [showScreenshot, setShowScreenshot] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowScreenshot((prev) => !prev);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
 
   const [dynamicWordIndex, setDynamicWordIndex] = useState(0);
   const words = ["FUN", "INNOVATION", "LEARNING", "COLLABORATION"];
@@ -275,8 +284,9 @@ export default function Home() {
       ],
       githubUrl: "https://github.com/Priyankm23/Cadence-backend",
       liveUrl: "https://cadence-meeting-intelligence.vercel.app/",
-      image: "/cadence.png",
+      image: "/cadence_graphic.png",
       logoUrl: "/cadence_logo.png",
+      screenshot: "/cadence.png",
     },
     {
       title: "Markivo",
@@ -287,9 +297,9 @@ export default function Home() {
       tags: ["Express", "PostgreSQL", "Redis", "BullMQ", "Prisma", "Zod"],
       githubUrl: "https://github.com/Priyankm23/marketflow",
       liveUrl: "https://marketflow-your-one-stop-shop.vercel.app/",
-      image:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuDCaSrNF-c3XvGDxzmwLCgO51fCbAbhYKALOpXlmRlPrd-6MbVFhO9F6Ch1sTfUfCKhHEh4ND0iQoV4Kre6WtVcdFYCEKWTV_OT2wEkg7P1qY2rk8Pk1n5t9_3zCkHovZdSecE_jptiCbyHX5cdcb5FdQ0jF8h2EFY715ZB3OhYVUByKU5T4OTGHPXYN9kB2LRhJR35xU5TXoQkEwsEb08fNJse9kX8QF9zoszIo5R-pbPcVzFpn_QAbQrIcLHWe8my75DLxFxKtQa8",
+      image: "/markivo_graphic.png",
       logoUrl: "/markivo_logo.png",
+      screenshot: "/marketflow.png",
     },
     {
       title: "SafeTrail",
@@ -300,7 +310,9 @@ export default function Home() {
       tags: ["Express", "MongoDB", "Socket.IO", "Ethers.js", "Redis"],
       githubUrl: "https://github.com/Priyankm23/safetrail",
       liveUrl: "https://safetrail-your-safety-in-your-mobile.vercel.app/",
+      image: "/safetrail_graphic.png",
       logoUrl: "/safetrail_logo.png",
+      screenshot: "/safetrail.png",
     },
     /*
     {
@@ -901,63 +913,99 @@ export default function Home() {
             </h2>
 
             {/* Brutalist Grid Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 gap-8">
               {projects.map((project, idx) => (
                 <div
                   key={idx}
-                  className="bg-surface border border-1px border-on-surface p-6 flex flex-col gap-4 shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] hover:-translate-y-1 transition-transform duration-200"
+                  className={`bg-surface border border-1px border-on-surface flex flex-col ${idx % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] hover:-translate-y-1 transition-transform duration-200 group overflow-hidden`}
                 >
-                  <div className="flex justify-between items-start border-b border-outline pb-2">
-                    <span className="bg-primary/10 border border-primary text-primary px-2 py-0.5 text-[11px] font-label-sm uppercase">
-                      {project.tech}
-                    </span>
-                    <span className="text-on-secondary-container font-mono-code text-[12px]">
-                      {project.dates}
-                    </span>
+                  {/* Left Side: Details */}
+                  <div className="flex-1 p-6 flex flex-col gap-4 justify-between min-w-0">
+                    <div>
+                      <div className="flex justify-between items-start border-b border-outline pb-2 mb-3">
+                        <span className="bg-primary/10 border border-primary text-primary px-2 py-0.5 text-[11px] font-label-sm uppercase font-bold">
+                          {project.tech}
+                        </span>
+                        <span className="text-on-secondary-container font-mono-code text-[12px]">
+                          {project.dates}
+                        </span>
+                      </div>
+                      <h3 className="font-headline-md text-[30px] leading-none text-on-surface uppercase tracking-tight flex items-center gap-3">
+                        {project.logoUrl && (
+                          <img
+                            src={project.logoUrl}
+                            alt={`${project.title} logo`}
+                            className="w-12 h-12 object-contain border border-on-surface bg-white p-1.5 rounded-sm shadow-[1.5px_1.5px_0px_0px_rgba(27,28,28,1)] mix-blend-multiply"
+                          />
+                        )}
+                        <span>{project.title}</span>
+                      </h3>
+                      <p className="font-body-md text-[14px] text-on-secondary-container leading-relaxed mt-3">
+                        {project.description}
+                      </p>
+                    </div>
+
+                    <div>
+                      <div className="flex flex-wrap gap-1.5 mb-4">
+                        {project.tags.map((tag, tagIdx) => (
+                          <span
+                            key={tagIdx}
+                            className="border-2 border-primary text-on-surface bg-transparent px-2 py-0.5 text-[11px] font-mono-code uppercase tracking-wider"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="flex gap-4 border-t border-outline/20 pt-3">
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-[12px] font-label-sm uppercase text-primary hover:underline flex items-center gap-1 font-bold"
+                        >
+                          SOURCE_CODE <span className="text-xs">→</span>
+                        </a>
+                        {project.liveUrl && (
+                          <a
+                            href={project.liveUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[12px] font-label-sm uppercase text-on-surface hover:underline flex items-center gap-1 font-bold"
+                          >
+                            DEMO_LINK <span className="text-xs">→</span>
+                          </a>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-headline-md text-[30px] leading-none text-on-surface uppercase tracking-tight flex items-center gap-3">
-                      {project.logoUrl && (
+
+                  {/* Right Side: Halftone Brutalist Graphic / Screenshot Transition */}
+                  <div 
+                    className={`w-full md:w-[40%] border-t md:border-t-0 ${idx % 2 === 0 ? "md:border-l" : "md:border-r"} border-on-surface relative flex items-center justify-center p-3 md:p-4 min-h-[260px] md:min-h-[340px]`}
+                    style={{
+                      backgroundColor: "var(--color-bg)",
+                      backgroundImage: "linear-gradient(rgba(27,28,28,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(27,28,28,0.06) 1px, transparent 1px)",
+                      backgroundSize: "20px 20px"
+                    }}
+                  >
+                    {project.image && (
+                      <div className="relative w-full h-full">
+                        {/* Halftone graphic (Default) */}
                         <img
-                          src={project.logoUrl}
-                          alt={`${project.title} logo`}
-                          className="w-12 h-12 object-contain border border-on-surface bg-white p-1.5 rounded-sm shadow-[1.5px_1.5px_0px_0px_rgba(27,28,28,1)] mix-blend-multiply"
+                          src={project.image}
+                          alt={`${project.title} Graphic`}
+                          className={`absolute inset-0 m-auto max-w-full max-h-full w-auto h-auto object-contain select-none pointer-events-none group-hover:scale-105 group-hover:rotate-[2deg] transition-all duration-500 ${showScreenshot && project.screenshot ? "opacity-0" : "opacity-100"} ${project.screenshot ? "group-hover:opacity-0" : ""}`}
                         />
-                      )}
-                      <span>{project.title}</span>
-                    </h3>
-                    <p className="font-body-md text-[14px] text-on-secondary-container leading-relaxed mt-2">
-                      {project.description}
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5 mt-auto">
-                    {project.tags.map((tag, tagIdx) => (
-                      <span
-                        key={tagIdx}
-                        className="border-2 border-primary text-on-surface bg-transparent px-2 py-0.5 text-[11px] font-mono-code uppercase tracking-wider"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex gap-4 border-t border-outline/20 pt-3 mt-2">
-                    <a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-[12px] font-label-sm uppercase text-primary hover:underline flex items-center gap-1"
-                    >
-                      SOURCE_CODE <span className="text-xs">→</span>
-                    </a>
-                    {project.liveUrl && (
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-[12px] font-label-sm uppercase text-on-surface hover:underline flex items-center gap-1"
-                      >
-                        DEMO_LINK <span className="text-xs">→</span>
-                      </a>
+                        {/* Actual platform screenshot (Visible on hover / mobile timer - fit cleanly!) */}
+                        {project.screenshot && (
+                          <img
+                            src={project.screenshot}
+                            alt={`${project.title} Screenshot`}
+                            className={`absolute inset-0 m-auto max-w-full max-h-full w-auto h-auto object-contain select-none pointer-events-none border border-on-surface shadow-[3px_3px_0px_0px_rgba(27,28,28,1)] group-hover:scale-105 transition-all duration-500 ${showScreenshot ? "opacity-100" : "opacity-0"} group-hover:opacity-100`}
+                          />
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -1142,8 +1190,8 @@ export default function Home() {
                 <div className="flex flex-col gap-8 md:gap-12 relative z-10">
                   {/* Job 1: Infosys Springboard */}
                   <div className="relative pl-10 md:pl-0 group">
-                    <div className="absolute left-0 top-2 w-6 h-6 bg-surface border border-primary flex items-center justify-center -ml-[9px] md:hidden">
-                      <div className="w-2 h-2 bg-primary group-hover:bg-on-surface transition-colors duration-0"></div>
+                    <div className="absolute left-0 top-2.5 w-4 h-4 bg-surface border-2 border-primary rounded-full flex items-center justify-center -ml-[8px] md:hidden">
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full group-hover:bg-on-surface transition-colors duration-0"></div>
                     </div>
                     <div className="border border-brutal bg-surface-container-lowest p-5 hover:border-on-surface transition-colors duration-0">
                       <div className="flex flex-col md:flex-row md:justify-between md:items-baseline mb-4 border-b border-outline/30 pb-3">
