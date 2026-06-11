@@ -17,6 +17,8 @@ export const Ticker = () => {
     'Socket.IO',
     'Ethers.js',
     'BullMQ',
+    'gRPC',
+    'RabbitMQ',
   ];
 
   const ticker = [...techs, ...techs]; // Duplicate for seamless loop

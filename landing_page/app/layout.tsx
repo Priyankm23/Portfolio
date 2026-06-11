@@ -5,11 +5,11 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Priyank Moradiya // Portfolio',
-  description: 'Backend developer specializing in Node.js, PostgreSQL, and Python. Building production systems with modern tech stacks.',
+  description: 'Backend developer specializing in Node.js, PostgreSQL, Python, gRPC, and RabbitMQ. Building distributed systems with modern tech stacks.',
   generator: 'v0.app',
   openGraph: {
     title: 'Priyank Moradiya // Portfolio',
-    description: 'Backend developer specializing in Node.js, PostgreSQL, and Python.',
+    description: 'Backend developer specializing in Node.js, PostgreSQL, Python, gRPC, and RabbitMQ.',
     type: 'website',
   },
   twitter: {

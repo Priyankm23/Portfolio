@@ -77,6 +77,8 @@ const techStack = [
       { name: "Git / GitHub", slug: "git" },
       { name: "PM2", slug: "pm2" },
       { name: "Postman", slug: "postman" },
+      { name: "gRPC" },
+      { name: "RabbitMQ", slug: "rabbitmq" },
       { name: "Zod", slug: "zod" },
       { name: "BullMQ", fallback: <Workflow className="w-3.5 h-3.5" /> },
     ],
@@ -300,6 +302,20 @@ export default function Home() {
       liveUrl: "https://safetrail-your-safety-in-your-mobile.vercel.app/",
       logoUrl: "/safetrail_logo.png",
     },
+    /*
+    {
+      title: "Bandit CLI",
+      dates: "Jun 2026 – Present (Beta)",
+      tech: "TypeScript · Node.js",
+      description:
+        "An interactive terminal workspace companion and auditor for backend developers. Automates codebase scans for route discovery, benchmarks endpoints under load with live latency percentiles, manages port processes, and audits env setups.",
+      tags: ["TypeScript", "Node.js", "Commander", "Clack Prompts", "CLI", "NPM Package"],
+      githubUrl: "https://github.com/Priyankm23/Backend-Audit-CLI-Tool---Bandit",
+      liveUrl: "https://www.npmjs.com/package/bandit-cli",
+      image: "/bandit.png",
+      logoUrl: "/bandit_logo.png",
+    },
+    */
   ];
 
   // Command input handler for the Section 06 Play terminal
@@ -575,7 +591,7 @@ export default function Home() {
             <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
           </div>
 
-          <div className="max-w-6xl mx-auto w-full flex flex-col md:flex-row items-center md:items-stretch relative z-10 gap-12 md:gap-gutter">
+          <div className="max-w-6xl mx-auto w-full flex flex-col md:flex-row justify-between items-center md:items-stretch relative z-10 gap-12 md:gap-0">
             <div className="flex flex-col gap-6 w-full md:w-[45%] justify-center">
               <div className="inline-block border border-1px border-primary px-3 py-1 bg-primary/10 text-primary font-mono-code text-mono-code w-max mx-auto md:mx-0 uppercase relative z-10">
                 BACKEND DEVELOPER
@@ -585,7 +601,7 @@ export default function Home() {
                 <br />
                 SYSTEMS FOR
                 <br />
-                <span className="text-primary font-bold inline-block min-w-[13ch] text-center md:text-left text-[72px] sm:text-[90px] md:text-[110px] lg:text-[120px] leading-none whitespace-nowrap" style={{ fontFamily: '"Bebas Neue", sans-serif' }}>
+                <span className="text-primary font-bold inline-block min-w-[13ch] text-center md:text-left text-[68px] sm:text-[84px] md:text-[95px] lg:text-[110px] leading-none whitespace-nowrap" style={{ fontFamily: '"Bebas Neue", sans-serif' }}>
                   {words[dynamicWordIndex]}
                 </span>
               </h1>
@@ -666,18 +682,18 @@ export default function Home() {
               </div>
             </div>
             {/* Hero Image Panel */}
-            <div className="w-full md:w-[55%] relative z-10 shrink-0 flex items-center justify-center md:justify-end">
-              <div className="relative w-full h-full flex items-center justify-center md:justify-end min-h-[380px] md:min-h-[480px]">
+            <div className="w-full md:w-[48%] relative z-10 shrink-0 flex items-center justify-center md:justify-end">
+              <div className="relative w-full h-full flex items-center justify-center md:justify-end min-h-[380px] md:min-h-[500px] lg:min-h-[580px]">
                 {/* The main portrait (increased size, centered) */}
                 <img
                   alt="Priyank Moradiya - Stylized Retro Portrait"
-                  className="h-[320px] md:h-[420px] lg:h-[480px] w-auto object-contain object-bottom select-none pointer-events-none z-10"
+                  className="h-[320px] md:h-[440px] lg:h-[550px] xl:h-[590px] w-auto object-contain object-bottom select-none pointer-events-none z-10"
                   src="/hero_portrait.png"
                   style={{ mixBlendMode: "multiply" }}
                 />
 
                 {/* 1. Database Storage (Top-Left) */}
-                <div className="absolute top-[2%] left-[-3%] md:top-[12%] md:left-[0%] z-20">
+                <div className="absolute top-[2%] left-[-3%] md:top-[10%] md:left-[0%] lg:top-[12%] lg:left-[-4%] z-20">
                   <img
                     src="/simple_database.png"
                     alt="Database Storage"
@@ -687,7 +703,7 @@ export default function Home() {
                 </div>
 
                 {/* 2. Server (Top-Right, on other side of head) */}
-                <div className="absolute top-[0%] right-[2%] md:top-[8%] md:right-[8%] z-20">
+                <div className="absolute top-[0%] right-[2%] md:top-[6%] md:right-[6%] lg:top-[8%] lg:right-[0%] z-20">
                   <img
                     src="/simple_server.png"
                     alt="Server Mainframe"
@@ -697,7 +713,7 @@ export default function Home() {
                 </div>
 
                 {/* 3. API Gateway / Router (Right-Side Middle, outside of silhouette) */}
-                <div className="absolute top-[38%] right-[-3%] md:top-[42%] md:right-[-8%] z-20">
+                <div className="absolute top-[38%] right-[-3%] md:top-[44%] md:right-[-6%] lg:top-[46%] lg:right-[-6%] z-20">
                   <img
                     src="/simple_router.png"
                     alt="API Gateway"

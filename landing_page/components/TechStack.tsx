@@ -54,6 +54,8 @@ const categories = [
       { name: 'Git / GitHub', slug: 'git' },
       { name: 'PM2', slug: 'pm2' },
       { name: 'Postman', slug: 'postman' },
+      { name: 'gRPC' },
+      { name: 'RabbitMQ', slug: 'rabbitmq' },
       { name: 'Zod', slug: 'zod' },
       { name: 'BullMQ', fallback: <Workflow className="w-4 h-4" /> },
     ],
