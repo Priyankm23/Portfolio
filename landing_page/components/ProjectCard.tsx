@@ -2,7 +2,7 @@ interface ProjectCardProps {
   title: string;
   dates: string;
   tech: string;
-  description: string;
+  description: React.ReactNode;
   tags: string[];
   githubUrl?: string;
   liveUrl?: string;

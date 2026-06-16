@@ -59,19 +59,24 @@ export default function WorkPage() {
                logoUrl="/safetrail_logo.png"
              />
 
-             {/* Bandit CLI - Hidden for now
              <ProjectCard
                title="Bandit CLI"
                dates="Jun 2026 – Present (Beta)"
                tech="TypeScript · Node.js"
-               description="An interactive terminal workspace companion and auditor for backend developers. Automates codebase scans for route discovery, benchmarks endpoints under load with live latency percentiles, manages port processes, and audits env setups."
+               description={
+                 <>
+                   An interactive terminal workspace companion and auditor for backend developers. Automates codebase scans for route discovery, benchmarks endpoints under load with live latency percentiles, manages port processes, and audits env setups.{' '}
+                   <span className="inline-block bg-[var(--color-primary)]/10 border border-[var(--color-primary)] text-[var(--color-primary)] px-1.5 py-0.5 text-[10px] font-mono-code uppercase font-bold tracking-wider rounded-sm ml-1 select-none">
+                     Vibe Coded
+                   </span>
+                 </>
+               }
                tags={['TypeScript', 'Node.js', 'Commander', 'Clack Prompts', 'CLI', 'NPM Package']}
                githubUrl="https://github.com/Priyankm23/Backend-Audit-CLI-Tool---Bandit"
-               liveUrl="https://www.npmjs.com/package/bandit-cli"
+               liveUrl="https://bandit-cli.vercel.app/"
                image="/bandit.png"
                logoUrl="/bandit_logo.png"
              />
-             */}
           </div>
         </div>
       </div>

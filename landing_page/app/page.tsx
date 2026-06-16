@@ -8,7 +8,7 @@ interface Project {
   title: string;
   dates: string;
   tech: string;
-  description: string;
+  description: React.ReactNode;
   tags: string[];
   githubUrl: string;
   liveUrl?: string;
@@ -89,6 +89,8 @@ const techStack = [
 export default function Home() {
   const [activeSection, setActiveSection] = useState("hero");
   const [showScreenshot, setShowScreenshot] = useState(false);
+  const [prelaxExpanded, setPrelaxExpanded] = useState(false);
+  const [infosysExpanded, setInfosysExpanded] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -127,7 +129,7 @@ export default function Home() {
     "[SYSTEM BOOT SUCCESSFUL]",
     "Welcome visitor! Established secure terminal session.",
     "",
-    ...HELP_LINES
+    ...HELP_LINES,
   ]);
   const terminalBodyRef = useRef<HTMLDivElement>(null);
 
@@ -141,24 +143,35 @@ export default function Home() {
   useEffect(() => {
     const fetchGithubData = async () => {
       try {
-        const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(/\/+$/, "");
+        const apiBaseUrl = (
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+        ).replace(/\/+$/, "");
         const primaryUrl = `${apiBaseUrl}/api/github/contributions`;
 
         let response = await fetch(primaryUrl);
 
         // If local API or primary URL fetch fails in development, try fetching from the Vercel deployed backup
-        if (!response.ok && apiBaseUrl !== "https://portfolio-vq3d.vercel.app") {
-          response = await fetch("https://portfolio-vq3d.vercel.app/api/github/contributions");
+        if (
+          !response.ok &&
+          apiBaseUrl !== "https://portfolio-vq3d.vercel.app"
+        ) {
+          response = await fetch(
+            "https://portfolio-vq3d.vercel.app/api/github/contributions",
+          );
         }
 
         if (response.ok) {
           const data = await response.json();
-          if (data && typeof data.total === "number" && Array.isArray(data.days)) {
+          if (
+            data &&
+            typeof data.total === "number" &&
+            Array.isArray(data.days)
+          ) {
             setGithubCommits(data.total);
             if (typeof data.streak === "number") {
               setGithubStreak(data.streak);
             }
-            
+
             const getLevel = (count: number) => {
               if (count === 0) return 0;
               if (count < 3) return 1;
@@ -173,7 +186,10 @@ export default function Home() {
             if (apiLevels.length >= targetLength) {
               cells = apiLevels.slice(-targetLength);
             } else {
-              cells = [...Array(targetLength - apiLevels.length).fill(0), ...apiLevels];
+              cells = [
+                ...Array(targetLength - apiLevels.length).fill(0),
+                ...apiLevels,
+              ];
             }
             setHeatmapCells(cells);
             return;
@@ -201,15 +217,20 @@ export default function Home() {
   useEffect(() => {
     const fetchVisits = async () => {
       try {
-        const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(/\/+$/, "");
+        const apiBaseUrl = (
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+        ).replace(/\/+$/, "");
         const primaryUrl = `${apiBaseUrl}/api/visitor-count`;
 
         let response = await fetch(primaryUrl);
 
         // If primary call fails, try fetching from the Vercel deployed API as a live backup
-        if (!response.ok && apiBaseUrl !== "https://portfolio-vq3d.vercel.app") {
+        if (
+          !response.ok &&
+          apiBaseUrl !== "https://portfolio-vq3d.vercel.app"
+        ) {
           response = await fetch(
-            "https://portfolio-vq3d.vercel.app/api/visitor-count"
+            "https://portfolio-vq3d.vercel.app/api/visitor-count",
           );
         }
 
@@ -221,7 +242,7 @@ export default function Home() {
               "[SYSTEM BOOT SUCCESSFUL]",
               `Welcome visitor #${data.visit_count}! Established secure terminal session.`,
               "",
-              ...HELP_LINES
+              ...HELP_LINES,
             ]);
             return;
           }
@@ -245,7 +266,7 @@ export default function Home() {
                 "[SYSTEM BOOT SUCCESSFUL]",
                 `Welcome visitor #${data.visit_count}! Established secure terminal session.`,
                 "",
-                ...HELP_LINES
+                ...HELP_LINES,
               ]);
               return;
             }
@@ -261,7 +282,7 @@ export default function Home() {
         "[SYSTEM BOOT SUCCESSFUL]",
         "Welcome visitor #1243! Established secure terminal session.",
         "",
-        ...HELP_LINES
+        ...HELP_LINES,
       ]);
     };
     fetchVisits();
@@ -314,20 +335,40 @@ export default function Home() {
       logoUrl: "/safetrail_logo.png",
       screenshot: "/safetrail.png",
     },
-    /*
     {
       title: "Bandit CLI",
       dates: "Jun 2026 – Present (Beta)",
       tech: "TypeScript · Node.js",
-      description:
-        "An interactive terminal workspace companion and auditor for backend developers. Automates codebase scans for route discovery, benchmarks endpoints under load with live latency percentiles, manages port processes, and audits env setups.",
-      tags: ["TypeScript", "Node.js", "Commander", "Clack Prompts", "CLI", "NPM Package"],
-      githubUrl: "https://github.com/Priyankm23/Backend-Audit-CLI-Tool---Bandit",
-      liveUrl: "https://www.npmjs.com/package/bandit-cli",
-      image: "/bandit.png",
+      description: (
+        <>
+          An interactive terminal workspace companion and auditor for backend
+          developers. Automates codebase scans for route discovery, benchmarks
+          endpoints under load with live latency percentiles, manages port
+          processes, and audits env setups.{" "}
+          <span className="inline-block bg-primary/10 border border-primary text-primary px-1.5 py-0.5 text-[10px] font-mono-code uppercase font-bold tracking-wider rounded-sm ml-1 select-none">
+            Vibe Coded
+          </span>
+          <span className="block text-[11.5px] text-on-surface-variant/75 mt-1.5 font-mono-code">
+            * Created with zero understanding of code but trying to understand
+            it for improvement.
+          </span>
+        </>
+      ),
+      tags: [
+        "TypeScript",
+        "Node.js",
+        "Commander",
+        "Clack Prompts",
+        "CLI",
+        "NPM Package",
+      ],
+      githubUrl:
+        "https://github.com/Priyankm23/Backend-Audit-CLI-Tool---Bandit",
+      liveUrl: "https://bandit-cli.vercel.app/",
+      image: "/bandit_graphic.png",
       logoUrl: "/bandit_logo.png",
+      screenshot: "/bandit.png",
     },
-    */
   ];
 
   // Command input handler for the Section 06 Play terminal
@@ -438,7 +479,9 @@ export default function Home() {
         setPlayInput("");
         return;
       default:
-        lines = [`sh: command not found: '${command}'. Type 'h' or 'help' for options.`];
+        lines = [
+          `sh: command not found: '${command}'. Type 'h' or 'help' for options.`,
+        ];
     }
 
     setPlayHistory((prev) => [
@@ -608,18 +651,26 @@ export default function Home() {
               <div className="inline-block border border-1px border-primary px-3 py-1 bg-primary/10 text-primary font-mono-code text-mono-code w-max mx-auto md:mx-0 uppercase relative z-10">
                 BACKEND DEVELOPER
               </div>
-              <h1 className="font-display-xl-mobile md:font-display-xl text-display-xl-mobile md:text-display-xl uppercase text-on-surface tracking-wider relative z-10 text-center md:text-left min-h-[3.2em] md:min-h-0" style={{ fontFamily: '"Bebas Neue", sans-serif' }}>
+              <h1
+                className="font-display-xl-mobile md:font-display-xl text-display-xl-mobile md:text-display-xl uppercase text-on-surface tracking-wider relative z-10 text-center md:text-left min-h-[3.2em] md:min-h-0"
+                style={{ fontFamily: '"Bebas Neue", sans-serif' }}
+              >
                 BUILDING
                 <br />
                 SYSTEMS FOR
                 <br />
-                <span className="text-primary font-bold inline-block min-w-[13ch] text-center md:text-left text-[68px] sm:text-[84px] md:text-[95px] lg:text-[110px] leading-none whitespace-nowrap" style={{ fontFamily: '"Bebas Neue", sans-serif' }}>
+                <span
+                  className="text-primary font-bold inline-block min-w-[13ch] text-center md:text-left text-[68px] sm:text-[84px] md:text-[95px] lg:text-[110px] leading-none whitespace-nowrap"
+                  style={{ fontFamily: '"Bebas Neue", sans-serif' }}
+                >
                   {words[dynamicWordIndex]}
                 </span>
               </h1>
               <p className="font-body-md text-body-md text-on-surface-variant max-w-md md:border-l-2 border-primary md:pl-4 relative z-10 text-center md:text-left mx-auto md:mx-0 border-l-0 pl-0">
                 Full-stack thinking. Backend obsession. From raw APIs to
-                distributed systems — <span className="whitespace-nowrap">I build</span> what holds everything together.
+                distributed systems —{" "}
+                <span className="whitespace-nowrap">I build</span> what holds
+                everything together.
               </p>
               <div className="flex flex-row flex-wrap gap-5 mt-6 relative z-10 justify-center md:justify-start">
                 {/* GitHub */}
@@ -922,7 +973,7 @@ export default function Home() {
                   {/* Left Side: Details */}
                   <div className="flex-1 p-6 flex flex-col gap-4 justify-between min-w-0">
                     <div>
-                      <div className="flex justify-between items-start border-b border-outline pb-2 mb-3">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 border-b border-outline pb-2 mb-3">
                         <span className="bg-primary/10 border border-primary text-primary px-2 py-0.5 text-[11px] font-label-sm uppercase font-bold">
                           {project.tech}
                         </span>
@@ -981,12 +1032,13 @@ export default function Home() {
                   </div>
 
                   {/* Right Side: Halftone Brutalist Graphic / Screenshot Transition */}
-                  <div 
+                  <div
                     className={`w-full md:w-[40%] border-t md:border-t-0 ${idx % 2 === 0 ? "md:border-l" : "md:border-r"} border-on-surface relative flex items-center justify-center p-3 md:p-4 min-h-[260px] md:min-h-[340px]`}
                     style={{
                       backgroundColor: "var(--color-bg)",
-                      backgroundImage: "linear-gradient(rgba(27,28,28,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(27,28,28,0.06) 1px, transparent 1px)",
-                      backgroundSize: "20px 20px"
+                      backgroundImage:
+                        "linear-gradient(rgba(27,28,28,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(27,28,28,0.06) 1px, transparent 1px)",
+                      backgroundSize: "20px 20px",
                     }}
                   >
                     {project.image && (
@@ -1089,17 +1141,21 @@ export default function Home() {
               </div>
               {/* Heatmap Area */}
               <div className="md:col-span-8 flex flex-col gap-6">
-                 {/* Stats Row */}
+                {/* Stats Row */}
                 <div className="flex flex-wrap gap-4 border-l border-brutal pl-4">
                   <div className="flex flex-col">
-                    <span className="font-headline-md text-primary">{githubCommits}</span>
+                    <span className="font-headline-md text-primary">
+                      {githubCommits}
+                    </span>
                     <span className="font-label-sm text-on-surface-variant uppercase">
                       COMMITS
                     </span>
                   </div>
                   <div className="w-px h-auto bg-brutal mx-2 hidden md:block text-outline"></div>
                   <div className="flex flex-col">
-                    <span className="font-headline-md text-primary">{githubRepos}</span>
+                    <span className="font-headline-md text-primary">
+                      {githubRepos}
+                    </span>
                     <span className="font-label-sm text-on-surface-variant uppercase">
                       REPOS
                     </span>
@@ -1186,14 +1242,94 @@ export default function Home() {
               </div>
               {/* Timeline */}
               <div className="md:col-span-8 relative">
-                <div className="absolute left-0 top-0 bottom-0 w-px bg-brutal ml-3 md:hidden"></div>
                 <div className="flex flex-col gap-8 md:gap-12 relative z-10">
-                  {/* Job 1: Infosys Springboard */}
-                  <div className="relative pl-10 md:pl-0 group">
-                    <div className="absolute left-0 top-2.5 w-4 h-4 bg-surface border-2 border-primary rounded-full flex items-center justify-center -ml-[8px] md:hidden">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full group-hover:bg-on-surface transition-colors duration-0"></div>
+                  {/* Job 1: Prelax Infotech */}
+                  <div className="relative pl-10 md:pl-12 group">
+                    {/* Line joining the two circles */}
+                    <div className="absolute left-0 top-5 bottom-[-32px] md:bottom-[-48px] w-px bg-[#C4BDB2] ml-3 md:ml-4 z-10"></div>
+                    {/* Circle-in-circle timeline marker - aligned with the line */}
+                    <div className="absolute left-0 top-3 w-4 h-4 bg-surface border-2 border-primary rounded-full flex items-center justify-center ml-1 md:ml-2 z-20">
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full group-hover:bg-on-surface transition-colors duration-200"></div>
                     </div>
-                    <div className="border border-brutal bg-surface-container-lowest p-5 hover:border-on-surface transition-colors duration-0">
+                    <div
+                      onClick={() => setPrelaxExpanded(!prelaxExpanded)}
+                      className="border border-brutal bg-surface-container-lowest p-5 hover:border-on-surface transition-colors duration-0 cursor-pointer select-none"
+                    >
+                      <div className="flex flex-col md:flex-row md:justify-between md:items-baseline mb-4 border-b border-outline/30 pb-3">
+                        <div>
+                          <h3 className="font-headline-md text-[32px] md:text-[40px] leading-none text-on-surface uppercase mb-1">
+                            BACKEND DEVELOPER INTERN
+                          </h3>
+                          <div className="font-mono-code text-primary font-bold uppercase text-sm">
+                            PRELAX INFOTECH
+                          </div>
+                        </div>
+                        <div className="font-mono-code text-on-surface-variant text-sm mt-2 md:mt-0 bg-surface-variant px-2 py-1 inline-block w-max border border-brutal">
+                          MAY 2026 — JUN 2026
+                        </div>
+                      </div>
+
+                      <div className="font-mono-code text-on-surface-variant text-xs mb-4">
+                        Backend Developer Intern · Surat, Gujarat, India
+                      </div>
+
+                      <ul className="font-body-md text-on-surface-variant space-y-3">
+                        <li className="flex items-start gap-2">
+                          <span className="material-symbols-outlined text-primary text-[18px] mt-1">
+                            arrow_forward
+                          </span>
+                          <span>
+                            Architected a microservices backend with 8-10
+                            Node.js/Express services, each using its own
+                            PostgreSQL database instance
+                            {!prelaxExpanded && "....."}
+                          </span>
+                        </li>
+                        {prelaxExpanded && (
+                          <>
+                            <li className="flex items-start gap-2">
+                              <span className="material-symbols-outlined text-primary text-[18px] mt-1">
+                                arrow_forward
+                              </span>
+                              <span>
+                                Engineered synchronous inter-service calls using
+                                gRPC and an API Gateway, with RabbitMQ topic
+                                exchanges for async event-driven logging.
+                              </span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="material-symbols-outlined text-primary text-[18px] mt-1">
+                                arrow_forward
+                              </span>
+                              <span>
+                                Resolved N+1 query issues on the job browsing
+                                endpoint using Redis caching, achieving
+                                throughput of 400-600 RPS under load tests with
+                                Autocannon.
+                              </span>
+                            </li>
+                          </>
+                        )}
+                      </ul>
+
+                      <div className="mt-4 text-[11px] font-mono-code uppercase tracking-wider text-primary/60 flex items-center gap-1 font-bold">
+                        {prelaxExpanded
+                          ? "— Click card to collapse"
+                          : "+ Click card to expand"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Job 2: Infosys Springboard */}
+                  <div className="relative pl-10 md:pl-12 group">
+                    {/* Circle-in-circle timeline marker - aligned with the line */}
+                    <div className="absolute left-0 top-3 w-4 h-4 bg-surface border-2 border-primary rounded-full flex items-center justify-center ml-1 md:ml-2 z-20">
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full group-hover:bg-on-surface transition-colors duration-200"></div>
+                    </div>
+                    <div
+                      onClick={() => setInfosysExpanded(!infosysExpanded)}
+                      className="border border-brutal bg-surface-container-lowest p-5 hover:border-on-surface transition-colors duration-0 cursor-pointer select-none"
+                    >
                       <div className="flex flex-col md:flex-row md:justify-between md:items-baseline mb-4 border-b border-outline/30 pb-3">
                         <div>
                           <h3 className="font-headline-md text-[32px] md:text-[40px] leading-none text-on-surface uppercase mb-1">
@@ -1218,48 +1354,50 @@ export default function Home() {
                             arrow_forward
                           </span>
                           <span>
-                            Contributed to a two-month virtual internship within
-                            a 25+ member team, utilizing Agile/Scrum methodology
-                            across 4 two-week sprints.
+                            Collaborated in a 25+ member Agile/Scrum team across
+                            4 sprints, managing testing and backlog
+                            documentation{!infosysExpanded && "....."}
                           </span>
                         </li>
-                        <li className="flex items-start gap-2">
-                          <span className="material-symbols-outlined text-primary text-[18px] mt-1">
-                            arrow_forward
-                          </span>
-                          <span>
-                            Developed the Crypto Portfolio Manager using Python
-                            and Streamlit.
-                          </span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="material-symbols-outlined text-primary text-[18px] mt-1">
-                            arrow_forward
-                          </span>
-                          <span>
-                            Implemented Strategic Portfolio Construction and
-                            integrated Machine Learning (Ridge Regression) for
-                            predictive modeling.
-                          </span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="material-symbols-outlined text-primary text-[18px] mt-1">
-                            arrow_forward
-                          </span>
-                          <span>
-                            Focused on professional development through daily
-                            stand-up meetings and maintaining Agile
-                            documentation (Test Cases, Product Backlog).
-                          </span>
-                        </li>
+                        {infosysExpanded && (
+                          <>
+                            <li className="flex items-start gap-2">
+                              <span className="material-symbols-outlined text-primary text-[18px] mt-1">
+                                arrow_forward
+                              </span>
+                              <span>
+                                Built a time-series crypto pipeline (SQLite,
+                                Pandas, NumPy) with Ridge Regression return
+                                prediction.
+                              </span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="material-symbols-outlined text-primary text-[18px] mt-1">
+                                arrow_forward
+                              </span>
+                              <span>
+                                Integrated stress testing across diverse market
+                                scenarios, exposing endpoints via FastAPI and a
+                                Streamlit dashboard.
+                              </span>
+                            </li>
+                          </>
+                        )}
                       </ul>
 
-                      {/* Certificate Link */}
-                      <div className="pt-4 border-t border-outline/10 mt-4">
+                      {/* Certificate & Expand Row */}
+                      <div className="flex flex-wrap gap-4 items-center justify-between pt-4 border-t border-outline/10 mt-4">
+                        <div className="text-[11px] font-mono-code uppercase tracking-wider text-primary/60 flex items-center gap-1 font-bold">
+                          {infosysExpanded
+                            ? "— Click card to collapse"
+                            : "+ Click card to expand"}
+                        </div>
+
                         <a
                           href="https://bit.ly/Priyank-InfosysCert"
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
                           className="inline-flex items-center gap-1.5 border border-primary px-3 py-1.5 font-label-sm text-[11px] text-primary hover:bg-primary hover:text-on-primary transition-colors duration-0 uppercase cursor-pointer"
                         >
                           <span className="material-symbols-outlined text-[16px]">
@@ -1367,7 +1505,7 @@ export default function Home() {
         {/* Redesigned Footer & Straightaway Contact Info */}
         <footer className="w-full py-8 md:py-10 px-margin-mobile md:px-margin-desktop bg-inverse-surface border-t border-outline text-[#D9D3C7] mt-auto z-10">
           <div className="max-w-6xl mx-auto w-full flex flex-col gap-5">
-            {/* Top Row: Say Hello & Witty Dev Card */}
+            {/* Top Row: Say Hello & Zoro Thanks Card */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
               <div className="flex flex-col gap-3">
                 <span className="font-mono-code text-[11px] md:text-[12px] uppercase tracking-widest text-primary">
@@ -1381,23 +1519,19 @@ export default function Home() {
                 </a>
               </div>
 
-              {/* Memorable GigaChad Meme Section */}
-              <div className="flex flex-row items-center gap-4 border border-outline bg-surface p-4 shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] max-w-md md:mr-4 select-none">
+              {/* Zoro Thanks For Visiting Section */}
+              <div className="flex flex-row items-center gap-5 max-w-md md:mr-4 self-center md:self-auto select-none">
                 <img
-                  src="/gigachad_avatar.png"
-                  alt="GigaChad Developer"
-                  className="w-16 h-16 md:w-20 md:h-20 object-cover border border-on-surface rounded-sm bg-white p-0.5 shadow-[1.5px_1.5px_0px_0px_rgba(27,28,28,1)] mix-blend-multiply"
+                  src="/thanks.png"
+                  alt="Zoro praying"
+                  className="w-24 h-24 md:w-32 md:h-32 object-contain"
                 />
-                <div className="flex-1 font-mono-code text-[11px] md:text-[12px] text-on-surface leading-relaxed">
-                  <p className="font-bold text-primary mb-1">
-                    GigaChad Backend Dev:
+                <div className="flex-1 font-mono-code text-[12px] md:text-[14px] text-[#D9D3C7] leading-relaxed">
+                  <p className="font-bold text-primary mb-1 text-sm md:text-base uppercase">
+                    Thanks for visiting!
                   </p>
-                  <p className="italic">
-                    "Optimizes SQL indexes to save 2ms of query latency. Spends
-                    4 hours picking a navbar font."
-                  </p>
-                  <p className="font-bold italic text-right mt-1">
-                    "Refuses to elaborate."
+                  <p className="text-[10px] md:text-[11px] text-[#C4BDB2]/75 mt-1 font-mono-code">
+                    * Not an anime fan.
                   </p>
                 </div>
               </div>
