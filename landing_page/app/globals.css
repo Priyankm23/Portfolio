@@ -52,7 +52,7 @@
 
   /* Custom spacings */
   --spacing-container-max: 1440px;
-  --spacing-margin-desktop: 64px;
+  --spacing-margin-desktop: 40px;
   --spacing-margin-mobile: 16px;
   --spacing-base: 8px;
   --spacing-gutter: 24px;
@@ -141,6 +141,16 @@
 .border-brutal-dark {
   border: 1px solid #5c4039;
 }
+
+.bg-hero-split {
+  background: linear-gradient(to bottom, #1B1C1C 54%, #D9D3C7 54%);
+}
+@media (min-width: 768px) {
+  .bg-hero-split {
+    background: linear-gradient(to right, #1B1C1C 48%, #D9D3C7 48%);
+  }
+}
+
 
 .blink {
   animation: blink-animation 1s steps(2, start) infinite;

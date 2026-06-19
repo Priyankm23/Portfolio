@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Terminal, Workflow } from "lucide-react";
+import { GenerativeHeroBg } from "@/components/GenerativeHeroBg";
 
 // Project Interface
 interface Project {
@@ -564,6 +565,7 @@ export default function Home() {
         <nav className="flex items-center justify-center sm:justify-start overflow-x-auto whitespace-nowrap scrollbar-none gap-0.5 min-[360px]:gap-1 sm:gap-2 font-bold text-[10px] min-[360px]:text-[11px] min-[390px]:text-[12px] sm:text-[13px] md:text-[14px] lg:text-[16px] uppercase tracking-wide h-12 lg:h-full px-2 lg:px-0 lg:flex-none w-full lg:w-auto">
           <button
             onClick={() => scrollTo("about")}
+            suppressHydrationWarning
             className={`px-1 min-[360px]:px-1.5 min-[390px]:px-2.5 sm:px-4 py-1 sm:py-1.5 text-center transition-colors duration-0 h-fit cursor-pointer flex-shrink-0 ${
               activeSection === "about"
                 ? "bg-primary text-on-primary"
@@ -574,6 +576,7 @@ export default function Home() {
           </button>
           <button
             onClick={() => scrollTo("projects")}
+            suppressHydrationWarning
             className={`px-1 min-[360px]:px-1.5 min-[390px]:px-2.5 sm:px-4 py-1 sm:py-1.5 text-center transition-colors duration-0 h-fit cursor-pointer flex-shrink-0 ${
               activeSection === "projects"
                 ? "bg-primary text-on-primary"
@@ -584,6 +587,7 @@ export default function Home() {
           </button>
           <button
             onClick={() => scrollTo("stack")}
+            suppressHydrationWarning
             className={`px-1 min-[360px]:px-1.5 min-[390px]:px-2.5 sm:px-4 py-1 sm:py-1.5 text-center transition-colors duration-0 h-fit cursor-pointer flex-shrink-0 ${
               activeSection === "stack"
                 ? "bg-primary text-on-primary"
@@ -594,6 +598,7 @@ export default function Home() {
           </button>
           <button
             onClick={() => scrollTo("contributions")}
+            suppressHydrationWarning
             className={`px-1 min-[360px]:px-1.5 min-[390px]:px-2.5 sm:px-4 py-1 sm:py-1.5 text-center transition-colors duration-0 h-fit cursor-pointer flex-shrink-0 ${
               activeSection === "contributions"
                 ? "bg-primary text-on-primary"
@@ -604,6 +609,7 @@ export default function Home() {
           </button>
           <button
             onClick={() => scrollTo("experience")}
+            suppressHydrationWarning
             className={`px-1 min-[360px]:px-1.5 min-[390px]:px-2.5 sm:px-4 py-1 sm:py-1.5 text-center transition-colors duration-0 h-fit cursor-pointer flex-shrink-0 ${
               activeSection === "experience"
                 ? "bg-primary text-on-primary"
@@ -622,22 +628,22 @@ export default function Home() {
 
       {/* Main Content Area - Full width without left sidebar margins */}
       <main className="min-h-screen flex flex-col relative overflow-hidden bg-surface">
-        {/* Hero Section 00 */}
+        {/* Hero Section */}
         <section
           id="hero"
-          className="relative px-margin-mobile md:px-margin-desktop pt-4 pb-12 md:pt-8 md:pb-24 border-b border-1px border-outline flex flex-col justify-center min-h-[85vh] overflow-hidden z-10 bg-d9d3c7 text-on-surface"
+          className="relative pt-8 pb-8 md:pt-8 md:pb-12 border-b border-1px border-outline flex flex-col md:flex-row justify-center items-center min-h-[95vh] md:min-h-[92vh] overflow-hidden z-10 text-[#D9D3C7] bg-hero-split"
         >
           {/* Lined Grid Overlay - Locally inside Hero */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 pointer-events-none grid grid-cols-4 md:grid-cols-12 gap-0 border-r border-1px border-outline opacity-10 z-0"
+            className="absolute top-[54%] bottom-0 left-0 right-0 md:inset-0 pointer-events-none grid grid-cols-4 md:grid-cols-12 gap-0 border-r border-1px border-outline opacity-10 z-0"
           >
-            <div className="border-l border-1px border-on-surface h-full"></div>
-            <div className="border-l border-1px border-on-surface h-full"></div>
-            <div className="border-l border-1px border-on-surface h-full"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
+            <div className="h-full"></div>
+            <div className="h-full max-md:border-l max-md:border-1px max-md:border-on-surface"></div>
+            <div className="h-full max-md:border-l max-md:border-1px max-md:border-on-surface md:border-l md:border-1px md:border-on-surface"></div>
+            <div className="h-full max-md:border-l max-md:border-1px max-md:border-on-surface"></div>
+            <div className="h-full hidden md:block"></div>
+            <div className="h-full hidden md:block"></div>
             <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
             <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
             <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
@@ -646,13 +652,16 @@ export default function Home() {
             <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
           </div>
 
-          <div className="max-w-6xl mx-auto w-full flex flex-col md:flex-row justify-between items-center md:items-stretch relative z-10 gap-12 md:gap-0">
-            <div className="flex flex-col gap-6 w-full md:w-[45%] justify-center">
+          <GenerativeHeroBg />
+
+          {/* Left Column (Text & Actions) */}
+          <div className="w-full md:w-[48%] flex-1 md:flex-none flex flex-col justify-center px-margin-mobile md:px-0 md:pl-[calc(max(40px,(100vw-1280px)/2))] md:pr-12 relative z-10 pb-8 md:pb-0">
+            <div className="flex flex-col gap-6 w-full max-w-[500px]">
               <div className="inline-block border border-1px border-primary px-3 py-1 bg-primary/10 text-primary font-mono-code text-mono-code w-max mx-auto md:mx-0 uppercase relative z-10">
                 BACKEND DEVELOPER
               </div>
               <h1
-                className="font-display-xl-mobile md:font-display-xl text-display-xl-mobile md:text-display-xl uppercase text-on-surface tracking-wider relative z-10 text-center md:text-left min-h-[3.2em] md:min-h-0"
+                className="font-display-xl-mobile md:font-display-xl text-display-xl-mobile md:text-display-xl uppercase text-[#D9D3C7] tracking-wider relative z-10 text-center md:text-left min-h-[3.2em] md:min-h-0"
                 style={{ fontFamily: '"Bebas Neue", sans-serif' }}
               >
                 BUILDING
@@ -666,13 +675,12 @@ export default function Home() {
                   {words[dynamicWordIndex]}
                 </span>
               </h1>
-              <p className="font-body-md text-body-md text-on-surface-variant max-w-md md:border-l-2 border-primary md:pl-4 relative z-10 text-center md:text-left mx-auto md:mx-0 border-l-0 pl-0">
+              <p className="font-body-md text-body-md text-[#D9D3C7]/90 max-w-md md:border-l-2 border-primary md:pl-4 relative z-10 text-center md:text-left mx-auto md:mx-0 border-l-0 pl-0">
                 Full-stack thinking. Backend obsession. From raw APIs to
-                distributed systems —{" "}
-                <span className="whitespace-nowrap">I build</span> what holds
+                distributed systems — <span className="whitespace-nowrap">I build</span> what holds
                 everything together.
               </p>
-              <div className="flex flex-row flex-wrap gap-5 mt-6 relative z-10 justify-center md:justify-start">
+              <div className="hidden md:flex flex-row flex-wrap gap-5 mt-6 relative z-10 justify-center md:justify-start">
                 {/* GitHub */}
                 <a
                   href="https://github.com/Priyankm23"
@@ -680,7 +688,7 @@ export default function Home() {
                   rel="noreferrer"
                   aria-label="GitHub"
                   title="GitHub"
-                  className="w-14 h-14 border border-1px border-on-surface bg-transparent text-primary flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(27,28,28,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-on-surface hover:text-[#D9D3C7]"
+                  className="w-14 h-14 border border-1px border-[#D9D3C7] bg-transparent text-[#D9D3C7] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#1B1C1C]"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -697,7 +705,7 @@ export default function Home() {
                   rel="noreferrer"
                   aria-label="LinkedIn"
                   title="LinkedIn"
-                  className="w-14 h-14 border border-1px border-on-surface bg-transparent text-primary flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(27,28,28,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-on-surface hover:text-[#D9D3C7]"
+                  className="w-14 h-14 border border-1px border-[#D9D3C7] bg-transparent text-[#D9D3C7] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#1B1C1C]"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -712,7 +720,7 @@ export default function Home() {
                   href="mailto:priyankmoradiya41@gmail.com"
                   aria-label="Email"
                   title="Email"
-                  className="w-14 h-14 border border-1px border-on-surface bg-transparent text-primary flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(27,28,28,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-on-surface hover:text-[#D9D3C7]"
+                  className="w-14 h-14 border border-1px border-[#D9D3C7] bg-transparent text-[#D9D3C7] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#1B1C1C]"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -732,7 +740,7 @@ export default function Home() {
                   rel="noreferrer"
                   aria-label="X (Twitter)"
                   title="X (Twitter)"
-                  className="w-14 h-14 border border-1px border-on-surface bg-transparent text-primary flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(27,28,28,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-on-surface hover:text-[#D9D3C7]"
+                  className="w-14 h-14 border border-1px border-[#D9D3C7] bg-transparent text-[#D9D3C7] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#1B1C1C]"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -744,46 +752,47 @@ export default function Home() {
                 </a>
               </div>
             </div>
-            {/* Hero Image Panel */}
-            <div className="w-full md:w-[48%] relative z-10 shrink-0 flex items-center justify-center md:justify-end">
-              <div className="relative w-full h-full flex items-center justify-center md:justify-end min-h-[380px] md:min-h-[500px] lg:min-h-[580px]">
-                {/* The main portrait (increased size, centered) */}
+          </div>
+
+          {/* Right Column (Stylized Portrait) */}
+          <div className="w-full md:w-[52%] flex-1 md:flex-none flex items-center justify-center px-margin-mobile md:px-0 md:px-[calc(max(40px,(100vw-1280px)/2))] relative z-10">
+            <div className="relative h-[360px] md:h-[470px] lg:h-[570px] xl:h-[610px] aspect-square flex items-center justify-center md:-translate-x-2 md:translate-y-2">
+              {/* The main portrait (increased size, centered) */}
+              <img
+                alt="Priyank Moradiya - Stylized Retro Portrait"
+                className="w-full h-full object-contain select-none pointer-events-none z-10"
+                src="/hero_portrait.png"
+                style={{ mixBlendMode: "multiply" }}
+              />
+
+              {/* 1. Database Storage (Top-Left) */}
+              <div className="absolute top-[12%] left-[-4%] w-[26%] h-[26%] z-20">
                 <img
-                  alt="Priyank Moradiya - Stylized Retro Portrait"
-                  className="h-[320px] md:h-[440px] lg:h-[550px] xl:h-[590px] w-auto object-contain object-bottom select-none pointer-events-none z-10"
-                  src="/hero_portrait.png"
+                  src="/simple_database.png"
+                  alt="Database Storage"
+                  className="w-full h-full object-contain select-none pointer-events-none"
                   style={{ mixBlendMode: "multiply" }}
                 />
+              </div>
 
-                {/* 1. Database Storage (Top-Left) */}
-                <div className="absolute top-[2%] left-[-3%] md:top-[10%] md:left-[0%] lg:top-[12%] lg:left-[-4%] z-20">
-                  <img
-                    src="/simple_database.png"
-                    alt="Database Storage"
-                    className="w-24 h-24 md:w-36 md:h-36 object-contain select-none pointer-events-none"
-                    style={{ mixBlendMode: "multiply" }}
-                  />
-                </div>
+              {/* 2. Server (Top-Right, on other side of head) */}
+              <div className="absolute top-[8%] right-[0%] w-[26%] h-[26%] z-20">
+                <img
+                  src="/simple_server.png"
+                  alt="Server Mainframe"
+                  className="w-full h-full object-contain select-none pointer-events-none"
+                  style={{ mixBlendMode: "multiply" }}
+                />
+              </div>
 
-                {/* 2. Server (Top-Right, on other side of head) */}
-                <div className="absolute top-[0%] right-[2%] md:top-[6%] md:right-[6%] lg:top-[8%] lg:right-[0%] z-20">
-                  <img
-                    src="/simple_server.png"
-                    alt="Server Mainframe"
-                    className="w-24 h-24 md:w-36 md:h-36 object-contain select-none pointer-events-none"
-                    style={{ mixBlendMode: "multiply" }}
-                  />
-                </div>
-
-                {/* 3. API Gateway / Router (Right-Side Middle, outside of silhouette) */}
-                <div className="absolute top-[38%] right-[-3%] md:top-[44%] md:right-[-6%] lg:top-[46%] lg:right-[-6%] z-20">
-                  <img
-                    src="/simple_router.png"
-                    alt="API Gateway"
-                    className="w-24 h-24 md:w-36 md:h-36 object-contain select-none pointer-events-none"
-                    style={{ mixBlendMode: "multiply" }}
-                  />
-                </div>
+              {/* 3. API Gateway / Router (Right-Side Middle, outside of silhouette) */}
+              <div className="absolute top-[46%] right-[0%] w-[26%] h-[26%] z-20">
+                <img
+                  src="/simple_router.png"
+                  alt="API Gateway"
+                  className="w-full h-full object-contain select-none pointer-events-none"
+                  style={{ mixBlendMode: "multiply" }}
+                />
               </div>
             </div>
           </div>
@@ -794,7 +803,7 @@ export default function Home() {
           id="about"
           className="relative px-margin-mobile md:px-margin-desktop py-16 border-b border-1px border-outline z-10 bg-surface text-on-surface"
         >
-          <div className="max-w-6xl mx-auto w-full relative z-10">
+          <div className="max-w-7xl mx-auto w-full relative z-10">
             {/* Ghost Number / Watermark behind the entire section */}
             <div className="absolute -top-10 left-0 md:-left-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-primary opacity-10 pointer-events-none select-none z-0">
               01
@@ -951,7 +960,7 @@ export default function Home() {
           </div>
 
           {/* Content */}
-          <div className="max-w-6xl mx-auto w-full relative z-10 mt-16">
+          <div className="max-w-7xl mx-auto w-full relative z-10 mt-16">
             {/* Ghost Number */}
             <div className="absolute -top-10 right-0 md:-right-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-white opacity-20 pointer-events-none select-none z-0">
               02
@@ -1071,7 +1080,7 @@ export default function Home() {
           id="stack"
           className="relative px-margin-mobile md:px-margin-desktop py-16 border-b border-1px border-outline z-10 bg-surface text-on-surface"
         >
-          <div className="max-w-6xl mx-auto w-full relative z-10">
+          <div className="max-w-7xl mx-auto w-full relative z-10">
             {/* Ghost Number */}
             <div className="absolute -top-10 left-0 md:-left-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-primary opacity-10 pointer-events-none select-none z-0">
               03
@@ -1121,7 +1130,7 @@ export default function Home() {
           id="contributions"
           className="bg-surface text-on-surface relative overflow-hidden px-margin-mobile md:px-margin-desktop py-16 border-b border-brutal z-10"
         >
-          <div className="max-w-6xl mx-auto w-full relative z-10">
+          <div className="max-w-7xl mx-auto w-full relative z-10">
             {/* Ghost Number */}
             <div className="absolute -top-10 right-0 md:-right-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-primary opacity-10 pointer-events-none select-none z-0">
               04
@@ -1222,7 +1231,7 @@ export default function Home() {
           id="experience"
           className="relative px-margin-mobile md:px-margin-desktop py-16 border-b border-1px border-outline z-10 bg-surface text-on-surface"
         >
-          <div className="max-w-6xl mx-auto w-full relative z-10">
+          <div className="max-w-7xl mx-auto w-full relative z-10">
             {/* Ghost Number */}
             <div className="absolute -top-10 left-0 md:-left-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-primary opacity-10 pointer-events-none select-none z-0">
               05
@@ -1425,7 +1434,7 @@ export default function Home() {
             backgroundSize: "40px 40px",
           }}
         >
-          <div className="max-w-6xl mx-auto w-full relative z-10">
+          <div className="max-w-7xl mx-auto w-full relative z-10">
             {/* Ghost Number */}
             <div className="absolute -top-10 right-0 md:-right-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-[#D9D3C7] opacity-20 pointer-events-none select-none z-0">
               06
@@ -1504,7 +1513,7 @@ export default function Home() {
 
         {/* Redesigned Footer & Straightaway Contact Info */}
         <footer className="w-full py-8 md:py-10 px-margin-mobile md:px-margin-desktop bg-inverse-surface border-t border-outline text-[#D9D3C7] mt-auto z-10">
-          <div className="max-w-6xl mx-auto w-full flex flex-col gap-5">
+          <div className="max-w-7xl mx-auto w-full flex flex-col gap-5">
             {/* Top Row: Say Hello & Zoro Thanks Card */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
               <div className="flex flex-col gap-3">

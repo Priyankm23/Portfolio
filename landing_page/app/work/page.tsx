@@ -7,8 +7,8 @@ export default function WorkPage() {
     <main className="w-full bg-bg min-h-screen flex flex-col">
       <Navigation />
       
-      <div className="flex-1 pt-24 pb-14 sm:pb-16 md:pb-24 px-5 sm:px-8 md:px-20">
-        <div className="max-w-6xl mx-auto w-full space-y-6 md:space-y-10">
+      <div className="flex-1 pt-24 pb-14 sm:pb-16 md:pb-24 px-margin-mobile md:px-margin-desktop">
+        <div className="max-w-7xl mx-auto w-full space-y-6 md:space-y-10">
           {/* Page title */}
           <h1 className="text-4xl md:text-6xl font-display font-bold text-ink leading-tight mt-10">
             ALL PROJECTS
