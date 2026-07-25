@@ -232,10 +232,10 @@ export default function Home() {
         // If primary call fails, try fetching from the Vercel deployed API as a live backup
         if (
           !response.ok &&
-          apiBaseUrl !== "https://portfolio-vq3d.vercel.app"
+          apiBaseUrl !== "https://portfolio-backend-api-seven.vercel.app"
         ) {
           response = await fetch(
-            "https://portfolio-vq3d.vercel.app/api/visitor-count",
+            "https://portfolio-backend-api-seven.vercel.app/api/visitor-count",
           );
         }
 
