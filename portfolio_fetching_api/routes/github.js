@@ -1,11 +1,7 @@
 import { Router } from "express";
 
 const router = Router();
-style(mobile): optimize layout and typography for narrow mobile viewports
-- Scale hero section dynamic title font size for 320px–375px mobile screens
-- Enable mobile social media touch buttons in hero section
-- Add mobile-specific brutalist card container styling to Section 01 Box B
-- Implement fluid font scaling and text wrapping for footer email address
+
 // In-memory cache for Vercel serverless functions
 let cacheData = null;
 let cacheTime = 0;
