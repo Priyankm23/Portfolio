@@ -753,7 +753,7 @@ export default function Home() {
                 BACKEND DEVELOPER
               </div>
               <h1
-                className="font-display-xl-mobile md:font-display-xl text-display-xl-mobile md:text-display-xl uppercase text-[#D9D3C7] tracking-wider relative z-10 text-center md:text-left min-h-[3.2em] md:min-h-0"
+                className="font-display-xl-mobile md:font-display-xl text-display-xl-mobile md:text-display-xl uppercase text-[#D9D3C7] tracking-wider relative z-10 text-center md:text-left min-h-[3em] md:min-h-0"
                 style={{ fontFamily: '"Bebas Neue", sans-serif' }}
               >
                 BUILDING
@@ -761,18 +761,18 @@ export default function Home() {
                 SYSTEMS FOR
                 <br />
                 <span
-                  className="text-primary font-bold inline-block min-w-[13ch] text-center md:text-left text-[68px] sm:text-[84px] md:text-[95px] lg:text-[110px] leading-none whitespace-nowrap"
+                  className="text-primary font-bold inline-block min-w-[10ch] md:min-w-[13ch] text-center md:text-left text-[44px] xs:text-[56px] sm:text-[84px] md:text-[95px] lg:text-[110px] leading-none whitespace-nowrap"
                   style={{ fontFamily: '"Bebas Neue", sans-serif' }}
                 >
                   {words[dynamicWordIndex]}
                 </span>
               </h1>
-              <p className="font-body-md text-body-md text-[#D9D3C7]/90 max-w-md md:border-l-2 border-primary md:pl-4 relative z-10 text-center md:text-left mx-auto md:mx-0 border-l-0 pl-0">
+              <p className="font-body-md text-body-md text-[#D9D3C7]/90 max-w-md md:border-l-2 border-primary md:pl-4 relative z-10 text-center md:text-left mx-auto md:mx-0 border-l-0 pl-0 text-[14px] sm:text-[16px]">
                 Full-stack thinking. Backend obsession. From raw APIs to
                 distributed systems — <span className="whitespace-nowrap">I build</span> what holds
                 everything together.
               </p>
-              <div className="hidden md:flex flex-row flex-wrap gap-5 mt-6 relative z-10 justify-center md:justify-start">
+              <div className="flex flex-row flex-wrap gap-3.5 sm:gap-5 mt-4 sm:mt-6 relative z-10 justify-center md:justify-start">
                 {/* GitHub */}
                 <a
                   href="https://github.com/Priyankm23"
@@ -989,8 +989,8 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Right Column (col-span-6 col-start-7): Dark side with "THE HONEST TRUTH." text - GUARANTEED INSIDE DARK SECTION */}
-              <div className="scroll-reveal-right lg:col-span-6 lg:col-start-7 flex flex-col justify-center py-4 lg:py-6 pl-4 sm:pl-6 md:pl-8 lg:pl-10 text-[#D9D3C7] relative z-10" style={{ transitionDelay: "150ms" }}>
+              {/* Right Column (col-span-6 col-start-7): Dark side with "THE HONEST TRUTH." text */}
+              <div className="scroll-reveal-right lg:col-span-6 lg:col-start-7 flex flex-col justify-center py-4 lg:py-6 px-4 sm:px-6 md:pl-8 lg:pl-10 text-[#D9D3C7] relative z-10 max-md:bg-[#1B1C1C] max-md:p-6 max-md:border max-md:border-on-surface max-md:shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] max-md:rounded-xs max-md:mt-4" style={{ transitionDelay: "150ms" }}>
                 <div className="flex flex-col gap-4">
                   <h3 className="font-headline-md text-[30px] md:text-[38px] leading-tight text-[#D9D3C7] tracking-wider uppercase">
                     THE HONEST TRUTH.
@@ -1072,7 +1072,7 @@ export default function Home() {
                           {project.dates}
                         </span>
                       </div>
-                      <h3 className="font-headline-md text-[36px] md:text-[44px] leading-none text-on-surface uppercase tracking-tight flex items-center gap-3">
+                      <h3 className="font-headline-md text-[26px] sm:text-[36px] md:text-[44px] leading-tight text-on-surface uppercase tracking-tight flex items-center gap-2.5 sm:gap-3">
                         {project.logoUrl && (
                           <img
                             src={project.logoUrl}
@@ -1714,7 +1714,7 @@ export default function Home() {
                 </span>
                 <a
                   href="mailto:priyankmoradiya41@gmail.com"
-                  className="font-display-xl-mobile md:font-display-xl text-[28px] md:text-[48px] uppercase tracking-tighter text-[#D9D3C7] hover:text-primary transition-colors duration-200"
+                  className="font-display-xl-mobile md:font-display-xl text-[20px] xs:text-[24px] sm:text-[32px] md:text-[48px] uppercase tracking-tighter text-[#D9D3C7] hover:text-primary transition-colors duration-200 break-all sm:break-normal"
                 >
                   priyankmoradiya41@gmail.com
                 </a>

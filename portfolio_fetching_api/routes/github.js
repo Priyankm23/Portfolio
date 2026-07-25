@@ -1,12 +1,28 @@
 import { Router } from "express";
 
 const router = Router();
+style(mobile): optimize layout and typography for narrow mobile viewports
+- Scale hero section dynamic title font size for 320px–375px mobile screens
+- Enable mobile social media touch buttons in hero section
+- Add mobile-specific brutalist card container styling to Section 01 Box B
+- Implement fluid font scaling and text wrapping for footer email address
+// In-memory cache for Vercel serverless functions
+let cacheData = null;
+let cacheTime = 0;
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes cache TTL
 
 // Fetches contribution data using GitHub GraphQL API
 router.get("/api/github/contributions", async (req, res) => {
   try {
-    const now = new Date();
-    const year = now.getUTCFullYear();
+    const now = Date.now();
+
+    // Serve from cache if still valid
+    if (cacheData && (now - cacheTime) < CACHE_TTL_MS) {
+      return res.json({ ...cacheData, cached: true });
+    }
+
+    const currentDate = new Date();
+    const year = currentDate.getUTCFullYear();
     const from = `${year}-01-01T00:00:00Z`;
     const to = `${year}-12-31T23:59:59Z`;
 
@@ -34,30 +50,40 @@ router.get("/api/github/contributions", async (req, res) => {
       }
     `;
 
+    const token = process.env.GITHUB_TOKEN;
+    if (!token) {
+      console.warn("[GitHub API] Warning: GITHUB_TOKEN is missing in environment variables.");
+    }
+
     const response = await fetch("https://api.github.com/graphql", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-        "Content-Type": "application/json"
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "User-Agent": "portfolio-backend-api"
       },
       body: JSON.stringify({ query })
     });
 
     if (!response.ok) {
-        throw new Error(`GitHub API Error: ${response.statusText}`);
+      throw new Error(`GitHub API Error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
     
     if (data.errors) {
-        throw new Error(`GraphQL Error: ${data.errors[0].message}`);
+      throw new Error(`GraphQL Error: ${data.errors[0].message}`);
     }
 
-    const repos = data.data.user.repositories.totalCount;
-    const prs = data.data.user.pullRequests.totalCount;
-    const calendar = data.data.user.contributionsCollection.contributionCalendar;
+    const repos = data.data?.user?.repositories?.totalCount || 0;
+    const prs = data.data?.user?.pullRequests?.totalCount || 0;
+    const calendar = data.data?.user?.contributionsCollection?.contributionCalendar;
 
-    // Flatten weeks -> days, then discard future dates in a timezone-safe way so consumers can render a real trailing window.
+    if (!calendar) {
+      throw new Error("Unable to parse contribution calendar from GitHub API response.");
+    }
+
+    // Flatten weeks -> days, then filter up to current local date
     const allDays = calendar.weeks.flatMap(w => w.contributionDays);
     const localDate = new Date();
     const yearStr = localDate.getFullYear();
@@ -74,7 +100,7 @@ router.get("/api/github/contributions", async (req, res) => {
       else break;
     }
 
-    return res.json({
+    const result = {
       year,
       total: calendar.totalContributions,
       repos,
@@ -84,10 +110,23 @@ router.get("/api/github/contributions", async (req, res) => {
         date: d.date,
         count: d.contributionCount
       }))
-    });
+    };
+
+    // Update in-memory cache
+    cacheData = result;
+    cacheTime = now;
+
+    return res.json({ ...result, cached: false });
 
   } catch (err) {
-    console.error("Error fetching GitHub contributions:", err.message);
+    console.error("[GitHub API] Error fetching contributions:", err.message);
+
+    // Fallback to stale cache if available
+    if (cacheData) {
+      console.warn("[GitHub API] Serving stale cached GitHub data due to API error.");
+      return res.json({ ...cacheData, stale: true });
+    }
+
     return res.status(500).json({ error: "server_error", message: err.message });
   }
 });
