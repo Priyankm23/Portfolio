@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Terminal, Workflow } from "lucide-react";
 import { GenerativeHeroBg } from "@/components/GenerativeHeroBg";
+import { fetchPortfolioApi } from "@/lib/api";
 
 // Project Interface
 interface Project {
@@ -139,27 +140,20 @@ export default function Home() {
   const [githubRepos, setGithubRepos] = useState<number>(18);
   const [githubPRs, setGithubPRs] = useState<number>(7);
   const [githubStreak, setGithubStreak] = useState<number>(0);
-  const [heatmapCells, setHeatmapCells] = useState<number[]>([]);
+  const [githubDays, setGithubDays] = useState<{ date: string; count: number; level: number }[]>([]);
 
   useEffect(() => {
     const fetchGithubData = async () => {
+      const getLevel = (count: number) => {
+        if (count === 0) return 0;
+        if (count < 3) return 1;
+        if (count < 6) return 2;
+        if (count < 9) return 3;
+        return 4;
+      };
+
       try {
-        const apiBaseUrl = (
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-        ).replace(/\/+$/, "");
-        const primaryUrl = `${apiBaseUrl}/api/github/contributions`;
-
-        let response = await fetch(primaryUrl);
-
-        // If local API or primary URL fetch fails in development, try fetching from the Vercel deployed backup
-        if (
-          !response.ok &&
-          apiBaseUrl !== "https://portfolio-vq3d.vercel.app"
-        ) {
-          response = await fetch(
-            "https://portfolio-vq3d.vercel.app/api/github/contributions",
-          );
-        }
+        const response = await fetchPortfolioApi("/api/github/contributions");
 
         if (response.ok) {
           const data = await response.json();
@@ -169,30 +163,22 @@ export default function Home() {
             Array.isArray(data.days)
           ) {
             setGithubCommits(data.total);
+            if (typeof data.repos === "number") {
+              setGithubRepos(data.repos);
+            }
+            if (typeof data.prs === "number") {
+              setGithubPRs(data.prs);
+            }
             if (typeof data.streak === "number") {
               setGithubStreak(data.streak);
             }
 
-            const getLevel = (count: number) => {
-              if (count === 0) return 0;
-              if (count < 3) return 1;
-              if (count < 6) return 2;
-              if (count < 9) return 3;
-              return 4;
-            };
-
-            const apiLevels = data.days.map((d: any) => getLevel(d.count));
-            const targetLength = 140;
-            let cells: number[] = [];
-            if (apiLevels.length >= targetLength) {
-              cells = apiLevels.slice(-targetLength);
-            } else {
-              cells = [
-                ...Array(targetLength - apiLevels.length).fill(0),
-                ...apiLevels,
-              ];
-            }
-            setHeatmapCells(cells);
+            const processed = data.days.map((d: any) => ({
+              date: d.date,
+              count: d.count,
+              level: getLevel(d.count),
+            }));
+            setGithubDays(processed);
             return;
           }
         }
@@ -201,15 +187,33 @@ export default function Home() {
       }
 
       // Fallback
-      const cells = Array.from({ length: 140 }, () => {
+      const mockDays = [];
+      const today = new Date();
+      const startOfYear = new Date(today.getFullYear(), 0, 1);
+      const diffTime = Math.abs(today.getTime() - startOfYear.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+      for (let i = diffDays - 1; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const dateStr = String(d.getDate()).padStart(2, "0");
+
         const rand = Math.random();
-        if (rand > 0.9) return 4;
-        if (rand > 0.75) return 3;
-        if (rand > 0.5) return 2;
-        if (rand > 0.3) return 1;
-        return 0;
-      });
-      setHeatmapCells(cells);
+        let count = 0;
+        if (rand > 0.9) count = 10;
+        else if (rand > 0.75) count = 7;
+        else if (rand > 0.5) count = 5;
+        else if (rand > 0.3) count = 2;
+
+        mockDays.push({
+          date: `${y}-${m}-${dateStr}`,
+          count: count,
+          level: getLevel(count),
+        });
+      }
+      setGithubDays(mockDays);
     };
     fetchGithubData();
   }, []);
@@ -289,6 +293,92 @@ export default function Home() {
     fetchVisits();
   }, []);
 
+
+  // Scroll reveal IntersectionObserver setup
+  useEffect(() => {
+    const revealCallback = (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("reveal-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    };
+
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px 0px -10% 0px",
+      threshold: 0.05,
+    };
+
+    const observer = new IntersectionObserver(revealCallback, observerOptions);
+    const revealElements = document.querySelectorAll(
+      ".scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .project-card-reveal"
+    );
+    revealElements.forEach((el) => observer.observe(el));
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [githubDays]);
+
+  // Helper to parse YYYY-MM-DD date safely
+  const parseDate = (dateStr: string) => {
+    const [year, month, day] = dateStr.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  // Align days to Sunday-Saturday weeks
+  let weeks: { date: string; count: number; level: number; isPlaceholder?: boolean }[][] = [];
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  if (githubDays.length > 0) {
+    const firstDate = parseDate(githubDays[0].date);
+    const firstDayOfWeek = firstDate.getDay(); // 0 is Sunday, 1 is Monday...
+
+    // Prepend placeholders
+    const startPlaceholders = [];
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      const prevDate = new Date(firstDate);
+      prevDate.setDate(firstDate.getDate() - (firstDayOfWeek - i));
+      const y = prevDate.getFullYear();
+      const m = String(prevDate.getMonth() + 1).padStart(2, "0");
+      const d = String(prevDate.getDate()).padStart(2, "0");
+      startPlaceholders.push({
+        date: `${y}-${m}-${d}`,
+        count: 0,
+        level: 0,
+        isPlaceholder: true,
+      });
+    }
+
+    const lastDate = parseDate(githubDays[githubDays.length - 1].date);
+    const lastDayOfWeek = lastDate.getDay(); // 0 is Sunday, 6 is Saturday
+
+    // Append placeholders to reach Saturday
+    const endPlaceholders = [];
+    const daysToSaturday = 6 - lastDayOfWeek;
+    for (let i = 1; i <= daysToSaturday; i++) {
+      const nextDate = new Date(lastDate);
+      nextDate.setDate(lastDate.getDate() + i);
+      const y = nextDate.getFullYear();
+      const m = String(nextDate.getMonth() + 1).padStart(2, "0");
+      const d = String(nextDate.getDate()).padStart(2, "0");
+      endPlaceholders.push({
+        date: `${y}-${m}-${d}`,
+        count: 0,
+        level: 0,
+        isPlaceholder: true,
+      });
+    }
+
+    const allDays = [...startPlaceholders, ...githubDays, ...endPlaceholders];
+
+    for (let i = 0; i < allDays.length; i += 7) {
+      weeks.push(allDays.slice(i, i + 7));
+    }
+  }
+
   const projects: Project[] = [
     {
       title: "Cadence",
@@ -336,6 +426,7 @@ export default function Home() {
       logoUrl: "/safetrail_logo.png",
       screenshot: "/safetrail.png",
     },
+    /* Bandit CLI - Commented out for now
     {
       title: "Bandit CLI",
       dates: "Jun 2026 – Present (Beta)",
@@ -370,6 +461,7 @@ export default function Home() {
       logoUrl: "/bandit_logo.png",
       screenshot: "/bandit.png",
     },
+    */
   ];
 
   // Command input handler for the Section 06 Play terminal
@@ -798,135 +890,125 @@ export default function Home() {
           </div>
         </section>
 
-        {/* About Section 01 - Bento Console Grid */}
+        {/* About Section 01 - Full-Bleed Split Canvas Section */}
         <section
           id="about"
-          className="relative px-margin-mobile md:px-margin-desktop py-16 border-b border-1px border-outline z-10 bg-surface text-on-surface"
+          className="relative border-b border-1px border-outline z-10 overflow-hidden bg-surface"
         >
-          <div className="max-w-7xl mx-auto w-full relative z-10">
-            {/* Ghost Number / Watermark behind the entire section */}
-            <div className="absolute -top-10 left-0 md:-left-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-primary opacity-10 pointer-events-none select-none z-0">
-              01
+          {/* Split Background: Left Side White, Right Side Dark #1B1C1C with Generative Canvas */}
+          <div className="absolute inset-0 pointer-events-none z-0">
+            {/* Desktop split: Right side dark #1B1C1C with generative canvas starting at 48% */}
+            <div className="hidden md:block absolute top-0 bottom-0 left-[48%] right-0 bg-[#1B1C1C] border-l border-1px border-outline">
+              <GenerativeHeroBg fullWidth />
             </div>
-
-            <div className="relative z-10 mt-16">
-              <h2 className="font-headline-lg text-headline-lg text-on-surface tracking-wider uppercase mb-12 relative z-10">
-                ABOUT
-              </h2>
+            {/* Mobile split: Bottom side dark #1B1C1C with generative canvas starting at 54% */}
+            <div className="md:hidden absolute top-[54%] bottom-0 left-0 right-0 bg-[#1B1C1C] border-t border-1px border-outline">
+              <GenerativeHeroBg fullWidth />
             </div>
+          </div>
 
+          <div className="max-w-[1440px] mx-auto w-full relative z-10 px-4 sm:px-6 md:px-10 py-10 md:py-14">
             {/* Bento Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
-              {/* Box A: Personal Specifications Card (col-span-5) */}
-              <div className="lg:col-span-5 border border-on-surface p-6 flex flex-col shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] bg-surface-container-lowest text-on-surface">
-                {/* Personal Specs */}
-                <div className="font-mono-code text-[13px] flex flex-col gap-4">
-                  <div className="flex gap-2 items-center border-b border-outline/20 pb-2 mb-2">
-                    <span className="material-symbols-outlined text-primary text-[16px]">
-                      fingerprint
-                    </span>
-                    <span className="font-bold uppercase tracking-widest text-on-surface/80 text-[11px]">
-                      SPECIFICATIONS
-                    </span>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-stretch relative z-10">
+              {/* Box A (Left Column - col-span-5): White side with 01 ABOUT Header + Specifications Card */}
+              <div className="scroll-reveal-left lg:col-span-5 flex flex-col justify-between relative">
+                {/* Header & 01 Watermark inside Left Column */}
+                <div className="relative mb-6 md:mb-8 pt-1">
+                  {/* Ghost Number / Watermark 01 */}
+                  <div className="absolute top-0 md:top-1 left-0 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[180px] text-on-surface opacity-10 pointer-events-none select-none z-0">
+                    01
                   </div>
+                  <h2 className="font-headline-lg text-[54px] md:text-[72px] leading-none text-on-surface tracking-wider uppercase relative z-10 pt-3 md:pt-4">
+                    ABOUT
+                  </h2>
+                </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-3 gap-x-4">
-                    <div className="sm:col-span-1 text-on-surface-variant font-bold uppercase">
-                      HOST:
-                    </div>
-                    <div className="sm:col-span-2 text-on-surface font-semibold">
-                      priyank_moradiya
-                    </div>
-
-                    <div className="sm:col-span-1 text-on-surface-variant font-bold uppercase">
-                      ACADEMICS:
-                    </div>
-                    <div className="sm:col-span-2 text-on-surface font-semibold text-[12px] sm:text-[13px]">
-                      B.Tech (Information Technology)
-                    </div>
-
-                    <div className="sm:col-span-1 text-on-surface-variant font-bold uppercase">
-                      ACADEMIC YEAR:
-                    </div>
-                    <div className="sm:col-span-2 text-on-surface font-semibold text-[12px] sm:text-[13px]">
-                      4th Year (Final Year)
-                    </div>
-
-                    <div className="sm:col-span-1 text-on-surface-variant font-bold uppercase">
-                      INSTITUTION:
-                    </div>
-                    <div className="sm:col-span-2 text-on-surface font-semibold text-[12px] leading-tight sm:text-[13px]">
-                      G H Patel College of Engineering & Technology, Anand
-                    </div>
-
-                    <div className="sm:col-span-1 text-on-surface-variant font-bold uppercase">
-                      CGPA:
-                    </div>
-                    <div className="sm:col-span-2 text-primary font-bold">
-                      9.40 / 10.00
-                    </div>
-
-                    <div className="sm:col-span-1 text-on-surface-variant font-bold uppercase">
-                      CORE FOCUS:
-                    </div>
-                    <div className="sm:col-span-2 text-on-surface font-semibold text-[12px] sm:text-[13px]">
-                      High-Throughput APIs & Distributed Backends
-                    </div>
-
-                    <div className="sm:col-span-1 text-on-surface-variant font-bold uppercase">
-                      LOC:
-                    </div>
-                    <div className="sm:col-span-2 text-on-surface font-semibold">
-                      Anand, Gujarat, IN
-                    </div>
-
-                    <div className="sm:col-span-1 text-on-surface-variant font-bold uppercase">
-                      LIVE_VISITS:
-                    </div>
-                    <div className="sm:col-span-2 font-bold flex items-center gap-1.5 text-primary">
-                      <span className="inline-block w-2.5 h-2.5 rounded-full bg-primary/20 flex items-center justify-center">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                {/* Specifications Card */}
+                <div className="border-2 border-on-surface p-5 sm:p-6 flex flex-col shadow-[5px_5px_0px_0px_rgba(27,28,28,1)] bg-surface-container-lowest text-on-surface flex-1 justify-between">
+                  {/* Personal Specs */}
+                  <div className="font-mono-code text-[13px] flex flex-col justify-between h-full gap-3">
+                    <div className="flex gap-2 items-center border-b border-outline/20 pb-2.5 mb-1">
+                      <span className="material-symbols-outlined text-primary text-[17px]">
+                        fingerprint
                       </span>
-                      {visitorCount !== null ? (
-                        <span className="font-mono-code text-[14px] tracking-widest">
-                          {visitorCount}
-                        </span>
-                      ) : (
-                        <span className="text-on-surface-variant/40 animate-pulse text-[11px]">
-                          Syncing...
-                        </span>
-                      )}
+                      <span className="font-bold uppercase tracking-widest text-on-surface/80 text-[11.5px] md:text-[12px]">
+                        SPECIFICATIONS
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col justify-between flex-1 gap-y-2 md:gap-y-2.5">
+                      <div className="flex flex-col sm:flex-row justify-between border-b border-outline/10 pb-1.5 gap-1">
+                        <span className="text-on-surface-variant font-bold uppercase text-[11.5px]">HOST:</span>
+                        <span className="text-on-surface font-semibold text-[13px]">priyank_moradiya</span>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row justify-between border-b border-outline/10 pb-1.5 gap-1">
+                        <span className="text-on-surface-variant font-bold uppercase text-[11.5px]">ACADEMICS:</span>
+                        <span className="text-on-surface font-semibold text-[12.5px]">B.Tech (IT) · 4th Year</span>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row justify-between border-b border-outline/10 pb-1.5 gap-1">
+                        <span className="text-on-surface-variant font-bold uppercase text-[11.5px]">INSTITUTION:</span>
+                        <span className="text-on-surface font-semibold text-[12.5px] sm:text-right">GCET, Anand</span>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row justify-between border-b border-outline/10 pb-1.5 gap-1">
+                        <span className="text-on-surface-variant font-bold uppercase text-[11.5px]">CGPA:</span>
+                        <span className="text-primary font-bold text-[13.5px]">9.40 / 10.00</span>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row justify-between border-b border-outline/10 pb-1.5 gap-1">
+                        <span className="text-on-surface-variant font-bold uppercase text-[11.5px]">CORE FOCUS:</span>
+                        <span className="text-on-surface font-semibold text-[12.5px] sm:text-right">High-Throughput APIs & Distributed Backends</span>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row justify-between border-b border-outline/10 pb-1.5 gap-1">
+                        <span className="text-on-surface-variant font-bold uppercase text-[11.5px]">LOC:</span>
+                        <span className="text-on-surface font-semibold text-[12.5px]">Anand, Gujarat, IN</span>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row justify-between items-center pt-0.5 gap-1">
+                        <span className="text-on-surface-variant font-bold uppercase text-[11.5px]">LIVE_VISITS:</span>
+                        <div className="font-bold flex items-center gap-1.5 text-primary">
+                          <span className="inline-block w-2.5 h-2.5 rounded-full bg-primary/20 flex items-center justify-center">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                          </span>
+                          {visitorCount !== null ? (
+                            <span className="font-mono-code text-[13px] tracking-widest">
+                              {visitorCount}
+                            </span>
+                          ) : (
+                            <span className="text-on-surface-variant/40 animate-pulse text-[11px]">
+                              Syncing...
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Box B: Philosophy Log Console (col-span-7) */}
-              <div className="lg:col-span-7 border border-on-surface p-6 flex flex-col justify-between shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] bg-surface-container-lowest text-on-surface relative overflow-hidden">
-                {/* Content */}
-                <div className="flex flex-col gap-5 relative z-10">
-                  <h2 className="font-headline-lg text-headline-lg text-on-surface tracking-wider uppercase">
+              {/* Right Column (col-span-6 col-start-7): Dark side with "THE HONEST TRUTH." text - GUARANTEED INSIDE DARK SECTION */}
+              <div className="scroll-reveal-right lg:col-span-6 lg:col-start-7 flex flex-col justify-center py-4 lg:py-6 pl-4 sm:pl-6 md:pl-8 lg:pl-10 text-[#D9D3C7] relative z-10" style={{ transitionDelay: "150ms" }}>
+                <div className="flex flex-col gap-4">
+                  <h3 className="font-headline-md text-[30px] md:text-[38px] leading-tight text-[#D9D3C7] tracking-wider uppercase">
                     THE HONEST TRUTH.
-                  </h2>
-                  <div className="space-y-4 font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  </h3>
+                  <div className="space-y-3.5 font-body-md text-[14px] md:text-[15px] text-[#D9D3C7]/90 leading-relaxed">
                     <p>
-                      I am a backend developer who tries to build optimized
-                      backend systems. Although not claiming that the systems I
-                      create are the best ones, everyday I am learning something
-                      new to make it work under load.
+                      I am a backend developer focused on engineering optimized backend systems. While not claiming every system I create is perfect, every day I am learning and iterating to make services perform reliably under load.
                     </p>
                     <p>
-                      I started with Node.js for my backend base, switch to
-                      FastAPI for a while, and currently learning most of the
-                      backend concepts deeply in Node.js.
+                      I love building REST API endpoints, designing relational database schemas, and defining Redis caching layers with single-flight request patterns. My microservices leverage gRPC for inter-service communication and RabbitMQ for async task offloading. Everything is containerized with Docker, verified via load testing (k6, Autocannon), unit/integration tested (Jest, Supertest, Pytest), and monitored using Pino logs and Sentry observability. The skills remain the same, only the learnings get adapted with the new and unique business logic across different projects.
+                    </p>
+                    <p>
+                      I started with Node.js for my backend foundation, explored FastAPI, and am currently diving deep into core Node.js concepts while contributing to open source, solving LeetCode SQL challenges, and always welcome tech discussions.
                     </p>
 
                     {/* Personal Quote Mantra */}
-                    <div className="pl-4 border-l-2 border-primary/40 italic text-on-surface-variant/85 font-body-md text-body-md mt-6 pt-1">
-                      "Learning to optimize the system and on the journey to be
-                      honest about the failures and bad architectural design
-                      decisions because that's what would make the future
-                      systems better."
+                    <div className="pl-4 border-l-2 border-primary italic text-[#D9D3C7]/90 text-[13.5px] md:text-[14.5px] mt-4 pt-0.5">
+                      "Learning to optimize the system and on the journey to be honest about the failures and bad architectural design decisions because that's what would make the future systems better."
                     </div>
                   </div>
                 </div>
@@ -975,54 +1057,54 @@ export default function Home() {
             {/* Brutalist Grid Cards */}
             <div className="grid grid-cols-1 gap-8">
               {projects.map((project, idx) => (
-                <div
-                  key={idx}
-                  className={`bg-surface border border-1px border-on-surface flex flex-col ${idx % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] hover:-translate-y-1 transition-transform duration-200 group overflow-hidden`}
-                >
+                <div key={idx} className="project-card-reveal" style={{ transitionDelay: `${idx * 150}ms` }}>
+                  <div
+                    className={`bg-surface border border-1px border-on-surface flex flex-col ${idx % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] hover:-translate-y-1 transition-transform duration-200 group overflow-hidden`}
+                  >
                   {/* Left Side: Details */}
-                  <div className="flex-1 p-6 flex flex-col gap-4 justify-between min-w-0">
+                  <div className="flex-1 p-6 sm:p-8 flex flex-col gap-5 justify-between min-w-0">
                     <div>
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 border-b border-outline pb-2 mb-3">
-                        <span className="bg-primary/10 border border-primary text-primary px-2 py-0.5 text-[11px] font-label-sm uppercase font-bold">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border-b border-outline/30 pb-3 mb-4">
+                        <span className="bg-primary/15 border border-primary text-primary px-3 py-1 text-[13px] md:text-[14px] font-mono-code font-bold uppercase tracking-wide rounded-xs">
                           {project.tech}
                         </span>
-                        <span className="text-on-secondary-container font-mono-code text-[12px]">
+                        <span className="text-on-surface font-mono-code text-[13px] md:text-[14px] font-semibold tracking-wider">
                           {project.dates}
                         </span>
                       </div>
-                      <h3 className="font-headline-md text-[30px] leading-none text-on-surface uppercase tracking-tight flex items-center gap-3">
+                      <h3 className="font-headline-md text-[36px] md:text-[44px] leading-none text-on-surface uppercase tracking-tight flex items-center gap-3">
                         {project.logoUrl && (
                           <img
                             src={project.logoUrl}
                             alt={`${project.title} logo`}
-                            className="w-12 h-12 object-contain border border-on-surface bg-white p-1.5 rounded-sm shadow-[1.5px_1.5px_0px_0px_rgba(27,28,28,1)] mix-blend-multiply"
+                            className="w-12 h-12 md:w-14 md:h-14 object-contain border border-on-surface bg-white p-1.5 rounded-sm shadow-[1.5px_1.5px_0px_0px_rgba(27,28,28,1)] mix-blend-multiply"
                           />
                         )}
                         <span>{project.title}</span>
                       </h3>
-                      <p className="font-body-md text-[14px] text-on-secondary-container leading-relaxed mt-3">
+                      <p className="font-body-md text-[16px] md:text-[17px] text-on-surface leading-relaxed mt-4 font-normal">
                         {project.description}
                       </p>
                     </div>
 
                     <div>
-                      <div className="flex flex-wrap gap-1.5 mb-4">
+                      <div className="flex flex-wrap gap-2 mb-5">
                         {project.tags.map((tag, tagIdx) => (
                           <span
                             key={tagIdx}
-                            className="border-2 border-primary text-on-surface bg-transparent px-2 py-0.5 text-[11px] font-mono-code uppercase tracking-wider"
+                            className="border border-on-surface/80 text-on-surface bg-surface-container-high/60 px-3 py-1 text-[12px] md:text-[13px] font-mono-code font-semibold uppercase tracking-wider rounded-xs"
                           >
                             {tag}
                           </span>
                         ))}
                       </div>
 
-                      <div className="flex gap-4 border-t border-outline/20 pt-3">
+                      <div className="flex gap-4 border-t border-outline/30 pt-4">
                         <a
                           href={project.githubUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-[12px] font-label-sm uppercase text-primary hover:underline flex items-center gap-1 font-bold"
+                          className="text-[14px] md:text-[15px] font-mono-code uppercase text-primary hover:underline flex items-center gap-1.5 font-bold"
                         >
                           SOURCE_CODE <span className="text-xs">→</span>
                         </a>
@@ -1031,7 +1113,7 @@ export default function Home() {
                             href={project.liveUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-[12px] font-label-sm uppercase text-on-surface hover:underline flex items-center gap-1 font-bold"
+                            className="text-[14px] md:text-[15px] font-mono-code uppercase text-on-surface hover:underline flex items-center gap-1.5 font-bold"
                           >
                             DEMO_LINK <span className="text-xs">→</span>
                           </a>
@@ -1042,7 +1124,7 @@ export default function Home() {
 
                   {/* Right Side: Halftone Brutalist Graphic / Screenshot Transition */}
                   <div
-                    className={`w-full md:w-[40%] border-t md:border-t-0 ${idx % 2 === 0 ? "md:border-l" : "md:border-r"} border-on-surface relative flex items-center justify-center p-3 md:p-4 min-h-[260px] md:min-h-[340px]`}
+                    className={`w-full md:w-[48%] border-t md:border-t-0 ${idx % 2 === 0 ? "md:border-l" : "md:border-r"} border-on-surface relative flex items-center justify-center p-4 md:p-6 min-h-[300px] md:min-h-[420px]`}
                     style={{
                       backgroundColor: "var(--color-bg)",
                       backgroundImage:
@@ -1070,6 +1152,7 @@ export default function Home() {
                     )}
                   </div>
                 </div>
+              </div>
               ))}
             </div>
           </div>
@@ -1095,7 +1178,8 @@ export default function Home() {
                 {techStack.map((cat, catIdx) => (
                   <div
                     key={catIdx}
-                    className="border border-1px border-on-surface p-6 bg-d9d3c7 shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] text-on-surface"
+                    className="scroll-reveal border border-1px border-on-surface p-6 bg-d9d3c7 shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] text-on-surface"
+                    style={{ transitionDelay: `${catIdx * 150}ms` }}
                   >
                     <h3 className="font-label-sm text-label-sm text-primary uppercase border-b border-primary pb-2 mb-4">
                       {cat.category}
@@ -1125,79 +1209,151 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 04: GitHub Contributions - White background, no grid lines */}
+        {/* Section 04: GitHub Contributions */}
         <section
           id="contributions"
           className="bg-surface text-on-surface relative overflow-hidden px-margin-mobile md:px-margin-desktop py-16 border-b border-brutal z-10"
         >
+          {/* Background Video */}
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover z-0 opacity-75 pointer-events-none filter contrast-105 brightness-90"
+          >
+            <source src="/git-video.mp4" type="video/mp4" />
+          </video>
+          {/* Dark Overlay for text contrast */}
+          <div className="absolute inset-0 bg-black/45 z-0 pointer-events-none" />
+
           <div className="max-w-7xl mx-auto w-full relative z-10">
             {/* Ghost Number */}
-            <div className="absolute -top-10 right-0 md:-right-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-primary opacity-10 pointer-events-none select-none z-0">
+            <div className="absolute -top-10 right-0 md:-right-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-white opacity-20 pointer-events-none select-none z-0">
               04
             </div>
             <div className="relative z-10 flex flex-col md:grid md:grid-cols-12 gap-gutter mt-16">
               {/* Heading Area */}
-              <div className="md:col-span-4 mb-8 md:mb-0">
-                <h2 className="font-headline-lg text-on-surface uppercase flex items-center">
+              <div className="scroll-reveal-left md:col-span-4 mb-8 md:mb-0">
+                <h2 className="font-headline-lg text-white uppercase flex items-center drop-shadow-sm">
                   COMMIT HISTORY
                   <span className="text-primary ml-1 blink">_</span>
                 </h2>
-                <div className="h-px w-full bg-outline my-4"></div>
-                <p className="font-mono-code text-on-surface-variant text-sm max-w-sm">
+                <div className="h-px w-full bg-white/30 my-4"></div>
+                <p className="font-mono-code text-white/90 text-sm max-w-sm">
                   Raw output from the primary repository structure. Tracking
                   daily commits, merges, and system updates.
                 </p>
               </div>
               {/* Heatmap Area */}
-              <div className="md:col-span-8 flex flex-col gap-6">
+              <div className="scroll-reveal-right md:col-span-8 flex flex-col gap-6" style={{ transitionDelay: "150ms" }}>
                 {/* Stats Row */}
-                <div className="flex flex-wrap gap-4 border-l border-brutal pl-4">
+                <div className="flex flex-wrap gap-4 border-l border-white/40 pl-4">
                   <div className="flex flex-col">
                     <span className="font-headline-md text-primary">
                       {githubCommits}
                     </span>
-                    <span className="font-label-sm text-on-surface-variant uppercase">
+                    <span className="font-label-sm text-white/80 uppercase">
                       COMMITS
                     </span>
                   </div>
-                  <div className="w-px h-auto bg-brutal mx-2 hidden md:block text-outline"></div>
+                  <div className="w-px h-auto bg-white/30 mx-2 hidden md:block"></div>
                   <div className="flex flex-col">
                     <span className="font-headline-md text-primary">
                       {githubRepos}
                     </span>
-                    <span className="font-label-sm text-on-surface-variant uppercase">
+                    <span className="font-label-sm text-white/80 uppercase">
                       REPOS
                     </span>
                   </div>
-                  <div className="w-px h-auto bg-brutal mx-2 hidden md:block text-outline"></div>
+                  <div className="w-px h-auto bg-white/30 mx-2 hidden md:block"></div>
                   <div className="flex flex-col">
                     <span className="font-headline-md text-primary">
                       {githubPRs < 10 ? `0${githubPRs}` : githubPRs}
                     </span>
-                    <span className="font-label-sm text-on-surface-variant uppercase">
+                    <span className="font-label-sm text-white/80 uppercase">
                       PRs
                     </span>
                   </div>
-                  <div className="w-px h-auto bg-brutal mx-2 hidden md:block text-outline"></div>
+                  <div className="w-px h-auto bg-white/30 mx-2 hidden md:block"></div>
                   <div className="flex flex-col">
                     <span className="font-headline-md text-primary">
                       {githubStreak < 10 ? `0${githubStreak}` : githubStreak}
                     </span>
-                    <span className="font-label-sm text-on-surface-variant uppercase">
+                    <span className="font-label-sm text-white/80 uppercase">
                       STREAK
                     </span>
                   </div>
                 </div>
                 {/* Grid */}
-                <div className="bg-[#111111] border border-brutal-dark p-4 overflow-x-auto w-full max-w-full">
-                  <div className="grid grid-flow-col grid-rows-7 gap-1 w-max">
-                    {heatmapCells.map((heat, idx) => (
-                      <div
-                        key={idx}
-                        className={`w-3 h-3 rounded-sm heat-${heat}`}
-                      />
-                    ))}
+                <div className="bg-[#111111]/90 backdrop-blur-md border border-white/20 p-4 overflow-x-auto w-full max-w-full rounded-xs">
+                  <div className="flex gap-2 w-max">
+                    {/* Weekdays column */}
+                    <div className="flex flex-col gap-1 mt-[22px] select-none text-left">
+                      <div className="h-3 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono"></div> {/* Sun */}
+                      <div className="h-3 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono">Mon</div> {/* Mon */}
+                      <div className="h-3 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono"></div> {/* Tue */}
+                      <div className="h-3 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono">Wed</div> {/* Wed */}
+                      <div className="h-3 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono"></div> {/* Thu */}
+                      <div className="h-3 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono">Fri</div> {/* Fri */}
+                      <div className="h-3 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono"></div> {/* Sat */}
+                    </div>
+
+                    <div className="flex flex-col">
+                      {/* Months row */}
+                      <div className="flex gap-1 mb-1.5 h-4 relative select-none">
+                        {weeks.map((week, weekIdx) => {
+                          const dateParts = week[0].date.split("-").map(Number);
+                          const year = dateParts[0];
+                          const month = dateParts[1] - 1;
+
+                          const targetYear = parseDate(githubDays[githubDays.length - 1].date).getFullYear();
+
+                          const isFirstWeekOfMonth =
+                            (weekIdx === 0 ||
+                              weeks[weekIdx - 1][0].date.split("-").map(Number)[1] - 1 !== month) &&
+                            year === targetYear;
+
+                          return (
+                            <div
+                              key={weekIdx}
+                              className="w-3 text-[10px] font-mono text-secondary-fixed-dim relative uppercase"
+                            >
+                              {isFirstWeekOfMonth && (
+                                <span className="absolute left-0 bottom-0 whitespace-nowrap">
+                                  {monthNames[month]}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Weeks columns */}
+                      <div className="flex gap-1">
+                        {weeks.map((week, weekIdx) => (
+                          <div key={weekIdx} className="flex flex-col gap-1">
+                            {week.map((day, dayIdx) => (
+                              <div
+                                key={dayIdx}
+                                className={`w-3 h-3 rounded-sm ${
+                                  day.isPlaceholder
+                                    ? "bg-transparent pointer-events-none"
+                                    : `heat-${day.level}`
+                                }`}
+                                title={
+                                  day.isPlaceholder
+                                    ? undefined
+                                    : `${day.date}: ${day.count} contributions`
+                                }
+                              />
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
+
                   <div className="flex justify-between items-center mt-3 font-label-sm text-[10px] text-secondary-fixed-dim uppercase">
                     <span>Less</span>
                     <div className="flex gap-1">
@@ -1211,7 +1367,7 @@ export default function Home() {
                   </div>
                 </div>
                 <a
-                  className="inline-flex items-center gap-2 border border-on-surface px-4 py-2 w-max text-on-surface font-label-sm hover:bg-primary hover:text-on-primary transition-colors duration-0 uppercase cursor-pointer"
+                  className="inline-flex items-center gap-2 border border-white px-4 py-2 w-max text-white font-label-sm hover:bg-primary hover:text-white transition-colors duration-200 uppercase cursor-pointer"
                   href="https://github.com/Priyankm23"
                   target="_blank"
                   rel="noreferrer"
@@ -1226,65 +1382,64 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 05: Experience - White background, no grid lines */}
+        {/* Section 05: Experience - Clean Brutalist Paper White Theme */}
         <section
           id="experience"
-          className="relative px-margin-mobile md:px-margin-desktop py-16 border-b border-1px border-outline z-10 bg-surface text-on-surface"
+          className="relative px-margin-mobile md:px-margin-desktop py-16 border-b border-1px border-outline z-10 bg-surface text-on-surface overflow-hidden"
         >
           <div className="max-w-7xl mx-auto w-full relative z-10">
             {/* Ghost Number */}
-            <div className="absolute -top-10 left-0 md:-left-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-primary opacity-10 pointer-events-none select-none z-0">
+            <div className="absolute -top-10 left-0 md:-left-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-on-surface opacity-10 pointer-events-none select-none z-0">
               05
             </div>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter mt-16 relative z-10">
               {/* Heading */}
               <div className="md:col-span-4 mb-10 md:mb-0 relative">
-                <div className="absolute left-0 top-14 bottom-0 w-px bg-brutal hidden md:block ml-[7px]"></div>
-                <h2 className="font-headline-lg text-on-surface uppercase relative z-10 bg-surface pr-4 inline-block tracking-wider">
+                <h2 className="font-headline-lg text-on-surface uppercase relative z-10 tracking-wider">
                   WHERE I'VE WORKED
                 </h2>
                 <div className="h-px w-full bg-outline my-4"></div>
-                <p className="font-mono-code text-on-surface-variant text-sm">
+                <p className="font-mono-code text-on-surface font-medium text-sm">
                   Professional deployments and architectural leadership across
-                  various systems.
+                  various production systems.
                 </p>
               </div>
               {/* Timeline */}
               <div className="md:col-span-8 relative">
                 <div className="flex flex-col gap-8 md:gap-12 relative z-10">
                   {/* Job 1: Prelax Infotech */}
-                  <div className="relative pl-10 md:pl-12 group">
+                  <div className="relative pl-10 md:pl-12 group scroll-reveal">
                     {/* Line joining the two circles */}
-                    <div className="absolute left-0 top-5 bottom-[-32px] md:bottom-[-48px] w-px bg-[#C4BDB2] ml-3 md:ml-4 z-10"></div>
-                    {/* Circle-in-circle timeline marker - aligned with the line */}
-                    <div className="absolute left-0 top-3 w-4 h-4 bg-surface border-2 border-primary rounded-full flex items-center justify-center ml-1 md:ml-2 z-20">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full group-hover:bg-on-surface transition-colors duration-200"></div>
+                    <div className="absolute left-0 top-6 bottom-[-32px] md:bottom-[-48px] w-0.5 bg-gradient-to-b from-primary to-outline/40 ml-3.5 md:ml-4 z-10"></div>
+                    {/* Circle-in-circle timeline marker */}
+                    <div className="absolute left-0 top-4 w-5 h-5 bg-surface-container-lowest border-2 border-primary rounded-full flex items-center justify-center ml-1 md:ml-1.5 z-20 shadow-[0_2px_8px_rgba(176,38,0,0.3)]">
+                      <div className="w-2 h-2 bg-primary rounded-full group-hover:scale-125 transition-transform duration-200"></div>
                     </div>
                     <div
                       onClick={() => setPrelaxExpanded(!prelaxExpanded)}
-                      className="border border-brutal bg-surface-container-lowest p-5 hover:border-on-surface transition-colors duration-0 cursor-pointer select-none"
+                      className="border-2 border-on-surface bg-surface-container-lowest p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(27,28,28,1)] transition-all duration-200 cursor-pointer select-none rounded-xs"
                     >
-                      <div className="flex flex-col md:flex-row md:justify-between md:items-baseline mb-4 border-b border-outline/30 pb-3">
+                      <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 border-b border-outline/20 pb-4 gap-3">
                         <div>
-                          <h3 className="font-headline-md text-[32px] md:text-[40px] leading-none text-on-surface uppercase mb-1">
+                          <h3 className="font-headline-md text-[28px] md:text-[36px] leading-tight text-on-surface font-bold uppercase tracking-wide mb-1.5">
                             BACKEND DEVELOPER INTERN
                           </h3>
-                          <div className="font-mono-code text-primary font-bold uppercase text-sm">
+                          <div className="font-mono-code text-primary font-bold uppercase text-[14px] md:text-[15px] tracking-wider flex items-center gap-2">
                             PRELAX INFOTECH
                           </div>
                         </div>
-                        <div className="font-mono-code text-on-surface-variant text-sm mt-2 md:mt-0 bg-surface-variant px-2 py-1 inline-block w-max border border-brutal">
+                        <div className="font-mono-code text-primary font-bold text-[12px] md:text-[13px] bg-primary/10 border border-primary px-3 py-1.5 inline-block w-max rounded-xs tracking-wider shadow-xs">
                           MAY 2026 — JUN 2026
                         </div>
                       </div>
 
-                      <div className="font-mono-code text-on-surface-variant text-xs mb-4">
+                      <div className="font-mono-code text-on-surface/75 text-[13px] md:text-[14px] mb-4 font-semibold">
                         Backend Developer Intern · Surat, Gujarat, India
                       </div>
 
-                      <ul className="font-body-md text-on-surface-variant space-y-3">
-                        <li className="flex items-start gap-2">
-                          <span className="material-symbols-outlined text-primary text-[18px] mt-1">
+                      <ul className="font-body-md text-on-surface text-[14.5px] md:text-[15.5px] space-y-3.5 leading-relaxed font-normal">
+                        <li className="flex items-start gap-2.5">
+                          <span className="material-symbols-outlined text-primary text-[20px] font-bold mt-0.5">
                             arrow_forward
                           </span>
                           <span>
@@ -1296,8 +1451,8 @@ export default function Home() {
                         </li>
                         {prelaxExpanded && (
                           <>
-                            <li className="flex items-start gap-2">
-                              <span className="material-symbols-outlined text-primary text-[18px] mt-1">
+                            <li className="flex items-start gap-2.5">
+                              <span className="material-symbols-outlined text-primary text-[20px] font-bold mt-0.5">
                                 arrow_forward
                               </span>
                               <span>
@@ -1306,8 +1461,8 @@ export default function Home() {
                                 exchanges for async event-driven logging.
                               </span>
                             </li>
-                            <li className="flex items-start gap-2">
-                              <span className="material-symbols-outlined text-primary text-[18px] mt-1">
+                            <li className="flex items-start gap-2.5">
+                              <span className="material-symbols-outlined text-primary text-[20px] font-bold mt-0.5">
                                 arrow_forward
                               </span>
                               <span>
@@ -1321,7 +1476,19 @@ export default function Home() {
                         )}
                       </ul>
 
-                      <div className="mt-4 text-[11px] font-mono-code uppercase tracking-wider text-primary/60 flex items-center gap-1 font-bold">
+                      {/* Tech Stack Pills */}
+                      <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-outline/20">
+                        {['Node.js', 'Express', 'PostgreSQL', 'gRPC', 'RabbitMQ', 'Redis', 'Docker', 'Autocannon'].map((tech, tIdx) => (
+                          <span
+                            key={tIdx}
+                            className="border border-on-surface/30 text-on-surface bg-surface-variant/40 px-2.5 py-1 font-mono-code text-[11.5px] md:text-[12px] uppercase font-bold rounded-xs"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="mt-4 text-[12px] font-mono-code uppercase tracking-wider text-primary font-bold flex items-center gap-1">
                         {prelaxExpanded
                           ? "— Click card to collapse"
                           : "+ Click card to expand"}
@@ -1330,36 +1497,36 @@ export default function Home() {
                   </div>
 
                   {/* Job 2: Infosys Springboard */}
-                  <div className="relative pl-10 md:pl-12 group">
-                    {/* Circle-in-circle timeline marker - aligned with the line */}
-                    <div className="absolute left-0 top-3 w-4 h-4 bg-surface border-2 border-primary rounded-full flex items-center justify-center ml-1 md:ml-2 z-20">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full group-hover:bg-on-surface transition-colors duration-200"></div>
+                  <div className="relative pl-10 md:pl-12 group scroll-reveal" style={{ transitionDelay: "150ms" }}>
+                    {/* Circle-in-circle timeline marker */}
+                    <div className="absolute left-0 top-4 w-5 h-5 bg-surface-container-lowest border-2 border-primary rounded-full flex items-center justify-center ml-1 md:ml-1.5 z-20 shadow-[0_2px_8px_rgba(176,38,0,0.3)]">
+                      <div className="w-2 h-2 bg-primary rounded-full group-hover:scale-125 transition-transform duration-200"></div>
                     </div>
                     <div
                       onClick={() => setInfosysExpanded(!infosysExpanded)}
-                      className="border border-brutal bg-surface-container-lowest p-5 hover:border-on-surface transition-colors duration-0 cursor-pointer select-none"
+                      className="border-2 border-on-surface bg-surface-container-lowest p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(27,28,28,1)] transition-all duration-200 cursor-pointer select-none rounded-xs"
                     >
-                      <div className="flex flex-col md:flex-row md:justify-between md:items-baseline mb-4 border-b border-outline/30 pb-3">
+                      <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 border-b border-outline/20 pb-4 gap-3">
                         <div>
-                          <h3 className="font-headline-md text-[32px] md:text-[40px] leading-none text-on-surface uppercase mb-1">
+                          <h3 className="font-headline-md text-[28px] md:text-[36px] leading-tight text-on-surface font-bold uppercase tracking-wide mb-1.5">
                             PYTHON BACKEND INTERN
                           </h3>
-                          <div className="font-mono-code text-primary font-bold uppercase text-sm">
+                          <div className="font-mono-code text-primary font-bold uppercase text-[14px] md:text-[15px] tracking-wider flex items-center gap-2">
                             INFOSYS SPRINGBOARD
                           </div>
                         </div>
-                        <div className="font-mono-code text-on-surface-variant text-sm mt-2 md:mt-0 bg-surface-variant px-2 py-1 inline-block w-max border border-brutal">
+                        <div className="font-mono-code text-primary font-bold text-[12px] md:text-[13px] bg-primary/10 border border-primary px-3 py-1.5 inline-block w-max rounded-xs tracking-wider shadow-xs">
                           AUG 2025 — OCT 2025
                         </div>
                       </div>
 
-                      <div className="font-mono-code text-on-surface-variant text-xs mb-4">
+                      <div className="font-mono-code text-on-surface/75 text-[13px] md:text-[14px] mb-4 font-semibold">
                         Python Backend Intern · Remote · Anand, Gujarat, India
                       </div>
 
-                      <ul className="font-body-md text-on-surface-variant space-y-3">
-                        <li className="flex items-start gap-2">
-                          <span className="material-symbols-outlined text-primary text-[18px] mt-1">
+                      <ul className="font-body-md text-on-surface text-[14.5px] md:text-[15.5px] space-y-3.5 leading-relaxed font-normal">
+                        <li className="flex items-start gap-2.5">
+                          <span className="material-symbols-outlined text-primary text-[20px] font-bold mt-0.5">
                             arrow_forward
                           </span>
                           <span>
@@ -1370,8 +1537,8 @@ export default function Home() {
                         </li>
                         {infosysExpanded && (
                           <>
-                            <li className="flex items-start gap-2">
-                              <span className="material-symbols-outlined text-primary text-[18px] mt-1">
+                            <li className="flex items-start gap-2.5">
+                              <span className="material-symbols-outlined text-primary text-[20px] font-bold mt-0.5">
                                 arrow_forward
                               </span>
                               <span>
@@ -1380,8 +1547,8 @@ export default function Home() {
                                 prediction.
                               </span>
                             </li>
-                            <li className="flex items-start gap-2">
-                              <span className="material-symbols-outlined text-primary text-[18px] mt-1">
+                            <li className="flex items-start gap-2.5">
+                              <span className="material-symbols-outlined text-primary text-[20px] font-bold mt-0.5">
                                 arrow_forward
                               </span>
                               <span>
@@ -1394,9 +1561,21 @@ export default function Home() {
                         )}
                       </ul>
 
+                      {/* Tech Stack Pills */}
+                      <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-outline/20">
+                        {['Python', 'FastAPI', 'SQLite', 'Pandas', 'NumPy', 'Ridge Regression', 'Streamlit', 'Agile/Scrum'].map((tech, tIdx) => (
+                          <span
+                            key={tIdx}
+                            className="border border-on-surface/30 text-on-surface bg-surface-variant/40 px-2.5 py-1 font-mono-code text-[11.5px] md:text-[12px] uppercase font-bold rounded-xs"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+
                       {/* Certificate & Expand Row */}
-                      <div className="flex flex-wrap gap-4 items-center justify-between pt-4 border-t border-outline/10 mt-4">
-                        <div className="text-[11px] font-mono-code uppercase tracking-wider text-primary/60 flex items-center gap-1 font-bold">
+                      <div className="flex flex-wrap gap-4 items-center justify-between pt-4 border-t border-outline/20 mt-4">
+                        <div className="text-[12px] font-mono-code uppercase tracking-wider text-primary font-bold flex items-center gap-1">
                           {infosysExpanded
                             ? "— Click card to collapse"
                             : "+ Click card to expand"}
@@ -1407,7 +1586,7 @@ export default function Home() {
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center gap-1.5 border border-primary px-3 py-1.5 font-label-sm text-[11px] text-primary hover:bg-primary hover:text-on-primary transition-colors duration-0 uppercase cursor-pointer"
+                          className="inline-flex items-center gap-1.5 border border-on-surface bg-surface text-on-surface hover:bg-primary hover:text-white transition-colors duration-200 px-4 py-2 font-mono-code text-[12px] font-bold uppercase cursor-pointer rounded-xs shadow-xs"
                         >
                           <span className="material-symbols-outlined text-[16px]">
                             verified_user
@@ -1446,7 +1625,7 @@ export default function Home() {
             </header>
 
             {/* Terminal Playground Widget - Black Background */}
-            <div className="border border-[#C4BDB2] bg-[#1A1A1A] flex flex-col mt-base shadow-sm text-surface relative z-10">
+            <div className="scroll-reveal border border-[#C4BDB2] bg-[#1A1A1A] flex flex-col mt-base shadow-sm text-surface relative z-10">
               {/* Window Header */}
               <div className="flex items-center px-base py-2 border-b border-[#C4BDB2] bg-[#111111]">
                 <div className="flex gap-1.5">
@@ -1512,12 +1691,25 @@ export default function Home() {
         </section>
 
         {/* Redesigned Footer & Straightaway Contact Info */}
-        <footer className="w-full py-8 md:py-10 px-margin-mobile md:px-margin-desktop bg-inverse-surface border-t border-outline text-[#D9D3C7] mt-auto z-10">
-          <div className="max-w-7xl mx-auto w-full flex flex-col gap-5">
-            {/* Top Row: Say Hello & Zoro Thanks Card */}
+        <footer className="w-full relative overflow-hidden py-8 md:py-12 px-margin-mobile md:px-margin-desktop bg-inverse-surface border-t border-outline text-[#D9D3C7] mt-auto z-10">
+          {/* Background Video */}
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover object-bottom md:object-[center_85%] z-0 opacity-80 pointer-events-none filter contrast-105 brightness-90"
+          >
+            <source src="/footer-video.mp4" type="video/mp4" />
+          </video>
+          {/* Dark Overlay for optimal text contrast */}
+          <div className="absolute inset-0 bg-black/50 z-0 pointer-events-none" />
+
+          <div className="max-w-7xl mx-auto w-full flex flex-col gap-6 md:gap-8 relative z-10">
+            {/* Top Row: Say Hello & Thanks Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
               <div className="flex flex-col gap-3">
-                <span className="font-mono-code text-[11px] md:text-[12px] uppercase tracking-widest text-primary">
+                <span className="font-mono-code text-[11px] md:text-[12px] uppercase tracking-widest text-primary font-bold">
                   GET IN TOUCH
                 </span>
                 <a
@@ -1528,19 +1720,11 @@ export default function Home() {
                 </a>
               </div>
 
-              {/* Zoro Thanks For Visiting Section */}
-              <div className="flex flex-row items-center gap-5 max-w-md md:mr-4 self-center md:self-auto select-none">
-                <img
-                  src="/thanks.png"
-                  alt="Zoro praying"
-                  className="w-24 h-24 md:w-32 md:h-32 object-contain"
-                />
-                <div className="flex-1 font-mono-code text-[12px] md:text-[14px] text-[#D9D3C7] leading-relaxed">
-                  <p className="font-bold text-primary mb-1 text-sm md:text-base uppercase">
+              {/* Thanks For Visiting Section */}
+              <div className="flex flex-row items-center gap-4 md:mr-4 self-center md:self-auto select-none">
+                <div className="font-mono-code text-[#D9D3C7] leading-relaxed">
+                  <p className="font-headline-lg text-primary text-[26px] sm:text-[32px] md:text-[42px] font-extrabold uppercase tracking-wider drop-shadow-md">
                     Thanks for visiting!
-                  </p>
-                  <p className="text-[10px] md:text-[11px] text-[#C4BDB2]/75 mt-1 font-mono-code">
-                    * Not an anime fan.
                   </p>
                 </div>
               </div>

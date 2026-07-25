@@ -4,11 +4,16 @@ import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Priyank Moradiya // Portfolio',
+  title: 'Priyank Moradiya',
   description: 'Backend developer specializing in Node.js, PostgreSQL, Python, gRPC, and RabbitMQ. Building distributed systems with modern tech stacks.',
   generator: 'v0.app',
+  icons: {
+    icon: '/spidey-favicon.jpg',
+    shortcut: '/spidey-favicon.jpg',
+    apple: '/spidey-favicon.jpg',
+  },
   openGraph: {
-    title: 'Priyank Moradiya // Portfolio',
+    title: 'Priyank Moradiya',
     description: 'Backend developer specializing in Node.js, PostgreSQL, Python, gRPC, and RabbitMQ.',
     type: 'website',
   },
@@ -25,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/spidey-favicon.jpg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

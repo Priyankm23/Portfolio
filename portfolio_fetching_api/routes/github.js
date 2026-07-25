@@ -13,6 +13,12 @@ router.get("/api/github/contributions", async (req, res) => {
     const query = `
       query {
         user(login: "Priyankm23") {
+          repositories(privacy: PUBLIC, isFork: false) {
+            totalCount
+          }
+          pullRequests {
+            totalCount
+          }
           contributionsCollection(from: "${from}", to: "${to}") {
             contributionCalendar {
               totalContributions
@@ -47,13 +53,19 @@ router.get("/api/github/contributions", async (req, res) => {
         throw new Error(`GraphQL Error: ${data.errors[0].message}`);
     }
 
+    const repos = data.data.user.repositories.totalCount;
+    const prs = data.data.user.pullRequests.totalCount;
     const calendar = data.data.user.contributionsCollection.contributionCalendar;
 
-    // Flatten weeks -> days, then discard future dates so consumers can render a real trailing window.
+    // Flatten weeks -> days, then discard future dates in a timezone-safe way so consumers can render a real trailing window.
     const allDays = calendar.weeks.flatMap(w => w.contributionDays);
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-    const availableDays = allDays.filter(day => new Date(day.date) <= today);
+    const localDate = new Date();
+    const yearStr = localDate.getFullYear();
+    const monthStr = String(localDate.getMonth() + 1).padStart(2, "0");
+    const dateStr = String(localDate.getDate()).padStart(2, "0");
+    const todayStr = `${yearStr}-${monthStr}-${dateStr}`;
+
+    const availableDays = allDays.filter(day => day.date <= todayStr);
 
     // Compute streak
     let streak = 0;
@@ -65,6 +77,8 @@ router.get("/api/github/contributions", async (req, res) => {
     return res.json({
       year,
       total: calendar.totalContributions,
+      repos,
+      prs,
       streak,
       days: availableDays.map(d => ({
         date: d.date,

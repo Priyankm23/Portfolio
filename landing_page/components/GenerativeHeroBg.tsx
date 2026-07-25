@@ -2,7 +2,11 @@
 
 import React, { useEffect, useRef } from "react";
 
-export const GenerativeHeroBg: React.FC = () => {
+interface GenerativeHeroBgProps {
+  fullWidth?: boolean;
+}
+
+export const GenerativeHeroBg: React.FC<GenerativeHeroBgProps> = ({ fullWidth = false }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -158,7 +162,9 @@ export const GenerativeHeroBg: React.FC = () => {
       ctx.save();
       
       ctx.beginPath();
-      if (width >= 768) {
+      if (fullWidth) {
+        ctx.rect(0, 0, width, height);
+      } else if (width >= 768) {
         ctx.rect(0, 0, width * 0.48, height);
       } else {
         ctx.rect(0, 0, width, height * 0.54);

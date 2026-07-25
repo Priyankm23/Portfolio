@@ -37,16 +37,16 @@ export const ProjectCard = ({
     >
       {/* Meta row */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-        <span className="font-label text-lg md:text-xl text-muted tracking-[0.15em]">
+        <span className="font-label text-lg md:text-xl text-ink font-semibold tracking-[0.15em]">
           {dates}
         </span>
-        <span className="font-body text-sm text-muted tracking-wider">
+        <span className="font-body text-base text-ink font-semibold tracking-wider">
           {tech}
         </span>
       </div>
 
       {/* Project title */}
-      <h3 className="text-2xl md:text-4xl font-display font-bold text-ink leading-tight flex items-center gap-3">
+      <h3 className="text-3xl md:text-4xl font-display font-bold text-ink leading-tight flex items-center gap-3">
         {logoUrl && (
           <img
             src={logoUrl}
@@ -56,14 +56,14 @@ export const ProjectCard = ({
         )}
         <span>{title}</span>
         {beta && (
-          <span className="text-xs md:text-sm border border-[var(--accent-2)] text-[var(--accent-2)] px-2 py-0.5 rounded-sm tracking-widest uppercase">
+          <span className="text-xs md:text-sm border border-[var(--accent-2)] text-[var(--accent-2)] px-2 py-0.5 rounded-sm tracking-widest uppercase font-bold">
             Beta
           </span>
         )}
       </h3>
 
       {/* Description intro */}
-      <p className="font-body text-sm md:text-base text-muted leading-relaxed">
+      <p className="font-body text-base md:text-lg text-ink/90 leading-relaxed font-normal">
         {description}
       </p>
 
@@ -78,8 +78,8 @@ export const ProjectCard = ({
           <span
             key={tag}
             className={variant === 'amber'
-              ? 'border border-[var(--accent-2)] text-[var(--accent-2)] font-body text-sm px-4 py-2 tracking-wider transition-all hover:border-[var(--accent-2)] hover:text-[var(--accent-2)]'
-              : 'border border-[var(--color-border)] text-[var(--color-ink-muted)] font-body text-sm px-4 py-2 tracking-wider transition-all hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]'}
+              ? 'border border-[var(--accent-2)] text-[var(--accent-2)] font-body text-sm font-semibold px-4 py-2 tracking-wider transition-all hover:border-[var(--accent-2)] hover:text-[var(--accent-2)]'
+              : 'border border-[var(--color-border)] text-ink font-body text-sm font-medium px-4 py-2 tracking-wider transition-all hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]'}
             style={{ background: 'var(--color-surface)' }}
           >
             {tag}
@@ -94,7 +94,7 @@ export const ProjectCard = ({
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={`font-body text-sm ${ctaTextColor} no-underline transition-all hover:underline hover:text-[var(--color-accent)]`}
+            className={`font-body text-base font-bold ${ctaTextColor} no-underline transition-all hover:underline hover:text-[var(--color-accent)]`}
           >
             GitHub ↗
           </a>

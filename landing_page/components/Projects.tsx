@@ -58,6 +58,8 @@ export const Projects = () => {
             logoUrl="/safetrail_logo.png"
           />
 
+          {/* Bandit CLI - Commented out for now */}
+          {/* 
           <ProjectCard
             title="Bandit CLI"
             dates="Jun 2026 – Present (Beta)"
@@ -76,6 +78,7 @@ export const Projects = () => {
             image="/bandit.png"
             logoUrl="/bandit_logo.png"
           />
+          */}
         </div>
       </div>
     </section>

@@ -175,23 +175,20 @@
 
 /* Simulated Heatmap styles */
 .heat-0 {
-  background-color: #303030;
-  border: 1px solid #1A1A1A;
+  background-color: #1e1e1e;
+  border: 1px solid #111111;
 }
 .heat-1 {
-  background-color: #b02600;
-  opacity: 0.3;
+  background-color: #6b2111;
 }
 .heat-2 {
-  background-color: #b02600;
-  opacity: 0.6;
+  background-color: #a8351c;
 }
 .heat-3 {
-  background-color: #b02600;
-  opacity: 0.8;
+  background-color: #e64a19;
 }
 .heat-4 {
-  background-color: #dc3200;
+  background-color: #ff7043;
 }
 
 @layer base {
@@ -231,4 +228,55 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #dc3200;
   }
+}
+
+/* Scroll Reveal Animations */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.scroll-reveal.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Slide-in styles */
+.scroll-reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.scroll-reveal-left.reveal-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.scroll-reveal-right.reveal-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Custom Project Card Reveal (Brutalist style: skew & scale reveal) */
+.project-card-reveal {
+  opacity: 0;
+  transform: scale(0.96) skewY(1.2deg) translateY(40px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.project-card-reveal.reveal-visible {
+  opacity: 1;
+  transform: scale(1) skewY(0) translateY(0);
 }

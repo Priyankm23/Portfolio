@@ -59,6 +59,8 @@ export default function WorkPage() {
                logoUrl="/safetrail_logo.png"
              />
 
+             {/* Bandit CLI - Commented out for now */}
+             {/* 
              <ProjectCard
                title="Bandit CLI"
                dates="Jun 2026 – Present (Beta)"
@@ -77,6 +79,7 @@ export default function WorkPage() {
                image="/bandit.png"
                logoUrl="/bandit_logo.png"
              />
+             */}
           </div>
         </div>
       </div>
