@@ -728,7 +728,7 @@ export default function Home() {
           {/* Lined Grid Overlay - Locally inside Hero */}
           <div
             aria-hidden="true"
-            className="absolute top-[54%] bottom-0 left-0 right-0 md:inset-0 pointer-events-none grid grid-cols-4 md:grid-cols-12 gap-0 border-r border-1px border-outline opacity-10 z-0"
+            className="absolute inset-0 pointer-events-none grid grid-cols-4 md:grid-cols-12 gap-0 border-r border-1px border-outline opacity-10 z-0"
           >
             <div className="h-full"></div>
             <div className="h-full max-md:border-l max-md:border-1px max-md:border-on-surface"></div>
@@ -747,7 +747,7 @@ export default function Home() {
           <GenerativeHeroBg />
 
           {/* Left Column (Text & Actions) */}
-          <div className="w-full md:w-[48%] flex-1 md:flex-none flex flex-col justify-center px-margin-mobile md:px-0 md:pl-[calc(max(40px,(100vw-1280px)/2))] md:pr-12 relative z-10 pb-8 md:pb-0">
+          <div className="w-full md:w-[48%] flex-1 md:flex-none flex flex-col justify-center px-margin-mobile md:px-0 md:pl-[calc(max(40px,(100vw-1280px)/2))] md:pr-12 relative z-10 pb-12 md:pb-0">
             <div className="flex flex-col gap-6 w-full max-w-[500px]">
               <div className="inline-block border border-1px border-primary px-3 py-1 bg-primary/10 text-primary font-mono-code text-mono-code w-max mx-auto md:mx-0 uppercase relative z-10">
                 BACKEND DEVELOPER
@@ -772,7 +772,7 @@ export default function Home() {
                 distributed systems — <span className="whitespace-nowrap">I build</span> what holds
                 everything together.
               </p>
-              <div className="flex flex-row flex-wrap gap-3.5 sm:gap-5 mt-4 sm:mt-6 relative z-10 justify-center md:justify-start">
+              <div className="flex flex-row flex-wrap gap-3.5 sm:gap-5 mt-4 sm:mt-6 mb-8 sm:mb-10 md:mb-0 relative z-10 justify-center md:justify-start">
                 {/* GitHub */}
                 <a
                   href="https://github.com/Priyankm23"
@@ -847,7 +847,16 @@ export default function Home() {
           </div>
 
           {/* Right Column (Stylized Portrait) */}
-          <div className="w-full md:w-[52%] flex-1 md:flex-none flex items-center justify-center px-margin-mobile md:px-0 md:px-[calc(max(40px,(100vw-1280px)/2))] relative z-10">
+          <div className="w-full md:w-[52%] flex-1 md:flex-none flex items-center justify-center px-margin-mobile md:px-0 md:px-[calc(max(40px,(100vw-1280px)/2))] relative z-10 max-md:bg-[#D9D3C7] max-md:py-8 max-md:mt-4 max-md:border-t max-md:border-outline overflow-hidden">
+            {/* Grid Pattern Overlay for Mobile Portrait Background */}
+            <div
+              className="md:hidden absolute inset-0 pointer-events-none opacity-25 z-0"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(27,28,28,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(27,28,28,0.2) 1px, transparent 1px)",
+                backgroundSize: "32px 32px",
+              }}
+            />
             <div className="relative h-[360px] md:h-[470px] lg:h-[570px] xl:h-[610px] aspect-square flex items-center justify-center md:-translate-x-2 md:translate-y-2">
               {/* The main portrait (increased size, centered) */}
               <img
@@ -895,14 +904,10 @@ export default function Home() {
           id="about"
           className="relative border-b border-1px border-outline z-10 overflow-hidden bg-surface"
         >
-          {/* Split Background: Left Side White, Right Side Dark #1B1C1C with Generative Canvas */}
-          <div className="absolute inset-0 pointer-events-none z-0">
+          {/* Split Background: Left Side White, Right Side Dark #1B1C1C with Generative Canvas (Desktop) */}
+          <div className="hidden md:block absolute inset-0 pointer-events-none z-0">
             {/* Desktop split: Right side dark #1B1C1C with generative canvas starting at 48% */}
-            <div className="hidden md:block absolute top-0 bottom-0 left-[48%] right-0 bg-[#1B1C1C] border-l border-1px border-outline">
-              <GenerativeHeroBg fullWidth />
-            </div>
-            {/* Mobile split: Bottom side dark #1B1C1C with generative canvas starting at 54% */}
-            <div className="md:hidden absolute top-[54%] bottom-0 left-0 right-0 bg-[#1B1C1C] border-t border-1px border-outline">
+            <div className="absolute top-0 bottom-0 left-[48%] right-0 bg-[#1B1C1C] border-l border-1px border-outline">
               <GenerativeHeroBg fullWidth />
             </div>
           </div>
@@ -990,7 +995,11 @@ export default function Home() {
               </div>
 
               {/* Right Column (col-span-6 col-start-7): Dark side with "THE HONEST TRUTH." text */}
-              <div className="scroll-reveal-right lg:col-span-6 lg:col-start-7 flex flex-col justify-center py-4 lg:py-6 px-4 sm:px-6 md:pl-8 lg:pl-10 text-[#D9D3C7] relative z-10 max-md:bg-[#1B1C1C] max-md:p-6 max-md:border max-md:border-on-surface max-md:shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] max-md:rounded-xs max-md:mt-4" style={{ transitionDelay: "150ms" }}>
+              <div className="scroll-reveal-right lg:col-span-6 lg:col-start-7 flex flex-col justify-center py-4 lg:py-6 px-5 sm:px-6 md:pl-8 lg:pl-10 text-[#D9D3C7] relative z-10 max-md:bg-[#1B1C1C] max-md:p-6 max-md:border max-md:border-on-surface max-md:shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] max-md:rounded-xs max-md:mt-4 overflow-hidden" style={{ transitionDelay: "150ms" }}>
+                {/* Mobile Canvas inside dark card */}
+                <div className="md:hidden absolute inset-0 pointer-events-none z-0">
+                  <GenerativeHeroBg fullWidth />
+                </div>
                 <div className="flex flex-col gap-4">
                   <h3 className="font-headline-md text-[30px] md:text-[38px] leading-tight text-[#D9D3C7] tracking-wider uppercase">
                     THE HONEST TRUTH.
@@ -1044,7 +1053,7 @@ export default function Home() {
           {/* Content */}
           <div className="max-w-7xl mx-auto w-full relative z-10 mt-16">
             {/* Ghost Number */}
-            <div className="absolute -top-10 right-0 md:-right-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-white opacity-20 pointer-events-none select-none z-0">
+            <div className="absolute -top-10 right-0 md:-right-4 font-display-xl-mobile md:font-display-xl text-[140px] md:text-[240px] text-on-surface/25 pointer-events-none select-none z-0">
               02
             </div>
             <span className="font-mono-code text-mono-code text-primary uppercase relative z-10">
@@ -1124,7 +1133,7 @@ export default function Home() {
 
                   {/* Right Side: Halftone Brutalist Graphic / Screenshot Transition */}
                   <div
-                    className={`w-full md:w-[48%] border-t md:border-t-0 ${idx % 2 === 0 ? "md:border-l" : "md:border-r"} border-on-surface relative flex items-center justify-center p-4 md:p-6 min-h-[300px] md:min-h-[420px]`}
+                    className={`w-full md:w-[48%] border-t md:border-t-0 ${idx % 2 === 0 ? "md:border-l" : "md:border-r"} border-on-surface relative flex items-center justify-center p-2.5 sm:p-4 md:p-5 min-h-[280px] sm:min-h-[360px] md:min-h-[440px]`}
                     style={{
                       backgroundColor: "var(--color-bg)",
                       backgroundImage:
@@ -1133,19 +1142,27 @@ export default function Home() {
                     }}
                   >
                     {project.image && (
-                      <div className="relative w-full h-full">
-                        {/* Halftone graphic (Default) */}
+                      <div className="relative w-full h-[260px] xs:h-[300px] sm:h-[360px] md:h-[420px] flex items-center justify-center">
+                        {/* Halftone graphic (Default / Toggled) */}
                         <img
                           src={project.image}
                           alt={`${project.title} Graphic`}
-                          className={`absolute inset-0 m-auto max-w-full max-h-full w-auto h-auto object-contain select-none pointer-events-none group-hover:scale-105 group-hover:rotate-[2deg] transition-all duration-500 ${showScreenshot && project.screenshot ? "opacity-0" : "opacity-100"} ${project.screenshot ? "group-hover:opacity-0" : ""}`}
+                          className={`absolute inset-0 m-auto max-w-full max-h-full w-auto h-auto object-contain select-none pointer-events-none transition-all duration-700 ${
+                            showScreenshot && project.screenshot
+                              ? "opacity-0 scale-95"
+                              : "opacity-100 scale-100"
+                          } ${project.screenshot ? "group-hover:opacity-0 group-hover:scale-95" : ""}`}
                         />
-                        {/* Actual platform screenshot (Visible on hover / mobile timer - fit cleanly!) */}
+                        {/* Actual platform screenshot (Toggled / Hovered) */}
                         {project.screenshot && (
                           <img
                             src={project.screenshot}
                             alt={`${project.title} Screenshot`}
-                            className={`absolute inset-0 m-auto max-w-full max-h-full w-auto h-auto object-contain select-none pointer-events-none border border-on-surface shadow-[3px_3px_0px_0px_rgba(27,28,28,1)] group-hover:scale-105 transition-all duration-500 ${showScreenshot ? "opacity-100" : "opacity-0"} group-hover:opacity-100`}
+                            className={`absolute inset-0 m-auto max-w-full max-h-full w-auto h-auto object-contain select-none border border-on-surface shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] rounded-xs transition-all duration-700 ${
+                              showScreenshot
+                                ? "opacity-100 scale-100"
+                                : "opacity-0 scale-95"
+                            } group-hover:opacity-100 group-hover:scale-105`}
                           />
                         )}
                       </div>
@@ -1165,7 +1182,7 @@ export default function Home() {
         >
           <div className="max-w-7xl mx-auto w-full relative z-10">
             {/* Ghost Number */}
-            <div className="absolute -top-10 left-0 md:-left-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-primary opacity-10 pointer-events-none select-none z-0">
+            <div className="absolute -top-10 left-0 md:-left-4 font-display-xl-mobile md:font-display-xl text-[140px] md:text-[240px] text-primary/25 pointer-events-none select-none z-0">
               03
             </div>
             <div className="relative z-10 mt-16">
@@ -1389,7 +1406,7 @@ export default function Home() {
         >
           <div className="max-w-7xl mx-auto w-full relative z-10">
             {/* Ghost Number */}
-            <div className="absolute -top-10 left-0 md:-left-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-on-surface opacity-10 pointer-events-none select-none z-0">
+            <div className="absolute -top-10 left-0 md:-left-4 font-display-xl-mobile md:font-display-xl text-[140px] md:text-[240px] text-on-surface/25 pointer-events-none select-none z-0">
               05
             </div>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter mt-16 relative z-10">
@@ -1615,7 +1632,7 @@ export default function Home() {
         >
           <div className="max-w-7xl mx-auto w-full relative z-10">
             {/* Ghost Number */}
-            <div className="absolute -top-10 right-0 md:-right-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-[#D9D3C7] opacity-20 pointer-events-none select-none z-0">
+            <div className="absolute -top-10 right-0 md:-right-4 font-display-xl-mobile md:font-display-xl text-[140px] md:text-[240px] text-[#D9D3C7]/25 pointer-events-none select-none z-0">
               06
             </div>
             <header className="border-b border-[#2a2a2a] pb-base relative z-10 mt-16">
@@ -1692,77 +1709,78 @@ export default function Home() {
 
         {/* Redesigned Footer & Straightaway Contact Info */}
         <footer className="w-full relative overflow-hidden py-8 md:py-12 px-margin-mobile md:px-margin-desktop bg-inverse-surface border-t border-outline text-[#D9D3C7] mt-auto z-10">
-          {/* Background Video */}
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover object-bottom md:object-[center_85%] z-0 opacity-80 pointer-events-none filter contrast-105 brightness-90"
-          >
-            <source src="/footer-video.mp4" type="video/mp4" />
-          </video>
-          {/* Dark Overlay for optimal text contrast */}
-          <div className="absolute inset-0 bg-black/50 z-0 pointer-events-none" />
+          {/* Background Image: footer.jpg in full vibrant color with medium visibility */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-cover bg-center z-0 pointer-events-none opacity-60 filter contrast-105 saturate-110"
+            style={{
+              backgroundImage: "url(/footer.jpg)",
+            }}
+          />
+          {/* Subtle Overlay for optimal text readability */}
+          <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none" />
 
           <div className="max-w-7xl mx-auto w-full flex flex-col gap-6 md:gap-8 relative z-10">
             {/* Top Row: Say Hello & Thanks Section */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
-              <div className="flex flex-col gap-3">
+            <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-6 md:gap-10">
+              <div className="flex flex-col items-center md:items-start gap-2">
                 <span className="font-mono-code text-[11px] md:text-[12px] uppercase tracking-widest text-primary font-bold">
                   GET IN TOUCH
                 </span>
                 <a
                   href="mailto:priyankmoradiya41@gmail.com"
-                  className="font-display-xl-mobile md:font-display-xl text-[20px] xs:text-[24px] sm:text-[32px] md:text-[48px] uppercase tracking-tighter text-[#D9D3C7] hover:text-primary transition-colors duration-200 break-all sm:break-normal"
+                  className="font-display-xl-mobile md:font-display-xl text-[28px] sm:text-[38px] md:text-[48px] lg:text-[54px] uppercase tracking-wider text-[#D9D3C7] hover:text-primary transition-colors duration-200 break-all sm:break-normal font-bold"
                 >
                   priyankmoradiya41@gmail.com
                 </a>
               </div>
 
               {/* Thanks For Visiting Section */}
-              <div className="flex flex-row items-center gap-4 md:mr-4 self-center md:self-auto select-none">
-                <div className="font-mono-code text-[#D9D3C7] leading-relaxed">
-                  <p className="font-headline-lg text-primary text-[26px] sm:text-[32px] md:text-[42px] font-extrabold uppercase tracking-wider drop-shadow-md">
-                    Thanks for visiting!
-                  </p>
-                </div>
+              <div className="flex flex-col items-center md:items-end select-none">
+                <span className="font-display-xl-mobile md:font-display-xl text-[28px] sm:text-[38px] md:text-[48px] lg:text-[54px] uppercase tracking-wider text-primary hover:text-[#D9D3C7] transition-colors duration-200 font-bold cursor-pointer">
+                  THANKS FOR VISITING!
+                </span>
               </div>
             </div>
 
             {/* Bottom Row: Social Links & Copyright */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-t border-outline/20 pt-4 mt-2 font-mono-code text-[12px] md:text-[14px]">
-              <div className="flex flex-row flex-wrap gap-x-6 gap-y-2 uppercase">
+              <div className="flex flex-row flex-wrap items-center gap-3 uppercase">
                 <a
                   href="https://github.com/Priyankm23"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-[#D9D3C7] hover:text-primary transition-colors duration-150"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 border border-outline/40 bg-surface-container-high/30 text-[#D9D3C7] hover:text-primary hover:border-primary transition-all duration-150 rounded-xs shadow-[2px_2px_0px_0px_rgba(27,28,28,1)] text-[12px] md:text-[13px] font-bold"
                 >
-                  GITHUB
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                    <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                  </svg>
+                  <span>GITHUB</span>
                 </a>
                 <a
                   href="https://linkedin.com/in/priyankmoradiya"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-[#D9D3C7] hover:text-primary transition-colors duration-150"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 border border-outline/40 bg-surface-container-high/30 text-[#D9D3C7] hover:text-primary hover:border-primary transition-all duration-150 rounded-xs shadow-[2px_2px_0px_0px_rgba(27,28,28,1)] text-[12px] md:text-[13px] font-bold"
                 >
-                  LINKEDIN
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                  </svg>
+                  <span>LINKEDIN</span>
                 </a>
                 <a
                   href="https://x.com/priyank_M73"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-[#D9D3C7] hover:text-primary transition-colors duration-150"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 border border-outline/40 bg-surface-container-high/30 text-[#D9D3C7] hover:text-primary hover:border-primary transition-all duration-150 rounded-xs shadow-[2px_2px_0px_0px_rgba(27,28,28,1)] text-[12px] md:text-[13px] font-bold"
                 >
-                  X (TWITTER)
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                  <span>X (TWITTER)</span>
                 </a>
-                <span className="text-primary flex items-center gap-1.5 font-bold">
-                  <span className="inline-block w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                  READY_FOR_HIRE
-                </span>
               </div>
-              <div className="text-[#C4BDB2] opacity-60 text-[11px] md:text-[12px]">
+              <div className="text-[#D9D3C7] text-[13px] sm:text-[14px] md:text-[15px] font-semibold tracking-wide opacity-80">
                 © 2026 PRIYANK MORADIYA · BUILT WITH OBSESSION
               </div>
             </div>

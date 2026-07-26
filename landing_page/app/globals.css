@@ -143,7 +143,7 @@
 }
 
 .bg-hero-split {
-  background: linear-gradient(to bottom, #1B1C1C 54%, #D9D3C7 54%);
+  background: #1B1C1C;
 }
 @media (min-width: 768px) {
   .bg-hero-split {
