@@ -151,6 +151,10 @@
   }
 }
 
+.font-bbh-bartle {
+  font-family: 'BBH Bartle', 'Bebas Neue', sans-serif;
+}
+
 
 .blink {
   animation: blink-animation 1s steps(2, start) infinite;

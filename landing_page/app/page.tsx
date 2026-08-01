@@ -633,28 +633,26 @@ export default function Home() {
     <div className="bg-surface text-on-surface font-body-md antialiased pt-24 lg:pt-16 pb-0 min-h-screen">
       {/* TopAppBar - Responsive Horizontal Navigation Header */}
       <header className="fixed top-0 w-full z-50 flex flex-col lg:flex-row justify-between items-stretch lg:items-center bg-inverse-surface border-b border-outline h-24 lg:h-16">
-        {/* Row 1: Logo & Status (on mobile) / Left Brand Column (on desktop) */}
-        <div className="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-12 lg:h-full border-b border-outline/30 lg:border-b-0 lg:flex-1 lg:justify-start lg:gap-8">
+        {/* Row 1: Brand Logo / Title */}
+        <div className="flex justify-center lg:justify-start items-center px-margin-mobile md:px-margin-desktop h-12 lg:h-full border-b border-outline/30 lg:border-b-0 lg:flex-1 lg:gap-8">
           <div className="flex items-center gap-2">
             <span
-              className="material-symbols-outlined text-primary animate-pulse"
+              className="hidden lg:inline-block material-symbols-outlined text-primary animate-pulse"
               style={{ fontVariationSettings: "'FILL' 1" }}
             >
               terminal
             </span>
-            <span className="font-headline-md text-[20px] md:text-[24px] leading-none text-on-primary-fixed-variant dark:text-primary tracking-widest mt-1 uppercase whitespace-nowrap">
+            <span
+              className="font-bbh-bartle text-[17px] min-[360px]:text-[19px] sm:text-[22px] md:text-[26px] leading-none text-[#D9D3C7] tracking-wider uppercase whitespace-nowrap font-bold mt-0.5"
+              style={{ fontFamily: '"BBH Bartle", "Bebas Neue", sans-serif' }}
+            >
               Priyank Moradiya
             </span>
           </div>
-
-          {/* Mobile-only status badge */}
-          <div className="lg:hidden font-mono-code text-[10px] uppercase tracking-widest text-primary truncate">
-            READY_FOR_HIRE
-          </div>
         </div>
 
-        {/* Row 2 on mobile: Horizontal Navigation Track (Desktop: middle aligned nav) */}
-        <nav className="flex items-center justify-center sm:justify-start overflow-x-auto whitespace-nowrap scrollbar-none gap-0.5 min-[360px]:gap-1 sm:gap-2 font-bold text-[10px] min-[360px]:text-[11px] min-[390px]:text-[12px] sm:text-[13px] md:text-[14px] lg:text-[16px] uppercase tracking-wide h-12 lg:h-full px-2 lg:px-0 lg:flex-none w-full lg:w-auto">
+        {/* Row 2 on mobile: Horizontal Navigation Track (Desktop: right aligned nav) */}
+        <nav className="flex items-center justify-center sm:justify-start lg:justify-end overflow-x-auto whitespace-nowrap scrollbar-none gap-0.5 min-[360px]:gap-1 sm:gap-2 font-bold text-[10px] min-[360px]:text-[11px] min-[390px]:text-[12px] sm:text-[13px] md:text-[14px] lg:text-[16px] uppercase tracking-wide h-12 lg:h-full px-2 lg:px-margin-desktop lg:flex-none w-full lg:w-auto">
           <button
             onClick={() => scrollTo("about")}
             suppressHydrationWarning
@@ -711,11 +709,6 @@ export default function Home() {
             EXPERIENCE
           </button>
         </nav>
-
-        {/* Desktop-only status column (right aligned) */}
-        <div className="hidden lg:block font-mono-code text-[11px] md:text-mono-code uppercase tracking-widest text-primary truncate px-margin-desktop lg:flex-1 lg:text-right">
-          STATUS: READY_FOR_HIRE
-        </div>
       </header>
 
       {/* Main Content Area - Full width without left sidebar margins */}
@@ -749,7 +742,7 @@ export default function Home() {
           {/* Left Column (Text & Actions) */}
           <div className="w-full md:w-[48%] flex-1 md:flex-none flex flex-col justify-center px-margin-mobile md:px-0 md:pl-[calc(max(40px,(100vw-1280px)/2))] md:pr-12 relative z-10 pb-12 md:pb-0">
             <div className="flex flex-col gap-6 w-full max-w-[500px]">
-              <div className="inline-block border border-1px border-primary px-3 py-1 bg-primary/10 text-primary font-mono-code text-mono-code w-max mx-auto md:mx-0 uppercase relative z-10">
+              <div className="inline-block border border-1px border-primary px-3.5 py-1.5 bg-primary/25 text-white font-mono-code text-[12px] md:text-[13px] font-bold w-max mx-auto md:mx-0 uppercase tracking-widest relative z-10 shadow-xs">
                 BACKEND DEVELOPER
               </div>
               <h1
@@ -825,22 +818,28 @@ export default function Home() {
                     <path d="M2 7l10 7 10-7" />
                   </svg>
                 </a>
-                {/* X */}
+                {/* Resume Download Button */}
                 <a
-                  href="https://x.com/priyank_M73"
+                  href="/resume.pdf"
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="X (Twitter)"
-                  title="X (Twitter)"
-                  className="w-14 h-14 border border-1px border-[#D9D3C7] bg-transparent text-[#D9D3C7] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#1B1C1C]"
+                  download="Priyank_Moradiya_Resume.pdf"
+                  aria-label="Download Resume"
+                  title="Download Resume"
+                  className="h-14 px-5 border border-1px border-[#D9D3C7] bg-transparent text-[#FF3800] flex items-center gap-2 font-mono-code font-extrabold text-[13px] sm:text-[14px] uppercase tracking-wider transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#FF3800] hover:text-white hover:border-[#FF3800]"
                 >
                   <svg
                     viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    className="w-5 h-5"
                   >
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
                   </svg>
+                  <span>RESUME</span>
                 </a>
               </div>
             </div>
@@ -1423,18 +1422,12 @@ export default function Home() {
               </div>
               {/* Timeline */}
               <div className="md:col-span-8 relative">
-                <div className="flex flex-col gap-8 md:gap-12 relative z-10">
+                <div className="flex flex-col gap-8 md:gap-10 relative z-10">
                   {/* Job 1: Prelax Infotech */}
-                  <div className="relative pl-10 md:pl-12 group scroll-reveal">
-                    {/* Line joining the two circles */}
-                    <div className="absolute left-0 top-6 bottom-[-32px] md:bottom-[-48px] w-0.5 bg-gradient-to-b from-primary to-outline/40 ml-3.5 md:ml-4 z-10"></div>
-                    {/* Circle-in-circle timeline marker */}
-                    <div className="absolute left-0 top-4 w-5 h-5 bg-surface-container-lowest border-2 border-primary rounded-full flex items-center justify-center ml-1 md:ml-1.5 z-20 shadow-[0_2px_8px_rgba(176,38,0,0.3)]">
-                      <div className="w-2 h-2 bg-primary rounded-full group-hover:scale-125 transition-transform duration-200"></div>
-                    </div>
+                  <div className="relative group scroll-reveal">
                     <div
                       onClick={() => setPrelaxExpanded(!prelaxExpanded)}
-                      className="border-2 border-on-surface bg-surface-container-lowest p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(27,28,28,1)] transition-all duration-200 cursor-pointer select-none rounded-xs"
+                      className="border-2 border-on-surface border-l-[6px] border-l-primary bg-surface-container-lowest p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(27,28,28,1)] transition-all duration-200 cursor-pointer select-none rounded-xs"
                     >
                       <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 border-b border-outline/20 pb-4 gap-3">
                         <div>
@@ -1514,14 +1507,10 @@ export default function Home() {
                   </div>
 
                   {/* Job 2: Infosys Springboard */}
-                  <div className="relative pl-10 md:pl-12 group scroll-reveal" style={{ transitionDelay: "150ms" }}>
-                    {/* Circle-in-circle timeline marker */}
-                    <div className="absolute left-0 top-4 w-5 h-5 bg-surface-container-lowest border-2 border-primary rounded-full flex items-center justify-center ml-1 md:ml-1.5 z-20 shadow-[0_2px_8px_rgba(176,38,0,0.3)]">
-                      <div className="w-2 h-2 bg-primary rounded-full group-hover:scale-125 transition-transform duration-200"></div>
-                    </div>
+                  <div className="relative group scroll-reveal" style={{ transitionDelay: "150ms" }}>
                     <div
                       onClick={() => setInfosysExpanded(!infosysExpanded)}
-                      className="border-2 border-on-surface bg-surface-container-lowest p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(27,28,28,1)] transition-all duration-200 cursor-pointer select-none rounded-xs"
+                      className="border-2 border-on-surface border-l-[6px] border-l-primary bg-surface-container-lowest p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(27,28,28,1)] transition-all duration-200 cursor-pointer select-none rounded-xs"
                     >
                       <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 border-b border-outline/20 pb-4 gap-3">
                         <div>
@@ -1700,7 +1689,6 @@ export default function Home() {
                       suppressHydrationWarning
                     />
                   </form>
-                  <span className="w-2 h-4 bg-[#D9D3C7] animate-pulse inline-block"></span>
                 </div>
               </div>
             </div>
@@ -1708,49 +1696,68 @@ export default function Home() {
         </section>
 
         {/* Redesigned Footer & Straightaway Contact Info */}
-        <footer className="w-full relative overflow-hidden py-8 md:py-12 px-margin-mobile md:px-margin-desktop bg-inverse-surface border-t border-outline text-[#D9D3C7] mt-auto z-10">
-          {/* Background Image: footer.jpg in full vibrant color with medium visibility */}
+        <footer className="w-full relative overflow-hidden py-8 md:py-12 px-margin-mobile md:px-margin-desktop bg-surface border-t border-1px border-outline text-on-surface mt-auto z-10">
+          {/* Lined Vertical Grid Overlay - Locally inside Footer */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-cover bg-center z-0 pointer-events-none opacity-60 filter contrast-105 saturate-110"
-            style={{
-              backgroundImage: "url(/footer.jpg)",
-            }}
-          />
-          {/* Subtle Overlay for optimal text readability */}
-          <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none" />
+            className="absolute inset-0 pointer-events-none grid grid-cols-4 md:grid-cols-12 gap-0 border-r border-1px border-outline opacity-10 z-0"
+          >
+            <div className="border-l border-1px border-on-surface h-full"></div>
+            <div className="border-l border-1px border-on-surface h-full"></div>
+            <div className="border-l border-1px border-on-surface h-full"></div>
+            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
+            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
+            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
+            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
+            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
+            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
+            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
+            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
+            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
+          </div>
 
           <div className="max-w-7xl mx-auto w-full flex flex-col gap-6 md:gap-8 relative z-10">
-            {/* Top Row: Say Hello & Thanks Section */}
-            <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-6 md:gap-10">
-              <div className="flex flex-col items-center md:items-start gap-2">
+            {/* Top Section: Say Hello & Thanks (Alternating Left/Right Stack) */}
+            <div className="flex flex-col gap-4 md:gap-5">
+              {/* GET IN TOUCH & Email (Left Aligned) */}
+              <div className="flex flex-col items-center md:items-start gap-1">
                 <span className="font-mono-code text-[11px] md:text-[12px] uppercase tracking-widest text-primary font-bold">
                   GET IN TOUCH
                 </span>
                 <a
                   href="mailto:priyankmoradiya41@gmail.com"
-                  className="font-display-xl-mobile md:font-display-xl text-[28px] sm:text-[38px] md:text-[48px] lg:text-[54px] uppercase tracking-wider text-[#D9D3C7] hover:text-primary transition-colors duration-200 break-all sm:break-normal font-bold"
+                  className="font-bbh-bartle text-[16px] xs:text-[20px] sm:text-[26px] md:text-[32px] lg:text-[36px] xl:text-[38px] uppercase tracking-wide text-on-surface hover:text-primary transition-colors duration-200 font-bold leading-tight"
+                  style={{ fontFamily: '"BBH Bartle", "Bebas Neue", sans-serif' }}
                 >
-                  priyankmoradiya41@gmail.com
+                  priyankmoradiya41
+                  <span className="block sm:inline">@gmail.com</span>
                 </a>
               </div>
 
-              {/* Thanks For Visiting Section */}
+              {/* Thanks For Visiting Section (Clipped Image Text inside Letters Only) */}
               <div className="flex flex-col items-center md:items-end select-none">
-                <span className="font-display-xl-mobile md:font-display-xl text-[28px] sm:text-[38px] md:text-[48px] lg:text-[54px] uppercase tracking-wider text-primary hover:text-[#D9D3C7] transition-colors duration-200 font-bold cursor-pointer">
+                <span
+                  className="font-bbh-bartle text-[16px] xs:text-[20px] sm:text-[26px] md:text-[32px] lg:text-[36px] xl:text-[38px] uppercase tracking-wide font-bold cursor-pointer leading-none text-center md:text-right bg-cover bg-center bg-clip-text text-transparent filter contrast-125 saturate-125 transition-transform duration-300 hover:scale-[1.02]"
+                  style={{
+                    fontFamily: '"BBH Bartle", "Bebas Neue", sans-serif',
+                    backgroundImage: "url(/footer.jpg)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
                   THANKS FOR VISITING!
                 </span>
               </div>
             </div>
 
-            {/* Bottom Row: Social Links & Copyright */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-t border-outline/20 pt-4 mt-2 font-mono-code text-[12px] md:text-[14px]">
+            {/* Bottom Row: Social Links & Copyright (No horizontal line) */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-2 mt-4 font-mono-code text-[12px] md:text-[14px]">
               <div className="flex flex-row flex-wrap items-center gap-3 uppercase">
                 <a
                   href="https://github.com/Priyankm23"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-1.5 border border-outline/40 bg-surface-container-high/30 text-[#D9D3C7] hover:text-primary hover:border-primary transition-all duration-150 rounded-xs shadow-[2px_2px_0px_0px_rgba(27,28,28,1)] text-[12px] md:text-[13px] font-bold"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 border border-on-surface bg-surface text-on-surface hover:text-primary hover:border-primary transition-all duration-150 rounded-xs shadow-[2px_2px_0px_0px_rgba(27,28,28,1)] text-[12px] md:text-[13px] font-bold"
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
                     <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
@@ -1761,7 +1768,7 @@ export default function Home() {
                   href="https://linkedin.com/in/priyankmoradiya"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-1.5 border border-outline/40 bg-surface-container-high/30 text-[#D9D3C7] hover:text-primary hover:border-primary transition-all duration-150 rounded-xs shadow-[2px_2px_0px_0px_rgba(27,28,28,1)] text-[12px] md:text-[13px] font-bold"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 border border-on-surface bg-surface text-on-surface hover:text-primary hover:border-primary transition-all duration-150 rounded-xs shadow-[2px_2px_0px_0px_rgba(27,28,28,1)] text-[12px] md:text-[13px] font-bold"
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
@@ -1772,15 +1779,29 @@ export default function Home() {
                   href="https://x.com/priyank_M73"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-1.5 border border-outline/40 bg-surface-container-high/30 text-[#D9D3C7] hover:text-primary hover:border-primary transition-all duration-150 rounded-xs shadow-[2px_2px_0px_0px_rgba(27,28,28,1)] text-[12px] md:text-[13px] font-bold"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 border border-on-surface bg-surface text-on-surface hover:text-primary hover:border-primary transition-all duration-150 rounded-xs shadow-[2px_2px_0px_0px_rgba(27,28,28,1)] text-[12px] md:text-[13px] font-bold"
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                   </svg>
                   <span>X (TWITTER)</span>
                 </a>
+                <a
+                  href="/resume.pdf"
+                  target="_blank"
+                  rel="noreferrer"
+                  download="Priyank_Moradiya_Resume.pdf"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 border border-primary bg-primary text-white hover:bg-surface hover:text-primary transition-all duration-150 rounded-xs shadow-[2px_2px_0px_0px_rgba(27,28,28,1)] text-[12px] md:text-[13px] font-bold"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  <span>RESUME</span>
+                </a>
               </div>
-              <div className="text-[#D9D3C7] text-[13px] sm:text-[14px] md:text-[15px] font-semibold tracking-wide opacity-80">
+              <div className="text-on-surface/80 text-[13px] sm:text-[14px] md:text-[15px] font-semibold tracking-wide">
                 © 2026 PRIYANK MORADIYA · BUILT WITH OBSESSION
               </div>
             </div>
