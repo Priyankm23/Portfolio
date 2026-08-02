@@ -54,7 +54,7 @@ const BrandIcon = ({
 // Accurate Tech Stack Categories from previous commit
 const techStack = [
   {
-    category: "Backend Runtime",
+    category: "Frameworks",
     items: [
       { name: "Node.js", slug: "nodedotjs" },
       { name: "Express.js", slug: "express" },
@@ -514,10 +514,11 @@ export default function Home() {
       case "books":
       case "lib":
         lines = [
-          "Reading list for developers & backend engineers:",
-          "  - 'Designing Data-Intensive Applications' by Martin Kleppmann (Must-read for distributed systems)",
-          "  - 'Clean Code' by Robert C. Martin (Core software craftsmanship)",
-          "  - 'System Design Interview' by Alex Xu (Scalability strategies)",
+          "Recommended Reading List:",
+          "  - 'The Silent Patient' by Alex Michaelides (Mystery / Thriller)",
+          "  - 'Master Your Emotions' by Thibaut Meurisse (Personal Growth & Emotional Mastery)",
+          "  - 'Sapiens: A Brief History of Humankind' by Yuval Noah Harari (Anthropology & History)",
+          "  - 'What Are You Doing With Your Life?' by J. Krishnamurti (Philosophy & Self-Inquiry)",
         ];
         break;
       case "friends":
@@ -632,27 +633,31 @@ export default function Home() {
   return (
     <div className="bg-surface text-on-surface font-body-md antialiased pt-24 lg:pt-16 pb-0 min-h-screen">
       {/* TopAppBar - Responsive Horizontal Navigation Header */}
-      <header className="fixed top-0 w-full z-50 flex flex-col lg:flex-row justify-between items-stretch lg:items-center bg-inverse-surface border-b border-outline h-24 lg:h-16">
+      <header className="fixed top-0 w-full z-50 flex flex-col lg:flex-row justify-between items-stretch lg:items-center bg-inverse-surface border-b border-outline h-24 lg:h-16 px-4 md:px-6 lg:px-8">
         {/* Row 1: Brand Logo / Title */}
-        <div className="flex justify-center lg:justify-start items-center px-margin-mobile md:px-margin-desktop h-12 lg:h-full border-b border-outline/30 lg:border-b-0 lg:flex-1 lg:gap-8">
-          <div className="flex items-center gap-2">
+        <div className="flex justify-center lg:justify-start items-center h-12 lg:h-full border-b border-outline/30 lg:border-b-0 lg:flex-initial">
+          <button
+            onClick={() => scrollTo("hero")}
+            className="flex items-center gap-2 cursor-pointer hover:opacity-90 transition-opacity"
+            aria-label="Priyank Moradiya - Home"
+          >
             <span
-              className="hidden lg:inline-block material-symbols-outlined text-primary animate-pulse"
+              className="inline-block material-symbols-outlined text-primary animate-pulse text-sm sm:text-base"
               style={{ fontVariationSettings: "'FILL' 1" }}
             >
               terminal
             </span>
             <span
-              className="font-bbh-bartle text-[17px] min-[360px]:text-[19px] sm:text-[22px] md:text-[26px] leading-none text-[#D9D3C7] tracking-wider uppercase whitespace-nowrap font-bold mt-0.5"
+              className="font-bbh-bartle text-[16px] min-[360px]:text-[18px] sm:text-[22px] md:text-[24px] lg:text-[26px] leading-none text-[#D9D3C7] tracking-wider uppercase whitespace-nowrap font-bold mt-0.5"
               style={{ fontFamily: '"BBH Bartle", "Bebas Neue", sans-serif' }}
             >
               Priyank Moradiya
             </span>
-          </div>
+          </button>
         </div>
 
         {/* Row 2 on mobile: Horizontal Navigation Track (Desktop: right aligned nav) */}
-        <nav className="flex items-center justify-center sm:justify-start lg:justify-end overflow-x-auto whitespace-nowrap scrollbar-none gap-0.5 min-[360px]:gap-1 sm:gap-2 font-bold text-[10px] min-[360px]:text-[11px] min-[390px]:text-[12px] sm:text-[13px] md:text-[14px] lg:text-[16px] uppercase tracking-wide h-12 lg:h-full px-2 lg:px-margin-desktop lg:flex-none w-full lg:w-auto">
+        <nav className="flex items-center justify-center sm:justify-start lg:justify-end overflow-x-auto whitespace-nowrap scrollbar-none gap-0.5 min-[360px]:gap-1 sm:gap-1.5 lg:gap-2 font-bold text-[10px] min-[360px]:text-[11px] min-[390px]:text-[12px] sm:text-[13px] md:text-[14px] lg:text-[15px] xl:text-[16px] uppercase tracking-wide h-12 lg:h-full lg:flex-initial w-full lg:w-auto">
           <button
             onClick={() => scrollTo("about")}
             suppressHydrationWarning
@@ -742,9 +747,12 @@ export default function Home() {
           {/* Left Column (Text & Actions) */}
           <div className="w-full md:w-[48%] flex-1 md:flex-none flex flex-col justify-center px-margin-mobile md:px-0 md:pl-[calc(max(40px,(100vw-1280px)/2))] md:pr-12 relative z-10 pb-12 md:pb-0">
             <div className="flex flex-col gap-6 w-full max-w-[500px]">
-              <div className="inline-block border border-1px border-primary px-3.5 py-1.5 bg-primary/25 text-white font-mono-code text-[12px] md:text-[13px] font-bold w-max mx-auto md:mx-0 uppercase tracking-widest relative z-10 shadow-xs">
+              <span
+                className="inline-flex items-center justify-center w-max px-3.5 py-1.5 border border-[#D9D3C7]/30 bg-[#D9D3C7]/10 text-[#D9D3C7] text-[12px] sm:text-[14px] md:text-[15px] leading-none font-bruno-ace font-bold uppercase tracking-wider rounded-xs whitespace-nowrap relative z-10 mx-auto md:mx-0 shadow-xs"
+                style={{ fontFamily: '"Bruno Ace SC", "Bebas Neue", sans-serif' }}
+              >
                 BACKEND DEVELOPER
-              </div>
+              </span>
               <h1
                 className="font-display-xl-mobile md:font-display-xl text-display-xl-mobile md:text-display-xl uppercase text-[#D9D3C7] tracking-wider relative z-10 text-center md:text-left min-h-[3em] md:min-h-0"
                 style={{ fontFamily: '"Bebas Neue", sans-serif' }}
@@ -1197,14 +1205,14 @@ export default function Home() {
                     className="scroll-reveal border border-1px border-on-surface p-6 bg-d9d3c7 shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] text-on-surface"
                     style={{ transitionDelay: `${catIdx * 150}ms` }}
                   >
-                    <h3 className="font-label-sm text-label-sm text-primary uppercase border-b border-primary pb-2 mb-4">
+                    <h3 className="font-mono-code text-[14px] sm:text-[15px] font-bold text-primary uppercase border-b border-primary pb-2 mb-4 tracking-wider">
                       {cat.category}
                     </h3>
                     <div className="flex flex-col gap-2">
                       {cat.items.map((item, itemIdx) => (
                         <div
                           key={itemIdx}
-                          className="group/stack flex items-center gap-3 border border-1px border-outline/35 px-3 py-1.5 font-mono-code text-[13px] text-on-surface bg-surface hover:bg-primary hover:text-on-primary hover:border-primary transition-all duration-200 cursor-pointer"
+                          className="group/stack flex items-center gap-3 border border-1px border-outline/35 px-3.5 py-2 font-mono-code text-[14px] sm:text-[15px] text-on-surface bg-surface hover:bg-primary hover:text-on-primary hover:border-primary transition-all duration-200 cursor-pointer"
                         >
                           <span className="text-primary group-hover/stack:text-on-primary transition-colors duration-200 flex items-center justify-center">
                             <BrandIcon
@@ -1228,21 +1236,8 @@ export default function Home() {
         {/* Section 04: GitHub Contributions */}
         <section
           id="contributions"
-          className="bg-surface text-on-surface relative overflow-hidden px-margin-mobile md:px-margin-desktop py-16 border-b border-brutal z-10"
+          className="bg-black text-white relative overflow-hidden px-margin-mobile md:px-margin-desktop py-16 border-b border-brutal z-10"
         >
-          {/* Background Video */}
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover z-0 opacity-75 pointer-events-none filter contrast-105 brightness-90"
-          >
-            <source src="/git-video.mp4" type="video/mp4" />
-          </video>
-          {/* Dark Overlay for text contrast */}
-          <div className="absolute inset-0 bg-black/45 z-0 pointer-events-none" />
-
           <div className="max-w-7xl mx-auto w-full relative z-10">
             {/* Ghost Number */}
             <div className="absolute -top-10 right-0 md:-right-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-white opacity-20 pointer-events-none select-none z-0">
@@ -1398,7 +1393,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 05: Experience - Clean Brutalist Paper White Theme */}
+        {/* Section 05: Experience - System Deployment Timeline */}
         <section
           id="experience"
           className="relative px-margin-mobile md:px-margin-desktop py-16 border-b border-1px border-outline z-10 bg-surface text-on-surface overflow-hidden"
@@ -1415,193 +1410,192 @@ export default function Home() {
                   WHERE I'VE WORKED
                 </h2>
                 <div className="h-px w-full bg-outline my-4"></div>
-                <p className="font-mono-code text-on-surface font-medium text-sm">
-                  Professional deployments and architectural leadership across
-                  various production systems.
+                <p className="font-mono-code text-on-surface/80 font-medium text-sm leading-relaxed">
+                  Architectural contributions, microservices engineering, and data pipeline deployments across production environments.
                 </p>
+
+                {/* Left Side Click Hint */}
+                <div className="mt-8 pt-6 border-t border-outline/30 flex items-center gap-2 font-mono-code text-xs text-on-surface/70 font-semibold">
+                  <span className="material-symbols-outlined text-[18px]">touch_app</span>
+                  <span>+ CLICK ENTRIES TO VIEW DETAILS & TECH STACK</span>
+                </div>
               </div>
-              {/* Timeline */}
+
+              {/* Timeline Container */}
               <div className="md:col-span-8 relative">
-                <div className="flex flex-col gap-8 md:gap-10 relative z-10">
+                {/* Vertical Timeline Spine Line */}
+                <div className="relative border-l-2 border-outline/30 pl-6 sm:pl-8 md:pl-10 ml-2 md:ml-4 space-y-10">
+                  
                   {/* Job 1: Prelax Infotech */}
                   <div className="relative group scroll-reveal">
+                    {/* Node Dot / Marker */}
+                    <div className="absolute -left-[37px] sm:-left-[45px] md:-left-[53px] top-1.5 w-6 h-6 rounded-full bg-surface border-4 border-outline/40 flex items-center justify-center shadow-xs">
+                      <div className="w-2 h-2 rounded-full bg-primary" />
+                    </div>
+
+                    {/* Open-Text Content Container */}
                     <div
                       onClick={() => setPrelaxExpanded(!prelaxExpanded)}
-                      className="border-2 border-on-surface border-l-[6px] border-l-primary bg-surface-container-lowest p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(27,28,28,1)] transition-all duration-200 cursor-pointer select-none rounded-xs"
+                      className="cursor-pointer select-none py-1 group/item"
                     >
-                      <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 border-b border-outline/20 pb-4 gap-3">
+                      {/* Top Header: Role, Company & Date */}
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 border-b border-outline/20 pb-4 mb-3">
                         <div>
-                          <h3 className="font-headline-md text-[28px] md:text-[36px] leading-tight text-on-surface font-bold uppercase tracking-wide mb-1.5">
+                          <div className="inline-block bg-surface-variant/40 border border-outline/30 text-on-surface/80 px-2.5 py-0.5 font-mono-code text-[11px] font-bold uppercase tracking-wider mb-2 rounded-xs">
+                            MICROSERVICES & DISTRIBUTED SYSTEMS
+                          </div>
+                          <h3 className="font-headline-md text-[26px] sm:text-[32px] md:text-[36px] leading-tight text-on-surface font-bold uppercase tracking-wide transition-opacity hover:opacity-85">
                             BACKEND DEVELOPER INTERN
                           </h3>
-                          <div className="font-mono-code text-primary font-bold uppercase text-[14px] md:text-[15px] tracking-wider flex items-center gap-2">
+                          <div className="font-mono-code text-primary font-bold uppercase text-[14px] md:text-[15px] tracking-wider mt-1 flex items-center gap-2">
                             PRELAX INFOTECH
                           </div>
                         </div>
-                        <div className="font-mono-code text-primary font-bold text-[12px] md:text-[13px] bg-primary/10 border border-primary px-3 py-1.5 inline-block w-max rounded-xs tracking-wider shadow-xs">
+                        <div className="font-mono-code text-on-surface font-semibold text-[12px] md:text-[13px] bg-surface-variant/30 border border-outline/40 px-3 py-1.5 inline-block w-max rounded-xs tracking-wider shadow-xs">
                           MAY 2026 — JUN 2026
                         </div>
                       </div>
 
-                      <div className="font-mono-code text-on-surface/75 text-[13px] md:text-[14px] mb-4 font-semibold">
-                        Backend Developer Intern · Surat, Gujarat, India
+                      {/* Location */}
+                      <div className="font-mono-code text-on-surface/75 text-[12.5px] md:text-[13.5px] font-semibold flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[16px] text-on-surface/70">location_on</span>
+                        Surat, Gujarat, India · On-Site
                       </div>
 
-                      <ul className="font-body-md text-on-surface text-[14.5px] md:text-[15.5px] space-y-3.5 leading-relaxed font-normal">
-                        <li className="flex items-start gap-2.5">
-                          <span className="material-symbols-outlined text-primary text-[20px] font-bold mt-0.5">
-                            arrow_forward
-                          </span>
-                          <span>
-                            Architected a microservices backend with 8-10
-                            Node.js/Express services, each using its own
-                            PostgreSQL database instance
-                            {!prelaxExpanded && "....."}
-                          </span>
-                        </li>
-                        {prelaxExpanded && (
-                          <>
-                            <li className="flex items-start gap-2.5">
-                              <span className="material-symbols-outlined text-primary text-[20px] font-bold mt-0.5">
-                                arrow_forward
-                              </span>
+                      {/* Expandable Content Area */}
+                      {prelaxExpanded && (
+                        <div className="mt-4 pt-4 border-t border-outline/20 animate-fadeIn space-y-4">
+                          {/* Technical Achievements List */}
+                          <ul className="font-body-md text-on-surface text-[14.5px] md:text-[15.5px] space-y-3 leading-relaxed font-normal">
+                            <li className="flex items-start gap-3">
+                              <span className="font-mono-code text-primary font-bold mt-0.5 text-base">›</span>
                               <span>
-                                Engineered synchronous inter-service calls using
-                                gRPC and an API Gateway, with RabbitMQ topic
-                                exchanges for async event-driven logging.
+                                Architected a microservices backend with <strong className="font-bold text-on-surface border-b border-outline/40">8–10 Node.js/Express services</strong>, each operating on an isolated PostgreSQL database instance.
                               </span>
                             </li>
-                            <li className="flex items-start gap-2.5">
-                              <span className="material-symbols-outlined text-primary text-[20px] font-bold mt-0.5">
-                                arrow_forward
-                              </span>
+                            <li className="flex items-start gap-3">
+                              <span className="font-mono-code text-primary font-bold mt-0.5 text-base">›</span>
                               <span>
-                                Resolved N+1 query issues on the job browsing
-                                endpoint using Redis caching, achieving
-                                throughput of 400-600 RPS under load tests with
-                                Autocannon.
+                                Engineered synchronous inter-service RPC calls using <strong className="font-bold text-on-surface border-b border-outline/40">gRPC & API Gateway</strong>, with <strong className="font-bold text-on-surface border-b border-outline/40">RabbitMQ</strong> topic exchanges for asynchronous event-driven logging.
                               </span>
                             </li>
-                          </>
-                        )}
-                      </ul>
+                            <li className="flex items-start gap-3">
+                              <span className="font-mono-code text-primary font-bold mt-0.5 text-base">›</span>
+                              <span>
+                                Eliminated N+1 query bottlenecks on job browsing endpoints using <strong className="font-bold text-on-surface border-b border-outline/40">Redis caching</strong>, sustaining throughput of <strong className="font-bold text-on-surface">400–600 RPS</strong> under load tests with Autocannon.
+                              </span>
+                            </li>
+                          </ul>
 
-                      {/* Tech Stack Pills */}
-                      <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-outline/20">
-                        {['Node.js', 'Express', 'PostgreSQL', 'gRPC', 'RabbitMQ', 'Redis', 'Docker', 'Autocannon'].map((tech, tIdx) => (
-                          <span
-                            key={tIdx}
-                            className="border border-on-surface/30 text-on-surface bg-surface-variant/40 px-2.5 py-1 font-mono-code text-[11.5px] md:text-[12px] uppercase font-bold rounded-xs"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-
-                      <div className="mt-4 text-[12px] font-mono-code uppercase tracking-wider text-primary font-bold flex items-center gap-1">
-                        {prelaxExpanded
-                          ? "— Click card to collapse"
-                          : "+ Click card to expand"}
-                      </div>
+                          {/* Tech Stack Matrix */}
+                          <div className="flex flex-wrap gap-2 pt-2">
+                            {['Node.js', 'Express', 'PostgreSQL', 'gRPC', 'RabbitMQ', 'Redis', 'Docker', 'Autocannon'].map((tech, tIdx) => (
+                              <span
+                                key={tIdx}
+                                className="border border-on-surface/30 text-on-surface bg-surface-variant/40 hover:bg-on-surface/5 transition-colors px-2.5 py-1 font-mono-code text-[11.5px] md:text-[12px] uppercase font-bold rounded-xs"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   {/* Job 2: Infosys Springboard */}
                   <div className="relative group scroll-reveal" style={{ transitionDelay: "150ms" }}>
+                    {/* Node Dot / Marker */}
+                    <div className="absolute -left-[37px] sm:-left-[45px] md:-left-[53px] top-1.5 w-6 h-6 rounded-full bg-surface border-4 border-outline/40 flex items-center justify-center shadow-xs">
+                      <div className="w-2 h-2 rounded-full bg-primary" />
+                    </div>
+
+                    {/* Open-Text Content Container */}
                     <div
                       onClick={() => setInfosysExpanded(!infosysExpanded)}
-                      className="border-2 border-on-surface border-l-[6px] border-l-primary bg-surface-container-lowest p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(27,28,28,1)] transition-all duration-200 cursor-pointer select-none rounded-xs"
+                      className="cursor-pointer select-none py-1 group/item"
                     >
-                      <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 border-b border-outline/20 pb-4 gap-3">
+                      {/* Top Header: Role, Company & Date */}
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 border-b border-outline/20 pb-4 mb-3">
                         <div>
-                          <h3 className="font-headline-md text-[28px] md:text-[36px] leading-tight text-on-surface font-bold uppercase tracking-wide mb-1.5">
+                          <div className="inline-block bg-surface-variant/40 border border-outline/30 text-on-surface/80 px-2.5 py-0.5 font-mono-code text-[11px] font-bold uppercase tracking-wider mb-2 rounded-xs">
+                            DATA PIPELINES & PREDICTIVE APIS
+                          </div>
+                          <h3 className="font-headline-md text-[26px] sm:text-[32px] md:text-[36px] leading-tight text-on-surface font-bold uppercase tracking-wide transition-opacity hover:opacity-85">
                             PYTHON BACKEND INTERN
                           </h3>
-                          <div className="font-mono-code text-primary font-bold uppercase text-[14px] md:text-[15px] tracking-wider flex items-center gap-2">
+                          <div className="font-mono-code text-primary font-bold uppercase text-[14px] md:text-[15px] tracking-wider mt-1 flex items-center gap-2">
                             INFOSYS SPRINGBOARD
                           </div>
                         </div>
-                        <div className="font-mono-code text-primary font-bold text-[12px] md:text-[13px] bg-primary/10 border border-primary px-3 py-1.5 inline-block w-max rounded-xs tracking-wider shadow-xs">
+                        <div className="font-mono-code text-on-surface font-semibold text-[12px] md:text-[13px] bg-surface-variant/30 border border-outline/40 px-3 py-1.5 inline-block w-max rounded-xs tracking-wider shadow-xs">
                           AUG 2025 — OCT 2025
                         </div>
                       </div>
 
-                      <div className="font-mono-code text-on-surface/75 text-[13px] md:text-[14px] mb-4 font-semibold">
-                        Python Backend Intern · Remote · Anand, Gujarat, India
+                      {/* Location */}
+                      <div className="font-mono-code text-on-surface/75 text-[12.5px] md:text-[13.5px] font-semibold flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[16px] text-on-surface/70">location_on</span>
+                        Remote · Anand, Gujarat, India
                       </div>
 
-                      <ul className="font-body-md text-on-surface text-[14.5px] md:text-[15.5px] space-y-3.5 leading-relaxed font-normal">
-                        <li className="flex items-start gap-2.5">
-                          <span className="material-symbols-outlined text-primary text-[20px] font-bold mt-0.5">
-                            arrow_forward
-                          </span>
-                          <span>
-                            Collaborated in a 25+ member Agile/Scrum team across
-                            4 sprints, managing testing and backlog
-                            documentation{!infosysExpanded && "....."}
-                          </span>
-                        </li>
-                        {infosysExpanded && (
-                          <>
-                            <li className="flex items-start gap-2.5">
-                              <span className="material-symbols-outlined text-primary text-[20px] font-bold mt-0.5">
-                                arrow_forward
-                              </span>
+                      {/* Expandable Content Area */}
+                      {infosysExpanded && (
+                        <div className="mt-4 pt-4 border-t border-outline/20 animate-fadeIn space-y-4">
+                          {/* Technical Achievements List */}
+                          <ul className="font-body-md text-on-surface text-[14.5px] md:text-[15.5px] space-y-3 leading-relaxed font-normal">
+                            <li className="flex items-start gap-3">
+                              <span className="font-mono-code text-primary font-bold mt-0.5 text-base">›</span>
                               <span>
-                                Built a time-series crypto pipeline (SQLite,
-                                Pandas, NumPy) with Ridge Regression return
-                                prediction.
+                                Collaborated in a <strong className="font-bold text-on-surface border-b border-outline/40">25+ member Agile/Scrum team</strong> across 4 sprints, managing automated testing suites and API documentation.
                               </span>
                             </li>
-                            <li className="flex items-start gap-2.5">
-                              <span className="material-symbols-outlined text-primary text-[20px] font-bold mt-0.5">
-                                arrow_forward
-                              </span>
+                            <li className="flex items-start gap-3">
+                              <span className="font-mono-code text-primary font-bold mt-0.5 text-base">›</span>
                               <span>
-                                Integrated stress testing across diverse market
-                                scenarios, exposing endpoints via FastAPI and a
-                                Streamlit dashboard.
+                                Built a time-series crypto pipeline using <strong className="font-bold text-on-surface border-b border-outline/40">SQLite, Pandas & NumPy</strong> with Ridge Regression return prediction models.
                               </span>
                             </li>
-                          </>
-                        )}
-                      </ul>
+                            <li className="flex items-start gap-3">
+                              <span className="font-mono-code text-primary font-bold mt-0.5 text-base">›</span>
+                              <span>
+                                Integrated stress testing across market volatility scenarios, exposing endpoints via <strong className="font-bold text-on-surface border-b border-outline/40">FastAPI</strong> and an interactive Streamlit dashboard.
+                              </span>
+                            </li>
+                          </ul>
 
-                      {/* Tech Stack Pills */}
-                      <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-outline/20">
-                        {['Python', 'FastAPI', 'SQLite', 'Pandas', 'NumPy', 'Ridge Regression', 'Streamlit', 'Agile/Scrum'].map((tech, tIdx) => (
-                          <span
-                            key={tIdx}
-                            className="border border-on-surface/30 text-on-surface bg-surface-variant/40 px-2.5 py-1 font-mono-code text-[11.5px] md:text-[12px] uppercase font-bold rounded-xs"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
+                          {/* Tech Stack Matrix */}
+                          <div className="flex flex-wrap gap-2 pt-2">
+                            {['Python', 'FastAPI', 'SQLite', 'Pandas', 'NumPy', 'Ridge Regression', 'Streamlit', 'Agile/Scrum'].map((tech, tIdx) => (
+                              <span
+                                key={tIdx}
+                                className="border border-on-surface/30 text-on-surface bg-surface-variant/40 hover:bg-on-surface/5 transition-colors px-2.5 py-1 font-mono-code text-[11.5px] md:text-[12px] uppercase font-bold rounded-xs"
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
 
-                      {/* Certificate & Expand Row */}
-                      <div className="flex flex-wrap gap-4 items-center justify-between pt-4 border-t border-outline/20 mt-4">
-                        <div className="text-[12px] font-mono-code uppercase tracking-wider text-primary font-bold flex items-center gap-1">
-                          {infosysExpanded
-                            ? "— Click card to collapse"
-                            : "+ Click card to expand"}
+                          {/* Certificate Verification Button */}
+                          <div className="pt-2 flex justify-end">
+                            <a
+                              href="https://bit.ly/Priyank-InfosysCert"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-1.5 border border-on-surface bg-surface text-on-surface hover:bg-on-surface hover:text-surface transition-colors duration-200 px-4 py-2 font-mono-code text-[12px] font-bold uppercase cursor-pointer rounded-xs shadow-xs"
+                            >
+                              <span className="material-symbols-outlined text-[16px]">
+                                verified_user
+                              </span>
+                              VIEW VERIFIED CREDENTIAL <span className="text-xs">→</span>
+                            </a>
+                          </div>
                         </div>
-
-                        <a
-                          href="https://bit.ly/Priyank-InfosysCert"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center gap-1.5 border border-on-surface bg-surface text-on-surface hover:bg-primary hover:text-white transition-colors duration-200 px-4 py-2 font-mono-code text-[12px] font-bold uppercase cursor-pointer rounded-xs shadow-xs"
-                        >
-                          <span className="material-symbols-outlined text-[16px]">
-                            verified_user
-                          </span>
-                          VIEW CREDENTIAL <span className="text-xs">→</span>
-                        </a>
-                      </div>
+                      )}
                     </div>
                   </div>
+
                 </div>
               </div>
             </div>
@@ -1626,7 +1620,7 @@ export default function Home() {
             </div>
             <header className="border-b border-[#2a2a2a] pb-base relative z-10 mt-16">
               <h2 className="font-headline-md text-headline-md text-[#D9D3C7] tracking-wider uppercase">
-                KNOW MORE ABOUT ME.....
+                MORE ABOUT ME
               </h2>
             </header>
 

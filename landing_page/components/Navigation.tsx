@@ -40,9 +40,15 @@ export const Navigation = () => {
         }`}
       >
         <div className="relative h-full flex items-center justify-between px-5 md:px-10 max-w-7xl mx-auto">
-          {/* Logo/Name placeholder */}
-          <div className="flex-1 hidden md:block">
-            {/* PM removed as requested */}
+          {/* Logo/Name */}
+          <div className="flex-1 flex items-center">
+            <Link
+              href="/"
+              className="font-bold text-base sm:text-lg md:text-xl tracking-wider text-ink hover:text-accent font-display transition-colors whitespace-nowrap uppercase"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Priyank Moradiya
+            </Link>
           </div>
 
           {/* Desktop Links */}

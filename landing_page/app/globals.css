@@ -155,6 +155,10 @@
   font-family: 'BBH Bartle', 'Bebas Neue', sans-serif;
 }
 
+.font-bruno-ace {
+  font-family: 'Bruno Ace SC', 'Bebas Neue', sans-serif;
+}
+
 
 .blink {
   animation: blink-animation 1s steps(2, start) infinite;
