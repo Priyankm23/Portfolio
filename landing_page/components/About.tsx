@@ -16,6 +16,12 @@ export const About = () => {
       </video>
       <div className="absolute inset-0 bg-black/35 z-0 pointer-events-none" />
 
+      <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-20">
+        <span className="font-label text-sm md:text-base text-white/70 tracking-[0.2em] uppercase drop-shadow-sm">
+          Who I Am
+        </span>
+      </div>
+
       <div className="max-w-6xl mx-auto w-full relative z-10">
         <div className="max-w-4xl">
         {/* Section label */}

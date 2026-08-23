@@ -23,3 +23,6 @@ public/simple_router_1.png
 public/simple_server_1.png
 public/full_portrait.png
 public/self.jpeg
+
+# TypeScript build cache
+*.tsbuildinfo

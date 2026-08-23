@@ -2,8 +2,16 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Terminal, Workflow } from "lucide-react";
-import { GenerativeHeroBg } from "@/components/GenerativeHeroBg";
 import { fetchPortfolioApi } from "@/lib/api";
+import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
+import { AnimatedMetric } from "@/components/ui/animated-metric";
+import { MenuHorizontal } from "@/components/ui/menu-horizontal";
+import { NotificationList } from "@/components/ui/components-community-notification-list";
+import { ContainerScroll, CardSticky } from "@/components/ui/cards-stack";
+import AboutSection3 from "@/components/ui/about-section";
+import { motion, AnimatePresence } from "motion/react";
+import { ShaderBackground } from "@/components/ui/shader-background";
+import Lenis from "lenis";
 
 // Project Interface
 interface Project {
@@ -17,7 +25,24 @@ interface Project {
   image?: string;
   logoUrl?: string;
   screenshot?: string;
+  metrics?: { label: string; value: string }[];
 }
+
+// ExperienceHighlight component to animate underlines on scroll
+const ExperienceHighlight = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <span className="relative inline-block font-semibold text-zinc-100 whitespace-nowrap">
+      {children}
+      <motion.span
+        className="absolute bottom-[-0.12em] left-0 right-0 h-[0.08em] bg-[#D9D3C7] origin-left"
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true, amount: 0.5 }}
+        transition={{ duration: 0.65, ease: [0.4, 0, 0.2, 1] }}
+      />
+    </span>
+  );
+};
 
 // BrandIcon component using simpleicons mask
 const BrandIcon = ({
@@ -29,14 +54,14 @@ const BrandIcon = ({
 }) => {
   if (!slug)
     return (
-      <span className="flex items-center justify-center w-4 h-4">
-        {fallback || <Terminal className="w-3.5 h-3.5" />}
+      <span className="flex items-center justify-center w-5 h-5">
+        {fallback || <Terminal className="w-4.5 h-4.5" />}
       </span>
     );
 
   return (
     <div
-      className="w-4 h-4 bg-current transition-colors"
+      className="w-5 h-5 bg-current transition-colors"
       style={{
         maskImage: `url(https://cdn.simpleicons.org/${slug})`,
         maskRepeat: "no-repeat",
@@ -51,7 +76,6 @@ const BrandIcon = ({
   );
 };
 
-// Accurate Tech Stack Categories from previous commit
 const techStack = [
   {
     category: "Frameworks",
@@ -94,6 +118,26 @@ export default function Home() {
   const [prelaxExpanded, setPrelaxExpanded] = useState(false);
   const [infosysExpanded, setInfosysExpanded] = useState(false);
 
+  // Initialize Lenis smooth scroll
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    });
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
+  // Interval for toggling screenshots or similar
   useEffect(() => {
     const interval = setInterval(() => {
       setShowScreenshot((prev) => !prev);
@@ -111,36 +155,23 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [words.length]);
 
-  const HELP_LINES = [
-    "Available commands (OS-style shortcuts):",
-    "  h        - Display this help menu",
-    "  faq      - View common questions pool (e.g., 'faq 1')",
-    "  lib      - View my reading recommendations (library)",
-    "  net      - View tech friends from my network",
-    "  yt       - View favorite developer channels",
-    "  cur      - View my active personal project",
-    "  ls       - List my recent deployments",
-    "  cat      - Initiate communication protocol (contact)",
-    "  cls      - Purge terminal output",
-  ];
-
-  // States and fetching for visitor count & interactive terminal
+  // States and fetching for visitor count & contact form
   const [visitorCount, setVisitorCount] = useState<number | null>(null);
-  const [playInput, setPlayInput] = useState("");
-  const [playHistory, setPlayHistory] = useState<string[]>([
-    "[SYSTEM BOOT SUCCESSFUL]",
-    "Welcome visitor! Established secure terminal session.",
-    "",
-    ...HELP_LINES,
-  ]);
-  const terminalBodyRef = useRef<HTMLDivElement>(null);
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [statusMessage, setStatusMessage] = useState("");
 
   // Fetch real GitHub contribution data
   const [githubCommits, setGithubCommits] = useState<number>(234);
   const [githubRepos, setGithubRepos] = useState<number>(18);
   const [githubPRs, setGithubPRs] = useState<number>(7);
   const [githubStreak, setGithubStreak] = useState<number>(0);
-  const [githubDays, setGithubDays] = useState<{ date: string; count: number; level: number }[]>([]);
+  const [githubDays, setGithubDays] = useState<
+    { date: string; count: number; level: number }[]
+  >([]);
 
   useEffect(() => {
     const fetchGithubData = async () => {
@@ -243,12 +274,6 @@ export default function Home() {
           const data = await response.json();
           if (data && typeof data.visit_count === "number") {
             setVisitorCount(data.visit_count);
-            setPlayHistory([
-              "[SYSTEM BOOT SUCCESSFUL]",
-              `Welcome visitor #${data.visit_count}! Established secure terminal session.`,
-              "",
-              ...HELP_LINES,
-            ]);
             return;
           }
         }
@@ -267,12 +292,6 @@ export default function Home() {
             const data = await backupResponse.json();
             if (data && typeof data.visit_count === "number") {
               setVisitorCount(data.visit_count);
-              setPlayHistory([
-                "[SYSTEM BOOT SUCCESSFUL]",
-                `Welcome visitor #${data.visit_count}! Established secure terminal session.`,
-                "",
-                ...HELP_LINES,
-              ]);
               return;
             }
           }
@@ -283,20 +302,16 @@ export default function Home() {
 
       // Fallback
       setVisitorCount(1243);
-      setPlayHistory([
-        "[SYSTEM BOOT SUCCESSFUL]",
-        "Welcome visitor #1243! Established secure terminal session.",
-        "",
-        ...HELP_LINES,
-      ]);
     };
     fetchVisits();
   }, []);
 
-
   // Scroll reveal IntersectionObserver setup
   useEffect(() => {
-    const revealCallback = (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
+    const revealCallback = (
+      entries: IntersectionObserverEntry[],
+      observer: IntersectionObserver,
+    ) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add("reveal-visible");
@@ -313,7 +328,7 @@ export default function Home() {
 
     const observer = new IntersectionObserver(revealCallback, observerOptions);
     const revealElements = document.querySelectorAll(
-      ".scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .project-card-reveal"
+      ".scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .project-card-reveal",
     );
     revealElements.forEach((el) => observer.observe(el));
 
@@ -328,9 +343,191 @@ export default function Home() {
     return new Date(year, month - 1, day);
   };
 
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+    setStatusMessage("");
+
+    try {
+      const apiBaseUrl = (
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+      ).replace(/\/+$/, "");
+      
+      const response = await fetch(`${apiBaseUrl}/api/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: contactName,
+          email: contactEmail,
+          message: contactMessage,
+        }),
+      });
+
+      if (response.ok) {
+        setSubmitStatus("success");
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        setSubmitStatus("error");
+        setStatusMessage(errorData.error || "Server returned an error status.");
+      }
+    } catch (err) {
+      console.error("Error submitting contact form:", err);
+      setSubmitStatus("error");
+      setStatusMessage("Failed to reach connection server.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const projects: Project[] = [
+    {
+      title: "Cadence",
+      dates: "May 2026 – Present",
+      tech: "Python · FastAPI",
+      description: (
+        <>
+          A real-time meeting transcription and intelligence platform. Built a
+          Deepgram Nova-2 transcription pipeline cutting audio bandwidth by{" "}
+          <AnimatedMetric>83.3%</AnimatedMetric> and enabling{" "}
+          <AnimatedMetric>sub-150ms</AnimatedMetric> transcription latency via
+          Redis Pub/Sub. Integrates a local Silero VAD model to discard
+          low-confidence speech frames, reducing database report retrieval time
+          from <AnimatedMetric>1.25s</AnimatedMetric> to{" "}
+          <AnimatedMetric>50ms</AnimatedMetric> (
+          <AnimatedMetric>35%</AnimatedMetric> total reduction). Uses a
+          leaky-bucket rate limiter to pace summary generation with a{" "}
+          <AnimatedMetric>100%</AnimatedMetric> success rate.
+        </>
+      ),
+      tags: ["Python", "FastAPI", "LiveKit", "WebRTC", "Deepgram", "Groq"],
+      githubUrl: "https://github.com/Priyankm23/Cadence-backend",
+      liveUrl: "https://cadence-meeting-intelligence.vercel.app/",
+      image: "/cadence_graphic.png",
+      logoUrl: "/cadence_logo.png",
+      screenshot: "/cadence.png",
+      metrics: [
+        { label: "Audio Bandwidth", value: "-83.3%" },
+        { label: "Transcription Latency", value: "Sub-150ms" },
+        { label: "Report Retrieval", value: "1.25s → 50ms" },
+        { label: "Report Gen Time", value: "-35%" },
+        { label: "Summary Success", value: "100%" },
+      ],
+    },
+    {
+      title: "Markivo",
+      dates: "Mar – Apr 2026",
+      tech: "TypeScript · Express",
+      description: (
+        <>
+          A high-throughput multi-vendor e-commerce API. Implemented Stripe
+          checkout with idempotency keys to prevent duplicate payments under
+          concurrent checkouts, and used database row-level locking inside
+          transactions to guarantee <AnimatedMetric>zero</AnimatedMetric> stock
+          drift. Configured a TTL caching layer for the product catalog that
+          scaled read throughput from{" "}
+          <AnimatedMetric>199 to 565+ RPS</AnimatedMetric> and cut p95 latency
+          from <AnimatedMetric>871ms</AnimatedMetric> to{" "}
+          <AnimatedMetric>83ms</AnimatedMetric>.
+        </>
+      ),
+      tags: [
+        "TypeScript",
+        "Express.js",
+        "PostgreSQL",
+        "Prisma ORM",
+        "Redis",
+        "Stripe",
+      ],
+      githubUrl: "https://github.com/Priyankm23/marketflow",
+      liveUrl: "https://marketflow-your-one-stop-shop.vercel.app/",
+      image: "/markivo_graphic.png",
+      logoUrl: "/markivo_logo.png",
+      screenshot: "/marketflow.png",
+      metrics: [
+        { label: "Read Throughput", value: "199 → 565+ RPS" },
+        { label: "p95 Latency", value: "871ms → 83ms" },
+        { label: "Stock Drift", value: "0% (Zero)" },
+      ],
+    },
+    {
+      title: "SafeTrail",
+      dates: "Jan – Feb 2026",
+      tech: "JavaScript · Node.js",
+      description: (
+        <>
+          A smart tourist safety backend with JWT role-based access, real-time
+          SOS alerts, and live location streaming via Socket.IO. Features a
+          background risk engine that scores geographic grid cells{" "}
+          <AnimatedMetric>every 30 minutes</AnimatedMetric> with time-decay
+          weighting, and auto-generates TTL-bound geofences from itineraries.
+          Enforces tamper-proof event auditing using{" "}
+          <AnimatedMetric>Polygon L2</AnimatedMetric> blockchain and encrypts
+          PII via <AnimatedMetric>AES-256</AnimatedMetric>.
+        </>
+      ),
+      tags: [
+        "Node.js",
+        "Express.js",
+        "MongoDB",
+        "Socket.IO",
+        "Ethers.js",
+        "Polygon",
+      ],
+      githubUrl: "https://github.com/Priyankm23/safetrail",
+      liveUrl: "https://safetrail-your-safety-in-your-mobile.vercel.app/",
+      image: "/safetrail_graphic.png",
+      logoUrl: "/safetrail_logo.png",
+      screenshot: "/safetrail.png",
+      metrics: [
+        { label: "Risk Update", value: "Every 30 Mins" },
+        { label: "PII Security", value: "AES-256" },
+        { label: "Blockchain Ledger", value: "Polygon L2" },
+      ],
+    },
+    /* Bandit CLI - Commented out for now
+    {
+      title: "Bandit CLI",
+      dates: "Jan 2026",
+      tech: "TypeScript · Node.js",
+      description: (
+        <>
+          An interactive CLI audit tool validating project health. Scans dependencies, runs test coverage audits, packages configuration validations, and outputs interactive brutalist dashboards built with raw terminal strings.
+          <span className="block text-[11.5px] text-on-surface-variant/75 mt-1.5 font-mono-code">
+            * Created with zero understanding of code but trying to understand it for improvement.
+          </span>
+        </>
+      ),
+      tags: [
+        "TypeScript",
+        "Node.js",
+        "Commander",
+        "Clack Prompts",
+        "CLI",
+        "NPM Package",
+      ],
+      githubUrl: "https://github.com/Priyankm23/Backend-Audit-CLI-Tool---Bandit",
+      liveUrl: "https://bandit-cli.vercel.app/",
+      image: "/bandit_graphic.png",
+      logoUrl: "/bandit_logo.png",
+      screenshot: "/bandit.png",
+    }
+    */
+  ];
+
   // Align days to Sunday-Saturday weeks
-  let weeks: { date: string; count: number; level: number; isPlaceholder?: boolean }[][] = [];
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  let weeks: {
+    date: string;
+    count: number;
+    level: number;
+    isPlaceholder?: boolean;
+  }[][] = [];
+  const monthNames = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
 
   if (githubDays.length > 0) {
     const firstDate = parseDate(githubDays[0].date);
@@ -379,240 +576,32 @@ export default function Home() {
     }
   }
 
-  const projects: Project[] = [
-    {
-      title: "Cadence",
-      dates: "May 2026 – Present",
-      tech: "Python · FastAPI",
-      description:
-        "A real-time microservices platform capturing and analyzing meeting audio. Streams audio seamlessly via Socket.IO, transcribes speech using Whisper v3 via Groq API, and automatically extracts summaries and action items with Llama 3.3.",
-      tags: [
-        "FastAPI",
-        "Socket.IO",
-        "Groq API",
-        "Redis",
-        "PostgreSQL",
-        "Docker",
-      ],
-      githubUrl: "https://github.com/Priyankm23/Cadence-backend",
-      liveUrl: "https://cadence-meeting-intelligence.vercel.app/",
-      image: "/cadence_graphic.png",
-      logoUrl: "/cadence_logo.png",
-      screenshot: "/cadence.png",
-    },
-    {
-      title: "Markivo",
-      dates: "Mar 2026 – Present",
-      tech: "TypeScript · Express",
-      description:
-        "A high-throughput multi-vendor e-commerce API managing complex order lifecycles and idempotent Stripe payments. Uses PostgreSQL row-level locking to prevent inventory overselling, offloading intensive tasks to Redis and BullMQ queues.",
-      tags: ["Express", "PostgreSQL", "Redis", "BullMQ", "Prisma", "Zod"],
-      githubUrl: "https://github.com/Priyankm23/marketflow",
-      liveUrl: "https://marketflow-your-one-stop-shop.vercel.app/",
-      image: "/markivo_graphic.png",
-      logoUrl: "/markivo_logo.png",
-      screenshot: "/marketflow.png",
-    },
-    {
-      title: "SafeTrail",
-      dates: "Jan – Feb 2026",
-      tech: "JavaScript · Node.js",
-      description:
-        "A tourist safety API featuring decentralized identity on Polygon. Dynamically computes proximity-based safety scores using Haversine distance, operates auto-expiring itinerary geofences, and streams live SOS alerts via WebSockets.",
-      tags: ["Express", "MongoDB", "Socket.IO", "Ethers.js", "Redis"],
-      githubUrl: "https://github.com/Priyankm23/safetrail",
-      liveUrl: "https://safetrail-your-safety-in-your-mobile.vercel.app/",
-      image: "/safetrail_graphic.png",
-      logoUrl: "/safetrail_logo.png",
-      screenshot: "/safetrail.png",
-    },
-    /* Bandit CLI - Commented out for now
-    {
-      title: "Bandit CLI",
-      dates: "Jun 2026 – Present (Beta)",
-      tech: "TypeScript · Node.js",
-      description: (
-        <>
-          An interactive terminal workspace companion and auditor for backend
-          developers. Automates codebase scans for route discovery, benchmarks
-          endpoints under load with live latency percentiles, manages port
-          processes, and audits env setups.{" "}
-          <span className="inline-block bg-primary/10 border border-primary text-primary px-1.5 py-0.5 text-[10px] font-mono-code uppercase font-bold tracking-wider rounded-sm ml-1 select-none">
-            Vibe Coded
-          </span>
-          <span className="block text-[11.5px] text-on-surface-variant/75 mt-1.5 font-mono-code">
-            * Created with zero understanding of code but trying to understand
-            it for improvement.
-          </span>
-        </>
-      ),
-      tags: [
-        "TypeScript",
-        "Node.js",
-        "Commander",
-        "Clack Prompts",
-        "CLI",
-        "NPM Package",
-      ],
-      githubUrl:
-        "https://github.com/Priyankm23/Backend-Audit-CLI-Tool---Bandit",
-      liveUrl: "https://bandit-cli.vercel.app/",
-      image: "/bandit_graphic.png",
-      logoUrl: "/bandit_logo.png",
-      screenshot: "/bandit.png",
-    },
-    */
-  ];
-
-  // Command input handler for the Section 06 Play terminal
-  const handlePlaySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const input = playInput.trim().toLowerCase();
-    if (!input) return;
-
-    const parts = input.split(" ");
-    const command = parts[0];
-    const argument = parts[1];
-
-    let lines: string[] = [];
-    switch (command) {
-      case "help":
-      case "h":
-        lines = HELP_LINES;
-        break;
-      case "faq":
-        if (!argument) {
-          lines = [
-            "FAQ Pool (Select a question by typing 'faq <number>'):",
-            "  1. What is your career goal as a developer?",
-            "  2. Why do you specialize in backend engineering?",
-            "  3. Are you open to relocation or remote opportunities?",
-            "",
-            "Example: Type 'faq 1' to view the answer.",
-          ];
-        } else if (argument === "1") {
-          lines = [
-            "Q1: What is your career goal as a developer?",
-            "A1: To build highly optimized backend architectures that handle heavy traffic under load while ensuring 99.9% uptime, clean APIs, and robust security.",
-          ];
-        } else if (argument === "2") {
-          lines = [
-            "Q2: Why do you specialize in backend engineering?",
-            "A2: Backend is the brain of the system. I love working with database schemas, optimizing queries, row-level locks, pub-sub architectures, and job queues like BullMQ.",
-          ];
-        } else if (argument === "3") {
-          lines = [
-            "Q3: Are you open to relocation or remote opportunities?",
-            "A3: Absolutely. I am ready to relocate for high-impact backend engineering roles and am also comfortable working in fully remote setups.",
-          ];
-        } else {
-          lines = [
-            `Invalid question number. Type 'faq' to see the list of questions.`,
-          ];
-        }
-        break;
-      case "books":
-      case "lib":
-        lines = [
-          "Recommended Reading List:",
-          "  - 'The Silent Patient' by Alex Michaelides (Mystery / Thriller)",
-          "  - 'Master Your Emotions' by Thibaut Meurisse (Personal Growth & Emotional Mastery)",
-          "  - 'Sapiens: A Brief History of Humankind' by Yuval Noah Harari (Anthropology & History)",
-          "  - 'What Are You Doing With Your Life?' by J. Krishnamurti (Philosophy & Self-Inquiry)",
-        ];
-        break;
-      case "friends":
-      case "net":
-        lines = [
-          "Tech friends in my circle:",
-          "  - Meet Patel (AI Engineer)   : If a solution is doable by any means, it will be done by him. Currently at ISRO.",
-          "  - Utsav Bhalani (ML Systems) : True ML system optimizer and my roommate. Keeps track of the AI industry at its tip.",
-          "  - Dhir Agarwal / RYUK (ML)   : Learning and improving for what can make him better as ML engineer. Makes crazy edits.",
-          "  - Yajush Gorasiya (Full Stack) : Aspiring full-stack engineer and my high-throughput movie recommendation engine.",
-        ];
-        break;
-      case "youtubers":
-      case "yt":
-        lines = [
-          "Favorite developer channels I learn from:",
-          "  - Piyush Garg : Master of modern Javascript, system design, and production-grade full-stack patterns.",
-          "  - Manu Arora  : Premium UI builder, interactive animations, and Next.js crafting.",
-          "  - Coder's Gyan: Excellent structural tutorials in Node.js, API design, and clean backend systems.",
-        ];
-        break;
-      case "project":
-      case "cur":
-        lines = [
-          "What I'm building right now:",
-          "  - Cadence (Active)",
-          "  - Description: Working on RAG (Retrieval-Augmented Generation) to get answers across the meetings and making it compatible for scalable use as well as for Hindi voice meetings to get accurate transcript for Hindi voice.",
-          "  - Current Progress: ~60% complete",
-        ];
-        break;
-      case "projects":
-      case "ls":
-        lines = [
-          "Deployments matrix:",
-          "  - Markivo: High-throughput e-commerce backend built with TypeScript, Express, PostgreSQL, Redis, and BullMQ.",
-          "  - SafeTrail: Tourist safety engine utilizing blockchain identity, Express, and WebSockets.",
-          "  - Cadence: Real-time FastAPI meeting audio capture and AI intelligence platform streaming via Socket.IO.",
-        ];
-        break;
-      case "contact":
-      case "cat":
-        lines = [
-          "Comms protocol initiated:",
-          "  - Email   : priyankmoradiya41@gmail.com",
-          "  - GitHub  : github.com/Priyankm23",
-          "  - Status  : READY_FOR_HIRE",
-        ];
-        break;
-      case "clear":
-      case "cls":
-        setPlayHistory([]);
-        setPlayInput("");
-        return;
-      default:
-        lines = [
-          `sh: command not found: '${command}'. Type 'h' or 'help' for options.`,
-        ];
-    }
-
-    setPlayHistory((prev) => [
-      ...prev,
-      `visitor@portfolio:~$ ${playInput}`,
-      ...lines,
-    ]);
-    setPlayInput("");
-  };
-
-  useEffect(() => {
-    if (terminalBodyRef.current) {
-      terminalBodyRef.current.scrollTop = terminalBodyRef.current.scrollHeight;
-    }
-  }, [playHistory]);
-
-  // Smooth scroll logic
   const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-      setActiveSection(id);
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 64; // header height
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
     }
   };
 
-  // Section Observer on Scroll
   useEffect(() => {
-    const sections = [
-      "hero",
-      "about",
-      "projects",
-      "stack",
-      "contributions",
-      "experience",
-      "play",
-    ];
     const handleScroll = () => {
+      const sections = [
+        "about",
+        "projects",
+        "stack",
+        "contributions",
+        "experience",
+        "play",
+      ];
       const scrollPos = window.scrollY + 200;
       for (const section of sections) {
         const el = document.getElementById(section);
@@ -631,218 +620,131 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-surface text-on-surface font-body-md antialiased pt-24 lg:pt-16 pb-0 min-h-screen">
+    <div className="bg-surface text-on-surface font-body-md antialiased pt-16 pb-0 min-h-screen">
       {/* TopAppBar - Responsive Horizontal Navigation Header */}
-      <header className="fixed top-0 w-full z-50 flex flex-col lg:flex-row justify-between items-stretch lg:items-center bg-inverse-surface border-b border-outline h-24 lg:h-16 px-4 md:px-6 lg:px-8">
-        {/* Row 1: Brand Logo / Title */}
-        <div className="flex justify-center lg:justify-start items-center h-12 lg:h-full border-b border-outline/30 lg:border-b-0 lg:flex-initial">
-          <button
-            onClick={() => scrollTo("hero")}
-            className="flex items-center gap-2 cursor-pointer hover:opacity-90 transition-opacity"
-            aria-label="Priyank Moradiya - Home"
-          >
-            <span
-              className="inline-block material-symbols-outlined text-primary animate-pulse text-sm sm:text-base"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              terminal
-            </span>
-            <span
-              className="font-bbh-bartle text-[16px] min-[360px]:text-[18px] sm:text-[22px] md:text-[24px] lg:text-[26px] leading-none text-[#D9D3C7] tracking-wider uppercase whitespace-nowrap font-bold mt-0.5"
-              style={{ fontFamily: '"BBH Bartle", "Bebas Neue", sans-serif' }}
-            >
-              Priyank Moradiya
-            </span>
-          </button>
-        </div>
-
-        {/* Row 2 on mobile: Horizontal Navigation Track (Desktop: right aligned nav) */}
-        <nav className="flex items-center justify-center sm:justify-start lg:justify-end overflow-x-auto whitespace-nowrap scrollbar-none gap-0.5 min-[360px]:gap-1 sm:gap-1.5 lg:gap-2 font-bold text-[10px] min-[360px]:text-[11px] min-[390px]:text-[12px] sm:text-[13px] md:text-[14px] lg:text-[15px] xl:text-[16px] uppercase tracking-wide h-12 lg:h-full lg:flex-initial w-full lg:w-auto">
-          <button
-            onClick={() => scrollTo("about")}
-            suppressHydrationWarning
-            className={`px-1 min-[360px]:px-1.5 min-[390px]:px-2.5 sm:px-4 py-1 sm:py-1.5 text-center transition-colors duration-0 h-fit cursor-pointer flex-shrink-0 ${
-              activeSection === "about"
-                ? "bg-primary text-on-primary"
-                : "text-[#D9D3C7] hover:text-primary hover:bg-surface-dim/10"
-            }`}
-          >
-            ABOUT
-          </button>
-          <button
-            onClick={() => scrollTo("projects")}
-            suppressHydrationWarning
-            className={`px-1 min-[360px]:px-1.5 min-[390px]:px-2.5 sm:px-4 py-1 sm:py-1.5 text-center transition-colors duration-0 h-fit cursor-pointer flex-shrink-0 ${
-              activeSection === "projects"
-                ? "bg-primary text-on-primary"
-                : "text-[#D9D3C7] hover:text-primary hover:bg-surface-dim/10"
-            }`}
-          >
-            PROJECTS
-          </button>
-          <button
-            onClick={() => scrollTo("stack")}
-            suppressHydrationWarning
-            className={`px-1 min-[360px]:px-1.5 min-[390px]:px-2.5 sm:px-4 py-1 sm:py-1.5 text-center transition-colors duration-0 h-fit cursor-pointer flex-shrink-0 ${
-              activeSection === "stack"
-                ? "bg-primary text-on-primary"
-                : "text-[#D9D3C7] hover:text-primary hover:bg-surface-dim/10"
-            }`}
-          >
-            STACK
-          </button>
-          <button
-            onClick={() => scrollTo("contributions")}
-            suppressHydrationWarning
-            className={`px-1 min-[360px]:px-1.5 min-[390px]:px-2.5 sm:px-4 py-1 sm:py-1.5 text-center transition-colors duration-0 h-fit cursor-pointer flex-shrink-0 ${
-              activeSection === "contributions"
-                ? "bg-primary text-on-primary"
-                : "text-[#D9D3C7] hover:text-primary hover:bg-surface-dim/10"
-            }`}
-          >
-            COMMITS
-          </button>
-          <button
-            onClick={() => scrollTo("experience")}
-            suppressHydrationWarning
-            className={`px-1 min-[360px]:px-1.5 min-[390px]:px-2.5 sm:px-4 py-1 sm:py-1.5 text-center transition-colors duration-0 h-fit cursor-pointer flex-shrink-0 ${
-              activeSection === "experience"
-                ? "bg-primary text-on-primary"
-                : "text-[#D9D3C7] hover:text-primary hover:bg-surface-dim/10"
-            }`}
-          >
-            EXPERIENCE
-          </button>
+      <header className="fixed top-0 z-50 flex h-16 w-full items-center justify-center border-b border-outline bg-black px-4 md:px-6 lg:px-8">
+        <nav className="flex h-full w-full items-center justify-center overflow-x-auto whitespace-nowrap scrollbar-none">
+          <MenuHorizontal
+            menuItems={[
+              { label: "ABOUT", href: "about" },
+              { label: "PROJECTS", href: "projects" },
+              { label: "STACK", href: "stack" },
+              { label: "COMMITS", href: "contributions" },
+              { label: <><span className="hidden sm:inline">EXPERIENCE</span><span className="sm:hidden">EXP</span></>, href: "experience" },
+            ]}
+            activeSection={activeSection}
+            onItemClick={scrollTo}
+            skew={-8}
+          />
         </nav>
       </header>
 
       {/* Main Content Area - Full width without left sidebar margins */}
-      <main className="min-h-screen flex flex-col relative overflow-hidden bg-surface">
+      <main className="min-h-screen flex flex-col relative bg-surface">
         {/* Hero Section */}
         <section
           id="hero"
-          className="relative pt-8 pb-8 md:pt-8 md:pb-12 border-b border-1px border-outline flex flex-col md:flex-row justify-center items-center min-h-[95vh] md:min-h-[92vh] overflow-hidden z-10 text-[#D9D3C7] bg-hero-split"
+          className="relative pt-12 pb-12 md:py-8 flex flex-col justify-center items-center min-h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] z-10 text-[#D9D3C7] bg-[#0a0a0a] overflow-hidden"
         >
-          {/* Lined Grid Overlay - Locally inside Hero */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 pointer-events-none grid grid-cols-4 md:grid-cols-12 gap-0 border-r border-1px border-outline opacity-10 z-0"
-          >
-            <div className="h-full"></div>
-            <div className="h-full max-md:border-l max-md:border-1px max-md:border-on-surface"></div>
-            <div className="h-full max-md:border-l max-md:border-1px max-md:border-on-surface md:border-l md:border-1px md:border-on-surface"></div>
-            <div className="h-full max-md:border-l max-md:border-1px max-md:border-on-surface"></div>
-            <div className="h-full hidden md:block"></div>
-            <div className="h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-          </div>
+          {/* WebGL Shader Background */}
+          <ShaderBackground className="absolute inset-0 z-0 pointer-events-none opacity-25" />
 
-          <GenerativeHeroBg />
+          {/* Bottom fade overlay for smooth section transition */}
+          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0a0a0a] to-transparent pointer-events-none z-10" />
 
-          {/* Left Column (Text & Actions) */}
-          <div className="w-full md:w-[48%] flex-1 md:flex-none flex flex-col justify-center px-margin-mobile md:px-0 md:pl-[calc(max(40px,(100vw-1280px)/2))] md:pr-12 relative z-10 pb-12 md:pb-0">
-            <div className="flex flex-col gap-6 w-full max-w-[500px]">
-              <span
-                className="inline-flex items-center justify-center w-max px-3.5 py-1.5 border border-[#D9D3C7]/30 bg-[#D9D3C7]/10 text-[#D9D3C7] text-[12px] sm:text-[14px] md:text-[15px] leading-none font-bruno-ace font-bold uppercase tracking-wider rounded-xs whitespace-nowrap relative z-10 mx-auto md:mx-0 shadow-xs"
-                style={{ fontFamily: '"Bruno Ace SC", "Bebas Neue", sans-serif' }}
-              >
-                BACKEND DEVELOPER
-              </span>
-              <h1
-                className="font-display-xl-mobile md:font-display-xl text-display-xl-mobile md:text-display-xl uppercase text-[#D9D3C7] tracking-wider relative z-10 text-center md:text-left min-h-[3em] md:min-h-0"
+          {/* Hero Content Container */}
+          <div className="w-full max-w-full mx-auto px-8 md:px-20 lg:px-28 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-24 items-center relative z-10 h-full">
+            {/* Left Column: Text Content */}
+            <div className="md:col-span-8 flex flex-col items-start text-left gap-6 w-full md:pl-10">
+              {/* Greeting + Name */}
+              <div className="flex flex-col gap-2 items-start select-none">
+                <span className="text-[18px] sm:text-[22px] md:text-[24px] text-zinc-400 font-sans font-medium tracking-widest uppercase">
+                  HI, I'M
+                </span>
+                <h1
+                  className="text-[38px] xs:text-[48px] sm:text-[68px] md:text-[80px] leading-tight text-[#D9D3C7] tracking-wider uppercase font-bold pr-4 md:pr-0"
+                  style={{ fontFamily: '"BBH Bartle", "Bebas Neue", sans-serif' }}
+                >
+                  Priyank
+                </h1>
+              </div>
+
+              <h2
+                className="text-[clamp(30px,3.8vw,60px)] uppercase text-[#D9D3C7] tracking-wider relative z-10 text-left leading-none font-bold"
                 style={{ fontFamily: '"Bebas Neue", sans-serif' }}
               >
-                BUILDING
-                <br />
-                SYSTEMS FOR
+                BUILDING SYSTEMS FOR
                 <br />
                 <span
-                  className="text-primary font-bold inline-block min-w-[10ch] md:min-w-[13ch] text-center md:text-left text-[44px] xs:text-[56px] sm:text-[84px] md:text-[95px] lg:text-[110px] leading-none whitespace-nowrap"
-                  style={{ fontFamily: '"Bebas Neue", sans-serif' }}
+                  className="relative inline-block overflow-hidden min-w-[15ch] h-[1.15em] align-bottom text-center bg-[#D9D3C7] px-3 rounded-sm mt-3"
                 >
-                  {words[dynamicWordIndex]}
+                  <AnimatePresence mode="popLayout">
+                    <motion.span
+                      key={dynamicWordIndex}
+                      initial={{ y: "100%", opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: "-100%", opacity: 0 }}
+                      transition={{ duration: 0.5, ease: [0.32, 0.94, 0.6, 1] }}
+                      className="text-primary font-bold absolute left-0 right-0 bottom-0 text-center whitespace-nowrap"
+                      style={{ fontFamily: '"Bebas Neue", sans-serif' }}
+                    >
+                      {words[dynamicWordIndex]}
+                    </motion.span>
+                  </AnimatePresence>
                 </span>
-              </h1>
-              <p className="font-body-md text-body-md text-[#D9D3C7]/90 max-w-md md:border-l-2 border-primary md:pl-4 relative z-10 text-center md:text-left mx-auto md:mx-0 border-l-0 pl-0 text-[14px] sm:text-[16px]">
+              </h2>
+
+              <p className="font-body-md text-body-md text-[#D9D3C7]/90 max-w-xl border-l-2 border-primary pl-4 relative z-10 text-left text-[15px] sm:text-[17px] leading-relaxed">
                 Full-stack thinking. Backend obsession. From raw APIs to
                 distributed systems — <span className="whitespace-nowrap">I build</span> what holds
                 everything together.
               </p>
-              <div className="flex flex-row flex-wrap gap-3.5 sm:gap-5 mt-4 sm:mt-6 mb-8 sm:mb-10 md:mb-0 relative z-10 justify-center md:justify-start">
+
+              <div className="flex flex-row flex-wrap gap-4 mt-6 relative z-10 justify-start w-full">
                 {/* GitHub */}
                 <a
                   href="https://github.com/Priyankm23"
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="GitHub"
                   title="GitHub"
                   className="w-14 h-14 border border-1px border-[#D9D3C7] bg-transparent text-[#D9D3C7] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#1B1C1C]"
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-6 h-6"
-                  >
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
                   </svg>
                 </a>
                 {/* LinkedIn */}
                 <a
-                  href="https://linkedin.com/in/priyankmoradiya"
+                  href="https://linkedin.com/in/priyank-moradiya"
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="LinkedIn"
                   title="LinkedIn"
                   className="w-14 h-14 border border-1px border-[#D9D3C7] bg-transparent text-[#D9D3C7] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#1B1C1C]"
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="w-6 h-6"
-                  >
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                   </svg>
                 </a>
                 {/* Email */}
                 <a
                   href="mailto:priyankmoradiya41@gmail.com"
-                  aria-label="Email"
                   title="Email"
                   className="w-14 h-14 border border-1px border-[#D9D3C7] bg-transparent text-[#D9D3C7] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#1B1C1C]"
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="w-6 h-6"
-                  >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
                     <rect x="2" y="4" width="20" height="16" rx="2" />
                     <path d="M2 7l10 7 10-7" />
                   </svg>
                 </a>
-                {/* Resume Download Button */}
+                {/* Resume Download */}
                 <a
                   href="/resume.pdf"
                   target="_blank"
                   rel="noreferrer"
-                  download="Priyank_Moradiya_Resume.pdf"
-                  aria-label="Download Resume"
                   title="Download Resume"
-                  className="h-14 px-5 border border-1px border-[#D9D3C7] bg-transparent text-[#FF3800] flex items-center gap-2 font-mono-code font-extrabold text-[13px] sm:text-[14px] uppercase tracking-wider transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#FF3800] hover:text-white hover:border-[#FF3800]"
+                  className="h-14 px-5 border border-1px border-[#D9D3C7] bg-transparent text-[#b02600] flex items-center gap-2 font-mono-code font-extrabold text-[13px] sm:text-[14px] uppercase tracking-wider transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#b02600] hover:text-white hover:border-[#b02600]"
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    className="w-5 h-5"
-                  >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                     <polyline points="7 10 12 15 17 10" />
                     <line x1="12" y1="15" x2="12" y2="3" />
@@ -851,197 +753,32 @@ export default function Home() {
                 </a>
               </div>
             </div>
-          </div>
 
-          {/* Right Column (Stylized Portrait) */}
-          <div className="w-full md:w-[52%] flex-1 md:flex-none flex items-center justify-center px-margin-mobile md:px-0 md:px-[calc(max(40px,(100vw-1280px)/2))] relative z-10 max-md:bg-[#D9D3C7] max-md:py-8 max-md:mt-4 max-md:border-t max-md:border-outline overflow-hidden">
-            {/* Grid Pattern Overlay for Mobile Portrait Background */}
-            <div
-              className="md:hidden absolute inset-0 pointer-events-none opacity-25 z-0"
-              style={{
-                backgroundImage:
-                  "linear-gradient(rgba(27,28,28,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(27,28,28,0.2) 1px, transparent 1px)",
-                backgroundSize: "32px 32px",
-              }}
-            />
-            <div className="relative h-[360px] md:h-[470px] lg:h-[570px] xl:h-[610px] aspect-square flex items-center justify-center md:-translate-x-2 md:translate-y-2">
-              {/* The main portrait (increased size, centered) */}
-              <img
-                alt="Priyank Moradiya - Stylized Retro Portrait"
-                className="w-full h-full object-contain select-none pointer-events-none z-10"
-                src="/hero_portrait.png"
-                style={{ mixBlendMode: "multiply" }}
-              />
-
-              {/* 1. Database Storage (Top-Left) */}
-              <div className="absolute top-[12%] left-[-4%] w-[26%] h-[26%] z-20">
+            {/* Right Column: Hero Portrait Image */}
+            <div className="md:col-span-4 flex justify-center md:justify-center items-center relative z-10 w-full mt-6 md:mt-0 animate-reveal">
+              <div className="relative w-full max-w-[300px] sm:max-w-[340px] md:max-w-[390px] lg:max-w-[440px] aspect-[4/5] overflow-hidden shadow-[5px_5px_0px_0px_rgba(217,211,199,0.15)] bg-[#0a0a0a] md:-translate-x-6">
                 <img
-                  src="/simple_database.png"
-                  alt="Database Storage"
-                  className="w-full h-full object-contain select-none pointer-events-none"
-                  style={{ mixBlendMode: "multiply" }}
-                />
-              </div>
-
-              {/* 2. Server (Top-Right, on other side of head) */}
-              <div className="absolute top-[8%] right-[0%] w-[26%] h-[26%] z-20">
-                <img
-                  src="/simple_server.png"
-                  alt="Server Mainframe"
-                  className="w-full h-full object-contain select-none pointer-events-none"
-                  style={{ mixBlendMode: "multiply" }}
-                />
-              </div>
-
-              {/* 3. API Gateway / Router (Right-Side Middle, outside of silhouette) */}
-              <div className="absolute top-[46%] right-[0%] w-[26%] h-[26%] z-20">
-                <img
-                  src="/simple_router.png"
-                  alt="API Gateway"
-                  className="w-full h-full object-contain select-none pointer-events-none"
-                  style={{ mixBlendMode: "multiply" }}
+                  src="/full_portrait1.png"
+                  alt="Priyank Moradiya - Hero Portrait"
+                  className="w-full h-full object-cover filter contrast-[1.02] brightness-[0.98]"
                 />
               </div>
             </div>
           </div>
         </section>
 
-        {/* About Section 01 - Full-Bleed Split Canvas Section */}
-        <section
-          id="about"
-          className="relative border-b border-1px border-outline z-10 overflow-hidden bg-surface"
-        >
-          {/* Split Background: Left Side White, Right Side Dark #1B1C1C with Generative Canvas (Desktop) */}
-          <div className="hidden md:block absolute inset-0 pointer-events-none z-0">
-            {/* Desktop split: Right side dark #1B1C1C with generative canvas starting at 48% */}
-            <div className="absolute top-0 bottom-0 left-[48%] right-0 bg-[#1B1C1C] border-l border-1px border-outline">
-              <GenerativeHeroBg fullWidth />
-            </div>
-          </div>
+        {/* About Section 01 - Custom Bento Grid */}
+        <AboutSection3 visitorCount={visitorCount} />
 
-          <div className="max-w-[1440px] mx-auto w-full relative z-10 px-4 sm:px-6 md:px-10 py-10 md:py-14">
-            {/* Bento Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-stretch relative z-10">
-              {/* Box A (Left Column - col-span-5): White side with 01 ABOUT Header + Specifications Card */}
-              <div className="scroll-reveal-left lg:col-span-5 flex flex-col justify-between relative">
-                {/* Header & 01 Watermark inside Left Column */}
-                <div className="relative mb-6 md:mb-8 pt-1">
-                  {/* Ghost Number / Watermark 01 */}
-                  <div className="absolute top-0 md:top-1 left-0 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[180px] text-on-surface opacity-10 pointer-events-none select-none z-0">
-                    01
-                  </div>
-                  <h2 className="font-headline-lg text-[54px] md:text-[72px] leading-none text-on-surface tracking-wider uppercase relative z-10 pt-3 md:pt-4">
-                    ABOUT
-                  </h2>
-                </div>
-
-                {/* Specifications Card */}
-                <div className="border-2 border-on-surface p-5 sm:p-6 flex flex-col shadow-[5px_5px_0px_0px_rgba(27,28,28,1)] bg-surface-container-lowest text-on-surface flex-1 justify-between">
-                  {/* Personal Specs */}
-                  <div className="font-mono-code text-[13px] flex flex-col justify-between h-full gap-3">
-                    <div className="flex gap-2 items-center border-b border-outline/20 pb-2.5 mb-1">
-                      <span className="material-symbols-outlined text-primary text-[17px]">
-                        fingerprint
-                      </span>
-                      <span className="font-bold uppercase tracking-widest text-on-surface/80 text-[11.5px] md:text-[12px]">
-                        SPECIFICATIONS
-                      </span>
-                    </div>
-
-                    <div className="flex flex-col justify-between flex-1 gap-y-2 md:gap-y-2.5">
-                      <div className="flex flex-col sm:flex-row justify-between border-b border-outline/10 pb-1.5 gap-1">
-                        <span className="text-on-surface-variant font-bold uppercase text-[11.5px]">HOST:</span>
-                        <span className="text-on-surface font-semibold text-[13px]">priyank_moradiya</span>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row justify-between border-b border-outline/10 pb-1.5 gap-1">
-                        <span className="text-on-surface-variant font-bold uppercase text-[11.5px]">ACADEMICS:</span>
-                        <span className="text-on-surface font-semibold text-[12.5px]">B.Tech (IT) · 4th Year</span>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row justify-between border-b border-outline/10 pb-1.5 gap-1">
-                        <span className="text-on-surface-variant font-bold uppercase text-[11.5px]">INSTITUTION:</span>
-                        <span className="text-on-surface font-semibold text-[12.5px] sm:text-right">GCET, Anand</span>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row justify-between border-b border-outline/10 pb-1.5 gap-1">
-                        <span className="text-on-surface-variant font-bold uppercase text-[11.5px]">CGPA:</span>
-                        <span className="text-primary font-bold text-[13.5px]">9.40 / 10.00</span>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row justify-between border-b border-outline/10 pb-1.5 gap-1">
-                        <span className="text-on-surface-variant font-bold uppercase text-[11.5px]">CORE FOCUS:</span>
-                        <span className="text-on-surface font-semibold text-[12.5px] sm:text-right">High-Throughput APIs & Distributed Backends</span>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row justify-between border-b border-outline/10 pb-1.5 gap-1">
-                        <span className="text-on-surface-variant font-bold uppercase text-[11.5px]">LOC:</span>
-                        <span className="text-on-surface font-semibold text-[12.5px]">Anand, Gujarat, IN</span>
-                      </div>
-
-                      <div className="flex flex-col sm:flex-row justify-between items-center pt-0.5 gap-1">
-                        <span className="text-on-surface-variant font-bold uppercase text-[11.5px]">LIVE_VISITS:</span>
-                        <div className="font-bold flex items-center gap-1.5 text-primary">
-                          <span className="inline-block w-2.5 h-2.5 rounded-full bg-primary/20 flex items-center justify-center">
-                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-                          </span>
-                          {visitorCount !== null ? (
-                            <span className="font-mono-code text-[13px] tracking-widest">
-                              {visitorCount}
-                            </span>
-                          ) : (
-                            <span className="text-on-surface-variant/40 animate-pulse text-[11px]">
-                              Syncing...
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column (col-span-6 col-start-7): Dark side with "THE HONEST TRUTH." text */}
-              <div className="scroll-reveal-right lg:col-span-6 lg:col-start-7 flex flex-col justify-center py-4 lg:py-6 px-5 sm:px-6 md:pl-8 lg:pl-10 text-[#D9D3C7] relative z-10 max-md:bg-[#1B1C1C] max-md:p-6 max-md:border max-md:border-on-surface max-md:shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] max-md:rounded-xs max-md:mt-4 overflow-hidden" style={{ transitionDelay: "150ms" }}>
-                {/* Mobile Canvas inside dark card */}
-                <div className="md:hidden absolute inset-0 pointer-events-none z-0">
-                  <GenerativeHeroBg fullWidth />
-                </div>
-                <div className="flex flex-col gap-4">
-                  <h3 className="font-headline-md text-[30px] md:text-[38px] leading-tight text-[#D9D3C7] tracking-wider uppercase">
-                    THE HONEST TRUTH.
-                  </h3>
-                  <div className="space-y-3.5 font-body-md text-[14px] md:text-[15px] text-[#D9D3C7]/90 leading-relaxed">
-                    <p>
-                      I am a backend developer focused on engineering optimized backend systems. While not claiming every system I create is perfect, every day I am learning and iterating to make services perform reliably under load.
-                    </p>
-                    <p>
-                      I love building REST API endpoints, designing relational database schemas, and defining Redis caching layers with single-flight request patterns. My microservices leverage gRPC for inter-service communication and RabbitMQ for async task offloading. Everything is containerized with Docker, verified via load testing (k6, Autocannon), unit/integration tested (Jest, Supertest, Pytest), and monitored using Pino logs and Sentry observability. The skills remain the same, only the learnings get adapted with the new and unique business logic across different projects.
-                    </p>
-                    <p>
-                      I started with Node.js for my backend foundation, explored FastAPI, and am currently diving deep into core Node.js concepts while contributing to open source, solving LeetCode SQL challenges, and always welcome tech discussions.
-                    </p>
-
-                    {/* Personal Quote Mantra */}
-                    <div className="pl-4 border-l-2 border-primary italic text-[#D9D3C7]/90 text-[13.5px] md:text-[14.5px] mt-4 pt-0.5">
-                      "Learning to optimize the system and on the journey to be honest about the failures and bad architectural design decisions because that's what would make the future systems better."
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Projects Section 02 - Lined Grid Overlay, beige background */}
+        {/* Projects Section 02 - Coverflow Carousel */}
         <section
           id="projects"
-          className="relative px-margin-mobile md:px-margin-desktop py-16 border-b border-1px border-outline z-10 bg-d9d3c7 text-on-surface"
+          className="relative px-margin-mobile md:px-margin-desktop pt-8 pb-16 z-10 bg-[#0a0a0a] text-zinc-100"
         >
-          {/* Lined Grid Overlay - Locally inside Projects */}
+          {/* Lined Grid Overlay */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 pointer-events-none grid grid-cols-4 md:grid-cols-12 gap-0 border-r border-1px border-outline opacity-10 z-0"
+            className="absolute inset-0 pointer-events-none grid grid-cols-4 md:grid-cols-12 gap-0 border-r border-1px border-[#222222] opacity-10 z-0"
           >
             <div className="border-l border-1px border-on-surface h-full"></div>
             <div className="border-l border-1px border-on-surface h-full"></div>
@@ -1057,176 +794,127 @@ export default function Home() {
             <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
           </div>
 
-          {/* Content */}
-          <div className="max-w-7xl mx-auto w-full relative z-10 mt-16">
-            {/* Ghost Number */}
-            <div className="absolute -top-10 right-0 md:-right-4 font-display-xl-mobile md:font-display-xl text-[140px] md:text-[240px] text-on-surface/25 pointer-events-none select-none z-0">
-              02
-            </div>
-            <span className="font-mono-code text-mono-code text-primary uppercase relative z-10">
-              PROJECTS
-            </span>
-            <h2 className="font-headline-lg text-headline-lg text-on-surface tracking-wider uppercase mb-12 relative z-10">
-              SELECTED PROJECTS
+          <div className="max-w-7xl mx-auto w-full relative z-10 mt-6">
+            <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide relative z-10">
+              FEATURED BUILDS
             </h2>
+            <div className="h-px w-full bg-[#222222] my-4 relative z-10"></div>
+            <p className="font-sans text-[#D9D3C7]/80 text-sm sm:text-base leading-relaxed max-w-xl mb-12 relative z-10">
+              A curated collection of backend systems, distributed architectures, and developer tools built with a focus on performance, reliability, and optimization.
+            </p>
 
-            {/* Brutalist Grid Cards */}
-            <div className="grid grid-cols-1 gap-8">
-              {projects.map((project, idx) => (
-                <div key={idx} className="project-card-reveal" style={{ transitionDelay: `${idx * 150}ms` }}>
-                  <div
-                    className={`bg-surface border border-1px border-on-surface flex flex-col ${idx % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] hover:-translate-y-1 transition-transform duration-200 group overflow-hidden`}
-                  >
-                  {/* Left Side: Details */}
-                  <div className="flex-1 p-6 sm:p-8 flex flex-col gap-5 justify-between min-w-0">
-                    <div>
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border-b border-outline/30 pb-3 mb-4">
-                        <span className="bg-primary/15 border border-primary text-primary px-3 py-1 text-[13px] md:text-[14px] font-mono-code font-bold uppercase tracking-wide rounded-xs">
-                          {project.tech}
-                        </span>
-                        <span className="text-on-surface font-mono-code text-[13px] md:text-[14px] font-semibold tracking-wider">
-                          {project.dates}
-                        </span>
-                      </div>
-                      <h3 className="font-headline-md text-[26px] sm:text-[36px] md:text-[44px] leading-tight text-on-surface uppercase tracking-tight flex items-center gap-2.5 sm:gap-3">
-                        {project.logoUrl && (
-                          <img
-                            src={project.logoUrl}
-                            alt={`${project.title} logo`}
-                            className="w-12 h-12 md:w-14 md:h-14 object-contain border border-on-surface bg-white p-1.5 rounded-sm shadow-[1.5px_1.5px_0px_0px_rgba(27,28,28,1)] mix-blend-multiply"
-                          />
-                        )}
-                        <span>{project.title}</span>
-                      </h3>
-                      <p className="font-body-md text-[16px] md:text-[17px] text-on-surface leading-relaxed mt-4 font-normal">
-                        {project.description}
-                      </p>
-                    </div>
-
-                    <div>
-                      <div className="flex flex-wrap gap-2 mb-5">
-                        {project.tags.map((tag, tagIdx) => (
-                          <span
-                            key={tagIdx}
-                            className="border border-on-surface/80 text-on-surface bg-surface-container-high/60 px-3 py-1 text-[12px] md:text-[13px] font-mono-code font-semibold uppercase tracking-wider rounded-xs"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-
-                      <div className="flex gap-4 border-t border-outline/30 pt-4">
-                        <a
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-[14px] md:text-[15px] font-mono-code uppercase text-primary hover:underline flex items-center gap-1.5 font-bold"
-                        >
-                          SOURCE_CODE <span className="text-xs">→</span>
-                        </a>
-                        {project.liveUrl && (
-                          <a
-                            href={project.liveUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-[14px] md:text-[15px] font-mono-code uppercase text-on-surface hover:underline flex items-center gap-1.5 font-bold"
-                          >
-                            DEMO_LINK <span className="text-xs">→</span>
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right Side: Halftone Brutalist Graphic / Screenshot Transition */}
-                  <div
-                    className={`w-full md:w-[48%] border-t md:border-t-0 ${idx % 2 === 0 ? "md:border-l" : "md:border-r"} border-on-surface relative flex items-center justify-center p-2.5 sm:p-4 md:p-5 min-h-[280px] sm:min-h-[360px] md:min-h-[440px]`}
-                    style={{
-                      backgroundColor: "var(--color-bg)",
-                      backgroundImage:
-                        "linear-gradient(rgba(27,28,28,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(27,28,28,0.06) 1px, transparent 1px)",
-                      backgroundSize: "20px 20px",
-                    }}
-                  >
-                    {project.image && (
-                      <div className="relative w-full h-[260px] xs:h-[300px] sm:h-[360px] md:h-[420px] flex items-center justify-center">
-                        {/* Halftone graphic (Default / Toggled) */}
-                        <img
-                          src={project.image}
-                          alt={`${project.title} Graphic`}
-                          className={`absolute inset-0 m-auto max-w-full max-h-full w-auto h-auto object-contain select-none pointer-events-none transition-all duration-700 ${
-                            showScreenshot && project.screenshot
-                              ? "opacity-0 scale-95"
-                              : "opacity-100 scale-100"
-                          } ${project.screenshot ? "group-hover:opacity-0 group-hover:scale-95" : ""}`}
-                        />
-                        {/* Actual platform screenshot (Toggled / Hovered) */}
-                        {project.screenshot && (
-                          <img
-                            src={project.screenshot}
-                            alt={`${project.title} Screenshot`}
-                            className={`absolute inset-0 m-auto max-w-full max-h-full w-auto h-auto object-contain select-none border border-on-surface shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] rounded-xs transition-all duration-700 ${
-                              showScreenshot
-                                ? "opacity-100 scale-100"
-                                : "opacity-0 scale-95"
-                            } group-hover:opacity-100 group-hover:scale-105`}
-                          />
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-              ))}
+            {/* Coverflow Carousel */}
+            <div className="w-full mt-8">
+              <CoverflowCarousel
+                slides={projects.map((project) => ({
+                  src: project.screenshot || project.image || "",
+                  alt: project.title,
+                  title: project.title,
+                  subtitle: project.description,
+                  meta: [
+                    { label: "Timeline", value: project.dates },
+                    { label: "Tech Stack", value: project.tech },
+                  ],
+                  tags: project.tags,
+                  githubUrl: project.githubUrl,
+                  liveUrl: project.liveUrl,
+                }))}
+                showCaption={true}
+                showPagination={true}
+                showNavigation={true}
+                loop={true}
+              />
             </div>
           </div>
         </section>
 
-        {/* Tech Stack Section 03 - White background, beige cards, red hover */}
+        {/* Tech Stack Section 03 - Tools I Trust */}
         <section
           id="stack"
-          className="relative px-margin-mobile md:px-margin-desktop py-16 border-b border-1px border-outline z-10 bg-surface text-on-surface"
+          className="relative px-margin-mobile md:px-margin-desktop pt-10 pb-16 z-10 bg-[#0a0a0a] text-zinc-100"
         >
           <div className="max-w-7xl mx-auto w-full relative z-10">
-            {/* Ghost Number */}
-            <div className="absolute -top-10 left-0 md:-left-4 font-display-xl-mobile md:font-display-xl text-[140px] md:text-[240px] text-primary/25 pointer-events-none select-none z-0">
-              03
-            </div>
-            <div className="relative z-10 mt-16">
-              <h2 className="font-headline-lg text-headline-lg text-on-surface tracking-wider uppercase mb-12">
+            <div className="relative z-10 mt-10">
+              <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide">
                 TOOLS I TRUST
               </h2>
+              <div className="h-px w-full bg-[#222222] my-4"></div>
+              <p className="font-sans text-[#D9D3C7]/80 text-sm sm:text-base leading-relaxed max-w-xl mb-12">
+                A curated set of technologies and developer tools I use to design, build, and deploy backend architectures.
+              </p>
 
-              {/* Categorized columns - Beige Background Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {techStack.map((cat, catIdx) => (
-                  <div
+                  <motion.div
                     key={catIdx}
-                    className="scroll-reveal border border-1px border-on-surface p-6 bg-d9d3c7 shadow-[4px_4px_0px_0px_rgba(27,28,28,1)] text-on-surface"
-                    style={{ transitionDelay: `${catIdx * 150}ms` }}
+                    initial={{ opacity: 0, y: 45, scale: 0.97 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 110,
+                      damping: 12,
+                      mass: 1.1,
+                      delay: catIdx * 0.15
+                    }}
+                    className="border border-[#2a2a2a] hover:border-[#D9D3C7] p-6 bg-[#151515] shadow-[4px_4px_0px_0px_rgba(217,211,199,0.1)] hover:shadow-[10px_10px_0px_0px_rgba(217,211,199,0.25)] transition-all duration-300 hover:-translate-y-2.5 text-[#D9D3C7] rounded-none flex flex-col justify-start relative overflow-hidden group"
                   >
-                    <h3 className="font-mono-code text-[14px] sm:text-[15px] font-bold text-primary uppercase border-b border-primary pb-2 mb-4 tracking-wider">
+                    {/* Background Icon Watermark */}
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.8, rotate: -8 }}
+                      whileInView={{ opacity: 0.12, scale: 1, rotate: 0 }}
+                      viewport={{ once: true, margin: "-100px" }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 90,
+                        damping: 14,
+                        delay: catIdx * 0.15 + 0.25
+                      }}
+                      className="absolute right-[-10px] bottom-[-10px] pointer-events-none group-hover:opacity-[0.25] group-hover:scale-105 transition-all duration-300 z-0"
+                    >
+                      {cat.category === "Frameworks" && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-28 h-28 text-[#b02600]">
+                          <polyline points="16 18 22 12 16 6" />
+                          <polyline points="8 6 2 12 8 18" />
+                        </svg>
+                      )}
+                      {cat.category === "Databases" && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-28 h-28 text-[#b02600]">
+                          <ellipse cx="12" cy="5" rx="9" ry="3" />
+                          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                          <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3" />
+                        </svg>
+                      )}
+                      {cat.category === "DevOps & Tools" && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-28 h-28 text-[#b02600]">
+                          <polyline points="4 17 10 11 4 5" />
+                          <line x1="12" y1="19" x2="20" y2="19" />
+                        </svg>
+                      )}
+                    </motion.div>
+
+                    <h3 className="font-mono-code text-[14px] sm:text-[15px] font-bold text-zinc-100 uppercase border-b border-[#D9D3C7]/20 pb-2 mb-4 tracking-wider relative z-10">
                       {cat.category}
                     </h3>
-                    <div className="flex flex-col gap-2">
+                    <div className={`relative z-10 ${cat.category === "DevOps & Tools" ? "grid grid-cols-2 gap-x-4 gap-y-3" : "flex flex-col gap-3"}`}>
                       {cat.items.map((item, itemIdx) => (
                         <div
                           key={itemIdx}
-                          className="group/stack flex items-center gap-3 border border-1px border-outline/35 px-3.5 py-2 font-mono-code text-[14px] sm:text-[15px] text-on-surface bg-surface hover:bg-primary hover:text-on-primary hover:border-primary transition-all duration-200 cursor-pointer"
+                          className="group/stack flex items-center gap-3.5 py-1.5 text-[#D9D3C7] hover:text-[#FF3800] transition-colors duration-200 cursor-pointer"
                         >
-                          <span className="text-primary group-hover/stack:text-on-primary transition-colors duration-200 flex items-center justify-center">
+                          <span className="text-[#D9D3C7]/60 group-hover/stack:text-[#FF3800] group-hover/stack:scale-110 group-hover/stack:rotate-[5deg] transition-all duration-200 flex items-center justify-center">
                             <BrandIcon
                               slug={item.slug}
                               fallback={item.fallback}
                             />
                           </span>
-                          <span className="uppercase tracking-wide font-bold">
+                          <span className="font-sans text-base sm:text-[17px] font-semibold tracking-wide group-hover/stack:translate-x-1 transition-transform duration-200">
                             {item.name}
                           </span>
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
@@ -1236,568 +924,547 @@ export default function Home() {
         {/* Section 04: GitHub Contributions */}
         <section
           id="contributions"
-          className="bg-black text-white relative overflow-hidden px-margin-mobile md:px-margin-desktop py-16 border-b border-brutal z-10"
+          className="bg-black text-white relative overflow-hidden px-margin-mobile md:px-margin-desktop py-8 z-10"
         >
           <div className="max-w-7xl mx-auto w-full relative z-10">
-            {/* Ghost Number */}
-            <div className="absolute -top-10 right-0 md:-right-4 font-display-xl-mobile md:font-display-xl text-[120px] md:text-[240px] text-white opacity-20 pointer-events-none select-none z-0">
-              04
-            </div>
             <div className="relative z-10 flex flex-col md:grid md:grid-cols-12 gap-gutter mt-16">
               {/* Heading Area */}
-              <div className="scroll-reveal-left md:col-span-4 mb-8 md:mb-0">
-                <h2 className="font-headline-lg text-white uppercase flex items-center drop-shadow-sm">
+              <div className="scroll-reveal-left md:col-span-3 mb-8 md:mb-0">
+                <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide flex items-center drop-shadow-sm">
                   COMMIT HISTORY
                   <span className="text-primary ml-1 blink">_</span>
                 </h2>
                 <div className="h-px w-full bg-white/30 my-4"></div>
-                <p className="font-mono-code text-white/90 text-sm max-w-sm">
-                  Raw output from the primary repository structure. Tracking
-                  daily commits, merges, and system updates.
+                <p className="font-sans text-[#D9D3C7]/80 text-sm sm:text-base leading-relaxed max-w-sm">
+                  Tracking daily commits, open-source contributions, and repository activity.
                 </p>
               </div>
+
               {/* Heatmap Area */}
-              <div className="scroll-reveal-right md:col-span-8 flex flex-col gap-6" style={{ transitionDelay: "150ms" }}>
+              <div
+                className="scroll-reveal-right md:col-span-8 md:col-start-5 flex flex-col gap-6"
+                style={{ transitionDelay: "150ms" }}
+              >
                 {/* Stats Row */}
                 <div className="flex flex-wrap gap-4 border-l border-white/40 pl-4">
                   <div className="flex flex-col">
                     <span className="font-headline-md text-primary">
                       {githubCommits}
                     </span>
-                    <span className="font-label-sm text-white/80 uppercase">
+                    <span className="font-label-sm text-[#D9D3C7] uppercase">
                       COMMITS
                     </span>
                   </div>
-                  <div className="w-px h-auto bg-white/30 mx-2 hidden md:block"></div>
+
                   <div className="flex flex-col">
                     <span className="font-headline-md text-primary">
                       {githubRepos}
                     </span>
-                    <span className="font-label-sm text-white/80 uppercase">
+                    <span className="font-label-sm text-[#D9D3C7] uppercase">
                       REPOS
                     </span>
                   </div>
-                  <div className="w-px h-auto bg-white/30 mx-2 hidden md:block"></div>
+
                   <div className="flex flex-col">
                     <span className="font-headline-md text-primary">
                       {githubPRs < 10 ? `0${githubPRs}` : githubPRs}
                     </span>
-                    <span className="font-label-sm text-white/80 uppercase">
+                    <span className="font-label-sm text-[#D9D3C7] uppercase">
                       PRs
                     </span>
                   </div>
-                  <div className="w-px h-auto bg-white/30 mx-2 hidden md:block"></div>
+
                   <div className="flex flex-col">
                     <span className="font-headline-md text-primary">
                       {githubStreak < 10 ? `0${githubStreak}` : githubStreak}
                     </span>
-                    <span className="font-label-sm text-white/80 uppercase">
+                    <span className="font-label-sm text-[#D9D3C7] uppercase">
                       STREAK
                     </span>
                   </div>
                 </div>
-                {/* Grid */}
-                <div className="bg-[#111111]/90 backdrop-blur-md border border-white/20 p-4 overflow-x-auto w-full max-w-full rounded-xs">
+
+                {/* Heatmap Grid Wrapper */}
+                <div className="w-full overflow-x-auto pb-2">
                   <div className="flex gap-2 w-max">
-                    {/* Weekdays column */}
-                    <div className="flex flex-col gap-1 mt-[22px] select-none text-left">
-                      <div className="h-3 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono"></div> {/* Sun */}
-                      <div className="h-3 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono">Mon</div> {/* Mon */}
-                      <div className="h-3 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono"></div> {/* Tue */}
-                      <div className="h-3 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono">Wed</div> {/* Wed */}
-                      <div className="h-3 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono"></div> {/* Thu */}
-                      <div className="h-3 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono">Fri</div> {/* Fri */}
-                      <div className="h-3 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono"></div> {/* Sat */}
-                    </div>
-
-                    <div className="flex flex-col">
-                      {/* Months row */}
-                      <div className="flex gap-1 mb-1.5 h-4 relative select-none">
-                        {weeks.map((week, weekIdx) => {
-                          const dateParts = week[0].date.split("-").map(Number);
-                          const year = dateParts[0];
-                          const month = dateParts[1] - 1;
-
-                          const targetYear = parseDate(githubDays[githubDays.length - 1].date).getFullYear();
-
-                          const isFirstWeekOfMonth =
-                            (weekIdx === 0 ||
-                              weeks[weekIdx - 1][0].date.split("-").map(Number)[1] - 1 !== month) &&
-                            year === targetYear;
-
-                          return (
-                            <div
-                              key={weekIdx}
-                              className="w-3 text-[10px] font-mono text-secondary-fixed-dim relative uppercase"
-                            >
-                              {isFirstWeekOfMonth && (
-                                <span className="absolute left-0 bottom-0 whitespace-nowrap">
-                                  {monthNames[month]}
-                                </span>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Weeks columns */}
-                      <div className="flex gap-1">
-                        {weeks.map((week, weekIdx) => (
-                          <div key={weekIdx} className="flex flex-col gap-1">
-                            {week.map((day, dayIdx) => (
-                              <div
-                                key={dayIdx}
-                                className={`w-3 h-3 rounded-sm ${
-                                  day.isPlaceholder
-                                    ? "bg-transparent pointer-events-none"
-                                    : `heat-${day.level}`
-                                }`}
-                                title={
-                                  day.isPlaceholder
-                                    ? undefined
-                                    : `${day.date}: ${day.count} contributions`
-                                }
-                              />
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                  {/* Weekdays column */}
+                  <div className="flex flex-col gap-[5px] mt-[25px] select-none text-left">
+                    <div className="h-3.5 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono"></div>{" "}
+                    {/* Sun */}
+                    <div className="h-3.5 w-5 text-[9px] leading-[14px] text-secondary-fixed-dim font-mono">
+                      Mon
+                    </div>{" "}
+                    {/* Mon */}
+                    <div className="h-3.5 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono"></div>{" "}
+                    {/* Tue */}
+                    <div className="h-3.5 w-5 text-[9px] leading-[14px] text-secondary-fixed-dim font-mono">
+                      Wed
+                    </div>{" "}
+                    {/* Wed */}
+                    <div className="h-3.5 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono"></div>{" "}
+                    {/* Thu */}
+                    <div className="h-3.5 w-5 text-[9px] leading-[14px] text-secondary-fixed-dim font-mono">
+                      Fri
+                    </div>{" "}
+                    {/* Fri */}
+                    <div className="h-3.5 w-5 text-[9px] leading-3 text-secondary-fixed-dim font-mono"></div>{" "}
+                    {/* Sat */}
                   </div>
 
-                  <div className="flex justify-between items-center mt-3 font-label-sm text-[10px] text-secondary-fixed-dim uppercase">
-                    <span>Less</span>
-                    <div className="flex gap-1">
-                      <div className="w-3 h-3 rounded-sm heat-0 border border-brutal-dark"></div>
-                      <div className="w-3 h-3 rounded-sm heat-1"></div>
-                      <div className="w-3 h-3 rounded-sm heat-2"></div>
-                      <div className="w-3 h-3 rounded-sm heat-3"></div>
-                      <div className="w-3 h-3 rounded-sm heat-4"></div>
+                  <div className="flex flex-col">
+                    {/* Months header */}
+                    <div className="flex gap-[5px] h-5 select-none text-left mb-1.5">
+                      {weeks.map((week, weekIdx) => {
+                        if (week.length === 0) return null;
+                        const dateParts = week[0].date.split("-").map(Number);
+                        const year = dateParts[0];
+                        const month = dateParts[1] - 1;
+
+                        const targetYear = parseDate(
+                          githubDays[githubDays.length - 1].date,
+                        ).getFullYear();
+
+                        const isFirstWeekOfMonth =
+                          (weekIdx === 0 ||
+                            weeks[weekIdx - 1][0].date
+                              .split("-")
+                              .map(Number)[1] -
+                              1 !==
+                              month) &&
+                          year === targetYear;
+
+                        return (
+                          <div
+                            key={weekIdx}
+                            className="w-3.5 text-[10px] font-mono text-secondary-fixed-dim relative uppercase"
+                          >
+                            {isFirstWeekOfMonth && (
+                              <span className="absolute left-0 bottom-0 whitespace-nowrap">
+                                {monthNames[month]}
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
-                    <span>More</span>
+
+                    {/* Matrix cells */}
+                    <div className="flex gap-[5px]">
+                      {weeks.map((week, weekIdx) => (
+                        <div key={weekIdx} className="flex flex-col gap-[5px]">
+                          {week.map((day, dayIdx) => (
+                            <div
+                              key={dayIdx}
+                              title={`${day.date}: ${day.count} commits`}
+                              className="w-3.5 h-3.5 rounded-sm transition-all duration-100 hover:scale-[1.25] hover:z-20 cursor-pointer"
+                              style={{
+                                backgroundColor: day.isPlaceholder
+                                  ? "transparent"
+                                  : day.level === 4
+                                  ? "#D9D3C7"
+                                  : day.level === 3
+                                  ? "rgba(217, 211, 199, 0.75)"
+                                  : day.level === 2
+                                  ? "rgba(217, 211, 199, 0.5)"
+                                  : day.level === 1
+                                  ? "rgba(217, 211, 199, 0.25)"
+                                  : "rgba(217, 211, 199, 0.08)",
+                              }}
+                            />
+                          ))}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <a
-                  className="inline-flex items-center gap-2 border border-white px-4 py-2 w-max text-white font-label-sm hover:bg-primary hover:text-white transition-colors duration-200 uppercase cursor-pointer"
-                  href="https://github.com/Priyankm23"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <span className="material-symbols-outlined text-[16px]">
-                    open_in_new
-                  </span>
-                  VIEW FULL LOG
-                </a>
               </div>
+              </div>
+            </div>
+            <div className="flex justify-end w-full mt-6 pr-4">
+              <a
+                className="inline-flex items-center gap-2 border border-[#D9D3C7] px-4 py-2 w-max text-[#D9D3C7] font-label-sm hover:bg-primary hover:text-white hover:border-primary transition-colors duration-200 uppercase cursor-pointer"
+                href="https://github.com/Priyankm23"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span className="material-symbols-outlined text-[16px]">
+                  open_in_new
+                </span>
+                <span>VIEW FULL LOG</span>
+              </a>
             </div>
           </div>
         </section>
 
-        {/* Section 05: Experience - System Deployment Timeline */}
+        {/* Section 05: Experience - Timeline */}
         <section
           id="experience"
-          className="relative px-margin-mobile md:px-margin-desktop py-16 border-b border-1px border-outline z-10 bg-surface text-on-surface overflow-hidden"
+          className="relative px-margin-mobile md:px-margin-desktop py-16 z-10 bg-[#0a0a0a] text-zinc-100"
         >
           <div className="max-w-7xl mx-auto w-full relative z-10">
-            {/* Ghost Number */}
-            <div className="absolute -top-10 left-0 md:-left-4 font-display-xl-mobile md:font-display-xl text-[140px] md:text-[240px] text-on-surface/25 pointer-events-none select-none z-0">
-              05
-            </div>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter mt-16 relative z-10">
               {/* Heading */}
-              <div className="md:col-span-4 mb-10 md:mb-0 relative">
-                <h2 className="font-headline-lg text-on-surface uppercase relative z-10 tracking-wider">
+              <div className="md:col-span-4 mb-10 md:mb-0 relative md:sticky md:top-24 md:h-fit">
+                <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide">
                   WHERE I'VE WORKED
                 </h2>
-                <div className="h-px w-full bg-outline my-4"></div>
-                <p className="font-mono-code text-on-surface/80 font-medium text-sm leading-relaxed">
-                  Architectural contributions, microservices engineering, and data pipeline deployments across production environments.
+                <div className="h-px w-full bg-[#222222] my-4"></div>
+                <p className="font-sans text-[#D9D3C7]/80 text-sm sm:text-base leading-relaxed max-w-sm">
+                  Backend developer internships focusing on building services, database optimizations, and distributed APIs.
                 </p>
 
-                {/* Left Side Click Hint */}
-                <div className="mt-8 pt-6 border-t border-outline/30 flex items-center gap-2 font-mono-code text-xs text-on-surface/70 font-semibold">
-                  <span className="material-symbols-outlined text-[18px]">touch_app</span>
-                  <span>+ CLICK ENTRIES TO VIEW DETAILS & TECH STACK</span>
-                </div>
               </div>
 
-              {/* Timeline Container */}
+              {/* Stacked Cards Container */}
               <div className="md:col-span-8 relative">
-                {/* Vertical Timeline Spine Line */}
-                <div className="relative border-l-2 border-outline/30 pl-6 sm:pl-8 md:pl-10 ml-2 md:ml-4 space-y-10">
-                  
+                <ContainerScroll className="min-h-[135vh] space-y-10 pt-0 pb-4">
                   {/* Job 1: Prelax Infotech */}
-                  <div className="relative group scroll-reveal">
-                    {/* Node Dot / Marker */}
-                    <div className="absolute -left-[37px] sm:-left-[45px] md:-left-[53px] top-1.5 w-6 h-6 rounded-full bg-surface border-4 border-outline/40 flex items-center justify-center shadow-xs">
-                      <div className="w-2 h-2 rounded-full bg-primary" />
-                    </div>
-
-                    {/* Open-Text Content Container */}
-                    <div
-                      onClick={() => setPrelaxExpanded(!prelaxExpanded)}
-                      className="cursor-pointer select-none py-1 group/item"
-                    >
-                      {/* Top Header: Role, Company & Date */}
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 border-b border-outline/20 pb-4 mb-3">
-                        <div>
-                          <div className="inline-block bg-surface-variant/40 border border-outline/30 text-on-surface/80 px-2.5 py-0.5 font-mono-code text-[11px] font-bold uppercase tracking-wider mb-2 rounded-xs">
-                            MICROSERVICES & DISTRIBUTED SYSTEMS
-                          </div>
-                          <h3 className="font-headline-md text-[26px] sm:text-[32px] md:text-[36px] leading-tight text-on-surface font-bold uppercase tracking-wide transition-opacity hover:opacity-85">
-                            BACKEND DEVELOPER INTERN
-                          </h3>
-                          <div className="font-mono-code text-primary font-bold uppercase text-[14px] md:text-[15px] tracking-wider mt-1 flex items-center gap-2">
-                            PRELAX INFOTECH
-                          </div>
+                  <CardSticky
+                    index={0}
+                    incrementY={40}
+                    incrementZ={8}
+                    topOffset={96}
+                    className="w-full bg-transparent backdrop-blur-sm border-b-2 border-[#D9D3C7] p-5 sm:p-6 rounded-none shadow-[4px_4px_0px_0px_rgba(217,211,199,0.15)] transition-all duration-200"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 border-b border-[#222222] pb-4 mb-4">
+                      <div>
+                        <div className="inline-block bg-[#D9D3C7] text-[#0a0a0a] px-2.5 py-0.5 font-sans text-[11px] font-bold uppercase tracking-wider mb-2 rounded-xs">
+                          MICROSERVICES & DISTRIBUTED SYSTEMS
                         </div>
-                        <div className="font-mono-code text-on-surface font-semibold text-[12px] md:text-[13px] bg-surface-variant/30 border border-outline/40 px-3 py-1.5 inline-block w-max rounded-xs tracking-wider shadow-xs">
-                          MAY 2026 — JUN 2026
+                        <h3 className="font-sans text-[20px] sm:text-[24px] leading-tight text-zinc-100 font-bold uppercase tracking-wide">
+                          BACKEND DEVELOPER INTERN
+                        </h3>
+                        <div className="font-sans text-primary font-bold uppercase text-[14px] md:text-[15px] tracking-wider mt-1 flex items-center gap-2">
+                          PRELAX INFOTECH
                         </div>
                       </div>
-
-                      {/* Location */}
-                      <div className="font-mono-code text-on-surface/75 text-[12.5px] md:text-[13.5px] font-semibold flex items-center gap-2">
-                        <span className="material-symbols-outlined text-[16px] text-on-surface/70">location_on</span>
-                        Surat, Gujarat, India · On-Site
+                      <div className="font-sans text-[#D9D3C7] font-semibold text-[12px] md:text-[13px] bg-[#222222] border border-[#2a2a2a] px-3 py-1.5 inline-block w-max rounded-xs tracking-wider shadow-xs">
+                        MAY 2026 — JUN 2026
                       </div>
-
-                      {/* Expandable Content Area */}
-                      {prelaxExpanded && (
-                        <div className="mt-4 pt-4 border-t border-outline/20 animate-fadeIn space-y-4">
-                          {/* Technical Achievements List */}
-                          <ul className="font-body-md text-on-surface text-[14.5px] md:text-[15.5px] space-y-3 leading-relaxed font-normal">
-                            <li className="flex items-start gap-3">
-                              <span className="font-mono-code text-primary font-bold mt-0.5 text-base">›</span>
-                              <span>
-                                Architected a microservices backend with <strong className="font-bold text-on-surface border-b border-outline/40">8–10 Node.js/Express services</strong>, each operating on an isolated PostgreSQL database instance.
-                              </span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                              <span className="font-mono-code text-primary font-bold mt-0.5 text-base">›</span>
-                              <span>
-                                Engineered synchronous inter-service RPC calls using <strong className="font-bold text-on-surface border-b border-outline/40">gRPC & API Gateway</strong>, with <strong className="font-bold text-on-surface border-b border-outline/40">RabbitMQ</strong> topic exchanges for asynchronous event-driven logging.
-                              </span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                              <span className="font-mono-code text-primary font-bold mt-0.5 text-base">›</span>
-                              <span>
-                                Eliminated N+1 query bottlenecks on job browsing endpoints using <strong className="font-bold text-on-surface border-b border-outline/40">Redis caching</strong>, sustaining throughput of <strong className="font-bold text-on-surface">400–600 RPS</strong> under load tests with Autocannon.
-                              </span>
-                            </li>
-                          </ul>
-
-                          {/* Tech Stack Matrix */}
-                          <div className="flex flex-wrap gap-2 pt-2">
-                            {['Node.js', 'Express', 'PostgreSQL', 'gRPC', 'RabbitMQ', 'Redis', 'Docker', 'Autocannon'].map((tech, tIdx) => (
-                              <span
-                                key={tIdx}
-                                className="border border-on-surface/30 text-on-surface bg-surface-variant/40 hover:bg-on-surface/5 transition-colors px-2.5 py-1 font-mono-code text-[11.5px] md:text-[12px] uppercase font-bold rounded-xs"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
                     </div>
-                  </div>
+
+                    {/* Location */}
+                    <div className="font-sans text-[#D9D3C7]/90 text-[13px] md:text-[14px] font-semibold flex items-center gap-2 mb-4">
+                      <span className="material-symbols-outlined text-[16px] text-[#D9D3C7]/60">
+                        location_on
+                      </span>
+                      Surat, Gujarat, India · On-Site
+                    </div>
+
+                    {/* Content List */}
+                    <ul className="font-sans text-[#D9D3C7]/90 text-[15px] md:text-[16px] space-y-3 leading-relaxed font-normal">
+                      <li className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                        <span>
+                          Architected a microservices backend with{" "}
+                          <ExperienceHighlight>
+                            8–10 Node.js/Express services
+                          </ExperienceHighlight>
+                          , each operating on an isolated PostgreSQL database instance.
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                        <span>
+                          Engineered synchronous inter-service RPC calls using{" "}
+                          <ExperienceHighlight>
+                            gRPC & API Gateway
+                          </ExperienceHighlight>
+                          , with RabbitMQ topic exchanges for asynchronous event-driven logging.
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                        <span>
+                          Eliminated N+1 query bottlenecks on job browsing endpoints using{" "}
+                          <ExperienceHighlight>
+                            Redis caching
+                          </ExperienceHighlight>
+                          , sustaining throughput of{" "}
+                          <ExperienceHighlight>
+                            400–600 RPS
+                          </ExperienceHighlight>{" "}
+                          under load tests with Autocannon.
+                        </span>
+                      </li>
+                    </ul>
+
+                  </CardSticky>
 
                   {/* Job 2: Infosys Springboard */}
-                  <div className="relative group scroll-reveal" style={{ transitionDelay: "150ms" }}>
-                    {/* Node Dot / Marker */}
-                    <div className="absolute -left-[37px] sm:-left-[45px] md:-left-[53px] top-1.5 w-6 h-6 rounded-full bg-surface border-4 border-outline/40 flex items-center justify-center shadow-xs">
-                      <div className="w-2 h-2 rounded-full bg-primary" />
-                    </div>
-
-                    {/* Open-Text Content Container */}
-                    <div
-                      onClick={() => setInfosysExpanded(!infosysExpanded)}
-                      className="cursor-pointer select-none py-1 group/item"
-                    >
-                      {/* Top Header: Role, Company & Date */}
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 border-b border-outline/20 pb-4 mb-3">
-                        <div>
-                          <div className="inline-block bg-surface-variant/40 border border-outline/30 text-on-surface/80 px-2.5 py-0.5 font-mono-code text-[11px] font-bold uppercase tracking-wider mb-2 rounded-xs">
-                            DATA PIPELINES & PREDICTIVE APIS
-                          </div>
-                          <h3 className="font-headline-md text-[26px] sm:text-[32px] md:text-[36px] leading-tight text-on-surface font-bold uppercase tracking-wide transition-opacity hover:opacity-85">
-                            PYTHON BACKEND INTERN
-                          </h3>
-                          <div className="font-mono-code text-primary font-bold uppercase text-[14px] md:text-[15px] tracking-wider mt-1 flex items-center gap-2">
-                            INFOSYS SPRINGBOARD
-                          </div>
+                  <CardSticky
+                    index={1}
+                    incrementY={40}
+                    incrementZ={8}
+                    topOffset={96}
+                    className="w-full bg-transparent backdrop-blur-sm border-b-2 border-[#D9D3C7] p-5 sm:p-6 rounded-none shadow-[4px_4px_0px_0px_rgba(217,211,199,0.15)] transition-all duration-200"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 border-b border-[#222222] pb-4 mb-4">
+                      <div>
+                        <div className="inline-block bg-[#D9D3C7] text-[#0a0a0a] px-2.5 py-0.5 font-sans text-[11px] font-bold uppercase tracking-wider mb-2 rounded-xs">
+                          DATA PIPELINES & PREDICTIVE APIS
                         </div>
-                        <div className="font-mono-code text-on-surface font-semibold text-[12px] md:text-[13px] bg-surface-variant/30 border border-outline/40 px-3 py-1.5 inline-block w-max rounded-xs tracking-wider shadow-xs">
-                          AUG 2025 — OCT 2025
+                        <h3 className="font-sans text-[20px] sm:text-[24px] leading-tight text-zinc-100 font-bold uppercase tracking-wide">
+                          PYTHON BACKEND INTERN
+                        </h3>
+                        <div className="font-sans text-primary font-bold uppercase text-[14px] md:text-[15px] tracking-wider mt-1 flex items-center gap-2">
+                          INFOSYS SPRINGBOARD
                         </div>
                       </div>
-
-                      {/* Location */}
-                      <div className="font-mono-code text-on-surface/75 text-[12.5px] md:text-[13.5px] font-semibold flex items-center gap-2">
-                        <span className="material-symbols-outlined text-[16px] text-on-surface/70">location_on</span>
-                        Remote · Anand, Gujarat, India
+                      <div className="font-sans text-[#D9D3C7] font-semibold text-[12px] md:text-[13px] bg-[#222222] border border-[#2a2a2a] px-3 py-1.5 inline-block w-max rounded-xs tracking-wider shadow-xs">
+                        AUG 2025 — OCT 2025
                       </div>
-
-                      {/* Expandable Content Area */}
-                      {infosysExpanded && (
-                        <div className="mt-4 pt-4 border-t border-outline/20 animate-fadeIn space-y-4">
-                          {/* Technical Achievements List */}
-                          <ul className="font-body-md text-on-surface text-[14.5px] md:text-[15.5px] space-y-3 leading-relaxed font-normal">
-                            <li className="flex items-start gap-3">
-                              <span className="font-mono-code text-primary font-bold mt-0.5 text-base">›</span>
-                              <span>
-                                Collaborated in a <strong className="font-bold text-on-surface border-b border-outline/40">25+ member Agile/Scrum team</strong> across 4 sprints, managing automated testing suites and API documentation.
-                              </span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                              <span className="font-mono-code text-primary font-bold mt-0.5 text-base">›</span>
-                              <span>
-                                Built a time-series crypto pipeline using <strong className="font-bold text-on-surface border-b border-outline/40">SQLite, Pandas & NumPy</strong> with Ridge Regression return prediction models.
-                              </span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                              <span className="font-mono-code text-primary font-bold mt-0.5 text-base">›</span>
-                              <span>
-                                Integrated stress testing across market volatility scenarios, exposing endpoints via <strong className="font-bold text-on-surface border-b border-outline/40">FastAPI</strong> and an interactive Streamlit dashboard.
-                              </span>
-                            </li>
-                          </ul>
-
-                          {/* Tech Stack Matrix */}
-                          <div className="flex flex-wrap gap-2 pt-2">
-                            {['Python', 'FastAPI', 'SQLite', 'Pandas', 'NumPy', 'Ridge Regression', 'Streamlit', 'Agile/Scrum'].map((tech, tIdx) => (
-                              <span
-                                key={tIdx}
-                                className="border border-on-surface/30 text-on-surface bg-surface-variant/40 hover:bg-on-surface/5 transition-colors px-2.5 py-1 font-mono-code text-[11.5px] md:text-[12px] uppercase font-bold rounded-xs"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-
-                          {/* Certificate Verification Button */}
-                          <div className="pt-2 flex justify-end">
-                            <a
-                              href="https://bit.ly/Priyank-InfosysCert"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              className="inline-flex items-center gap-1.5 border border-on-surface bg-surface text-on-surface hover:bg-on-surface hover:text-surface transition-colors duration-200 px-4 py-2 font-mono-code text-[12px] font-bold uppercase cursor-pointer rounded-xs shadow-xs"
-                            >
-                              <span className="material-symbols-outlined text-[16px]">
-                                verified_user
-                              </span>
-                              VIEW VERIFIED CREDENTIAL <span className="text-xs">→</span>
-                            </a>
-                          </div>
-                        </div>
-                      )}
                     </div>
-                  </div>
 
-                </div>
+                    {/* Location */}
+                    <div className="font-sans text-[#D9D3C7]/90 text-[13px] md:text-[14px] font-semibold flex items-center gap-2 mb-4">
+                      <span className="material-symbols-outlined text-[16px] text-[#D9D3C7]/60">
+                        location_on
+                      </span>
+                      Remote · Anand, Gujarat, India
+                    </div>
+
+                    {/* Content List */}
+                    <ul className="font-sans text-[#D9D3C7]/90 text-[15px] md:text-[16px] space-y-3 leading-relaxed font-normal">
+                      <li className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                        <span>
+                          Collaborated in a{" "}
+                          <ExperienceHighlight>
+                            25+ member Agile/Scrum team
+                          </ExperienceHighlight>{" "}
+                          across 4 sprints, managing automated testing suites and API documentation.
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                        <span>
+                          Built a time-series crypto pipeline using{" "}
+                          <ExperienceHighlight>
+                            SQLite, Pandas & NumPy
+                          </ExperienceHighlight>{" "}
+                          with Ridge Regression return prediction models.
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                        <span>
+                          Integrated stress testing across market volatility scenarios, exposing endpoints via{" "}
+                          <ExperienceHighlight>
+                            FastAPI
+                          </ExperienceHighlight>{" "}
+                          and an interactive Streamlit dashboard.
+                        </span>
+                      </li>
+                    </ul>
+
+
+                    {/* Certificate Verification Button */}
+                    <div className="pt-4 flex justify-end">
+                      <a
+                        href="https://bit.ly/Priyank-InfosysCert"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 border border-[#2a2a2a] bg-[#222222] text-[#D9D3C7] hover:bg-[#b02600] hover:text-white hover:border-[#b02600] transition-colors duration-200 px-4 py-2 font-sans text-[12px] font-bold uppercase cursor-pointer rounded-xs shadow-xs"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">
+                          verified_user
+                        </span>
+                        VIEW VERIFIED CREDENTIAL{" "}
+                        <span className="text-xs">→</span>
+                      </a>
+                    </div>
+                  </CardSticky>
+                </ContainerScroll>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Section 06: Interactive Play - Dark black grid background */}
+        {/* Section 06: Contact Form - Tailored to match new dark/beige theme */}
         <section
           id="play"
-          className="px-margin-mobile md:px-margin-desktop py-16 border-b border-[#2a2a2a] relative z-10 text-[#D9D3C7] animate-fade-in"
-          style={{
-            backgroundColor: "#111111",
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
+          className="relative px-margin-mobile md:px-margin-desktop py-16 z-10 bg-[#0a0a0a] text-zinc-100"
         >
           <div className="max-w-7xl mx-auto w-full relative z-10">
-            {/* Ghost Number */}
-            <div className="absolute -top-10 right-0 md:-right-4 font-display-xl-mobile md:font-display-xl text-[140px] md:text-[240px] text-[#D9D3C7]/25 pointer-events-none select-none z-0">
-              06
-            </div>
-            <header className="border-b border-[#2a2a2a] pb-base relative z-10 mt-16">
-              <h2 className="font-headline-md text-headline-md text-[#D9D3C7] tracking-wider uppercase">
-                MORE ABOUT ME
-              </h2>
-            </header>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter mt-8 relative z-10">
+              
+              {/* Left Column: Heading & Context */}
+              <div className="md:col-span-5 mb-10 md:mb-0 flex flex-col justify-start">
+                <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide">
+                  LET'S CONNECT
+                </h2>
+                <div className="h-px w-full bg-[#222222] my-4"></div>
+                <p className="font-sans text-[#D9D3C7]/80 text-sm sm:text-base leading-relaxed max-w-sm mb-4">
+                  Have a question, a project proposal, or just want to talk backend architecture and distributed systems? Drop a line and I'll get back to you shortly.
+                </p>
 
-            {/* Terminal Playground Widget - Black Background */}
-            <div className="scroll-reveal border border-[#C4BDB2] bg-[#1A1A1A] flex flex-col mt-base shadow-sm text-surface relative z-10">
-              {/* Window Header */}
-              <div className="flex items-center px-base py-2 border-b border-[#C4BDB2] bg-[#111111]">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-tertiary-container border border-[#C4BDB2]"></div>
-                  <div className="w-3 h-3 rounded-full bg-tertiary-container border border-[#C4BDB2]"></div>
-                  <div className="w-3 h-3 rounded-full bg-tertiary-container border border-[#C4BDB2]"></div>
+                <a
+                  href="mailto:priyankmoradiya41@gmail.com"
+                  className="font-sans text-base sm:text-[17px] font-bold text-[#D9D3C7] hover:text-[#FF3800] transition-colors duration-200 block mb-6 w-fit"
+                >
+                  priyankmoradiya41@gmail.com
+                </a>
+
+                {/* Social Links */}
+                <div className="flex gap-4 mb-6">
+                  {/* GitHub */}
+                  <a
+                    href="https://github.com/Priyankm23"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="GitHub"
+                    className="w-12 h-12 border border-[#2a2a2a] bg-[#151515] text-[#D9D3C7] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,0.15)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#0a0a0a] hover:border-[#D9D3C7]"
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                      <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                    </svg>
+                  </a>
+                  {/* LinkedIn */}
+                  <a
+                    href="https://linkedin.com/in/priyank-moradiya"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="LinkedIn"
+                    className="w-12 h-12 border border-[#2a2a2a] bg-[#151515] text-[#D9D3C7] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,0.15)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#0a0a0a] hover:border-[#D9D3C7]"
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                    </svg>
+                  </a>
+                  {/* Twitter / X */}
+                  <a
+                    href="https://x.com/priyank_m_23"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="X (Twitter)"
+                    className="w-12 h-12 border border-[#2a2a2a] bg-[#151515] text-[#D9D3C7] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,0.15)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#0a0a0a] hover:border-[#D9D3C7]"
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                  </a>
                 </div>
-                <span className="mx-auto font-label-sm text-label-sm text-[#D9D3C7] opacity-50">
-                  sh — 80x24
-                </span>
               </div>
 
-              {/* Terminal Body */}
-              <div
-                ref={terminalBodyRef}
-                className="p-4 font-mono-code text-mono-code text-[#D9D3C7] h-[400px] overflow-y-auto flex flex-col gap-1"
-              >
-                {playHistory.map((line, idx) => (
-                  <div
-                    key={idx}
-                    className="whitespace-pre-wrap leading-relaxed"
-                  >
-                    {line.startsWith("visitor@portfolio:~$") ? (
-                      <span>
-                        <span className="text-primary-container mr-2">
-                          visitor@portfolio:~$
-                        </span>
-                        {line.slice(21)}
-                      </span>
+              {/* Right Column: Contact Form Card */}
+              <div className="md:col-span-7">
+                <div className="w-full bg-[#151515] border border-[#2a2a2a] p-6 sm:p-8 rounded-none shadow-[4px_4px_0px_0px_rgba(217,211,199,0.1)] transition-all duration-200 relative overflow-hidden">
+                  {/* WebGL Shader Background inside Card */}
+                  <ShaderBackground className="absolute inset-0 z-0 pointer-events-none opacity-30" />
+                  <form onSubmit={handleContactSubmit} className="flex flex-col gap-6 font-sans relative z-10">
+                    {submitStatus === "success" ? (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-center py-8 flex flex-col items-center gap-4"
+                      >
+                        <div className="w-16 h-16 rounded-full bg-emerald-950/40 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <h3 className="text-xl font-bold text-zinc-100 uppercase tracking-wider">
+                          MESSAGE SENT
+                        </h3>
+                        <p className="text-[#D9D3C7]/80 text-sm max-w-md">
+                          Thank you! Your message has been sent successfully. I will get in touch with you shortly.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSubmitStatus("idle");
+                            setContactName("");
+                            setContactEmail("");
+                            setContactMessage("");
+                          }}
+                          className="mt-4 px-5 py-2 border border-[#D9D3C7] bg-[#D9D3C7] text-[#0a0a0a] text-xs font-bold uppercase tracking-wider hover:bg-transparent hover:text-[#D9D3C7] transition-colors"
+                        >
+                          Send Another Message
+                        </button>
+                      </motion.div>
                     ) : (
-                      <span className="text-surface-dim opacity-90">
-                        {line}
-                      </span>
-                    )}
-                  </div>
-                ))}
+                      <>
+                        <div className="flex flex-col gap-2">
+                          <label htmlFor="contact-name" className="text-xs uppercase tracking-widest text-[#D9D3C7] font-semibold">
+                            Name
+                          </label>
+                          <input
+                            type="text"
+                            id="contact-name"
+                            required
+                            value={contactName}
+                            onChange={(e) => setContactName(e.target.value)}
+                            placeholder="Enter your name"
+                            disabled={isSubmitting}
+                            className="bg-black border border-[#2a2a2a] focus:border-[#D9D3C7] outline-none px-4 py-3 text-zinc-100 text-sm focus:ring-0 w-full rounded-none transition-colors duration-250 placeholder-zinc-600"
+                          />
+                        </div>
 
-                <div className="flex gap-2 items-center text-[#D9D3C7] mt-1">
-                  <span className="text-primary-container">
-                    visitor@portfolio:~$
-                  </span>
-                  <form onSubmit={handlePlaySubmit} className="flex-1">
-                    <input
-                      type="text"
-                      id="terminal-input"
-                      name="terminal-command"
-                      autoComplete="off"
-                      autoCorrect="off"
-                      autoCapitalize="none"
-                      spellCheck="false"
-                      value={playInput}
-                      onChange={(e) => setPlayInput(e.target.value)}
-                      placeholder="type h..."
-                      className="bg-transparent border-none outline-none w-full text-[#D9D3C7] font-mono-code text-[14px] focus:ring-0 p-0"
-                      suppressHydrationWarning
-                    />
+                        <div className="flex flex-col gap-2">
+                          <label htmlFor="contact-email" className="text-xs uppercase tracking-widest text-[#D9D3C7] font-semibold">
+                            Email Address
+                          </label>
+                          <input
+                            type="email"
+                            id="contact-email"
+                            required
+                            value={contactEmail}
+                            onChange={(e) => setContactEmail(e.target.value)}
+                            placeholder="your.email@domain.com"
+                            disabled={isSubmitting}
+                            className="bg-black border border-[#2a2a2a] focus:border-[#D9D3C7] outline-none px-4 py-3 text-zinc-100 text-sm focus:ring-0 w-full rounded-none transition-colors duration-250 placeholder-zinc-600"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                          <label htmlFor="contact-message" className="text-xs uppercase tracking-widest text-[#D9D3C7] font-semibold">
+                            Message
+                          </label>
+                          <textarea
+                            id="contact-message"
+                            required
+                            rows={5}
+                            value={contactMessage}
+                            onChange={(e) => setContactMessage(e.target.value)}
+                            placeholder="Write your message here..."
+                            disabled={isSubmitting}
+                            className="bg-black border border-[#2a2a2a] focus:border-[#D9D3C7] outline-none px-4 py-3 text-zinc-100 text-sm focus:ring-0 w-full rounded-none resize-none transition-colors duration-250 placeholder-zinc-600"
+                          />
+                        </div>
+
+                        {submitStatus === "error" && (
+                          <div className="text-red-500 font-mono text-xs p-3 bg-red-950/20 border border-red-500/20">
+                            {statusMessage || "Failed to submit. Please try again."}
+                          </div>
+                        )}
+
+                        <div className="flex justify-end mt-2">
+                          <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="inline-flex items-center gap-2 px-6 py-3 border border-[#D9D3C7] bg-[#D9D3C7] text-[#0a0a0a] font-bold tracking-wider hover:bg-transparent hover:text-[#D9D3C7] transition-all uppercase cursor-pointer rounded-none shadow-[3px_3px_0px_0px_rgba(217,211,199,0.15)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {isSubmitting ? "SENDING..." : "SEND MESSAGE"}
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </form>
                 </div>
               </div>
+
             </div>
           </div>
         </section>
-
-        {/* Redesigned Footer & Straightaway Contact Info */}
-        <footer className="w-full relative overflow-hidden py-8 md:py-12 px-margin-mobile md:px-margin-desktop bg-surface border-t border-1px border-outline text-on-surface mt-auto z-10">
-          {/* Lined Vertical Grid Overlay - Locally inside Footer */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 pointer-events-none grid grid-cols-4 md:grid-cols-12 gap-0 border-r border-1px border-outline opacity-10 z-0"
-          >
-            <div className="border-l border-1px border-on-surface h-full"></div>
-            <div className="border-l border-1px border-on-surface h-full"></div>
-            <div className="border-l border-1px border-on-surface h-full"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-            <div className="border-l border-1px border-on-surface h-full hidden md:block"></div>
-          </div>
-
-          <div className="max-w-7xl mx-auto w-full flex flex-col gap-6 md:gap-8 relative z-10">
-            {/* Top Section: Say Hello & Thanks (Alternating Left/Right Stack) */}
-            <div className="flex flex-col gap-4 md:gap-5">
-              {/* GET IN TOUCH & Email (Left Aligned) */}
-              <div className="flex flex-col items-center md:items-start gap-1">
-                <span className="font-mono-code text-[11px] md:text-[12px] uppercase tracking-widest text-primary font-bold">
-                  GET IN TOUCH
-                </span>
-                <a
-                  href="mailto:priyankmoradiya41@gmail.com"
-                  className="font-bbh-bartle text-[16px] xs:text-[20px] sm:text-[26px] md:text-[32px] lg:text-[36px] xl:text-[38px] uppercase tracking-wide text-on-surface hover:text-primary transition-colors duration-200 font-bold leading-tight"
-                  style={{ fontFamily: '"BBH Bartle", "Bebas Neue", sans-serif' }}
-                >
-                  priyankmoradiya41
-                  <span className="block sm:inline">@gmail.com</span>
-                </a>
-              </div>
-
-              {/* Thanks For Visiting Section (Clipped Image Text inside Letters Only) */}
-              <div className="flex flex-col items-center md:items-end select-none">
-                <span
-                  className="font-bbh-bartle text-[16px] xs:text-[20px] sm:text-[26px] md:text-[32px] lg:text-[36px] xl:text-[38px] uppercase tracking-wide font-bold cursor-pointer leading-none text-center md:text-right bg-cover bg-center bg-clip-text text-transparent filter contrast-125 saturate-125 transition-transform duration-300 hover:scale-[1.02]"
-                  style={{
-                    fontFamily: '"BBH Bartle", "Bebas Neue", sans-serif',
-                    backgroundImage: "url(/footer.jpg)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                  }}
-                >
-                  THANKS FOR VISITING!
-                </span>
-              </div>
+        {/* Footer */}
+        <footer className="w-full bg-[#0a0a0a] py-8 px-margin-mobile md:px-margin-desktop z-10">
+          <div className="max-w-7xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-4 font-sans text-xs tracking-widest text-zinc-500 uppercase font-semibold">
+            <div>
+              THANKS FOR VISITING.
             </div>
-
-            {/* Bottom Row: Social Links & Copyright (No horizontal line) */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-2 mt-4 font-mono-code text-[12px] md:text-[14px]">
-              <div className="flex flex-row flex-wrap items-center gap-3 uppercase">
-                <a
-                  href="https://github.com/Priyankm23"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-1.5 border border-on-surface bg-surface text-on-surface hover:text-primary hover:border-primary transition-all duration-150 rounded-xs shadow-[2px_2px_0px_0px_rgba(27,28,28,1)] text-[12px] md:text-[13px] font-bold"
-                >
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                    <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
-                  </svg>
-                  <span>GITHUB</span>
-                </a>
-                <a
-                  href="https://linkedin.com/in/priyankmoradiya"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-1.5 border border-on-surface bg-surface text-on-surface hover:text-primary hover:border-primary transition-all duration-150 rounded-xs shadow-[2px_2px_0px_0px_rgba(27,28,28,1)] text-[12px] md:text-[13px] font-bold"
-                >
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                  </svg>
-                  <span>LINKEDIN</span>
-                </a>
-                <a
-                  href="https://x.com/priyank_M73"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-1.5 border border-on-surface bg-surface text-on-surface hover:text-primary hover:border-primary transition-all duration-150 rounded-xs shadow-[2px_2px_0px_0px_rgba(27,28,28,1)] text-[12px] md:text-[13px] font-bold"
-                >
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                  </svg>
-                  <span>X (TWITTER)</span>
-                </a>
-                <a
-                  href="/resume.pdf"
-                  target="_blank"
-                  rel="noreferrer"
-                  download="Priyank_Moradiya_Resume.pdf"
-                  className="inline-flex items-center gap-2 px-3 py-1.5 border border-primary bg-primary text-white hover:bg-surface hover:text-primary transition-all duration-150 rounded-xs shadow-[2px_2px_0px_0px_rgba(27,28,28,1)] text-[12px] md:text-[13px] font-bold"
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" y1="15" x2="12" y2="3" />
-                  </svg>
-                  <span>RESUME</span>
-                </a>
-              </div>
-              <div className="text-on-surface/80 text-[13px] sm:text-[14px] md:text-[15px] font-semibold tracking-wide">
-                © 2026 PRIYANK MORADIYA · BUILT WITH OBSESSION
-              </div>
+            <div>
+              © {new Date().getFullYear()} PRIYANK MORADIYA. ALL RIGHTS RESERVED.
             </div>
           </div>
         </footer>

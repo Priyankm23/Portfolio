@@ -238,7 +238,7 @@ export const GenerativeHeroBg: React.FC<GenerativeHeroBgProps> = ({ fullWidth = 
       clearInterval(intervalId);
       window.removeEventListener("resize", resize);
     };
-  }, []);
+  }, [fullWidth]);
 
   return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0" />;
 };

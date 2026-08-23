@@ -69,4 +69,27 @@ router.get("/api/priyank", async (req, res) => {
   }
 });
 
+router.post("/api/contact", async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: "missing_fields", message: "Name, email, and message are required." });
+    }
+
+    const client = getRedisClient();
+    if (client) {
+      const contactId = `contact:${Date.now()}`;
+      await client.hset(contactId, { name, email, message, timestamp: new Date().toISOString() });
+      await client.lpush("portfolio:contacts", contactId);
+    } else {
+      console.warn("[Redis] Upstash Redis environment variables missing. Logging message:", { name, email, message });
+    }
+
+    return res.json({ success: true, message: "Response received successfully!" });
+  } catch (err) {
+    console.error("[API] Error in contact route:", err.message || err);
+    return res.status(500).json({ error: "server_error", message: err.message });
+  }
+});
+
 export default router;

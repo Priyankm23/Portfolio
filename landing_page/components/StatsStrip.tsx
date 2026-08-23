@@ -49,7 +49,7 @@ export const StatsStrip = () => {
           className="col-span-2 md:col-span-1 pb-6 md:pb-0 mb-6 md:mb-0 border-b md:border-b-0 border-dashed border-[var(--border)]"
         >
           <p style={bioText}>B.Tech IT @ GCET</p>
-          <p style={bioText}>CGPA: 9.4 / 10</p>
+          <p style={bioText}>CGPA: 9.48 / 10</p>
           <p style={bioText}>Anand, Gujarat</p>
         </div>
 
