@@ -653,16 +653,16 @@ export default function Home() {
           <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0a0a0a] to-transparent pointer-events-none z-10" />
 
           {/* Hero Content Container */}
-          <div className="w-full max-w-full mx-auto px-8 md:px-20 lg:px-28 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-24 items-center relative z-10 h-full">
+          <div className="w-full max-w-full mx-auto px-6 sm:px-8 md:px-20 lg:px-28 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-24 items-center relative z-10 h-full">
             {/* Left Column: Text Content */}
-            <div className="md:col-span-8 flex flex-col items-start text-left gap-6 w-full md:pl-10">
+            <div className="md:col-span-8 flex flex-col items-start text-left gap-6 w-full">
               {/* Greeting + Name */}
               <div className="flex flex-col gap-2 items-start select-none">
-                <span className="text-[18px] sm:text-[22px] md:text-[24px] text-zinc-400 font-sans font-medium tracking-widest uppercase">
+                <span className="text-[16px] sm:text-[20px] md:text-[24px] text-zinc-400 font-sans font-medium tracking-widest uppercase">
                   HI, I'M
                 </span>
                 <h1
-                  className="text-[38px] xs:text-[48px] sm:text-[68px] md:text-[80px] leading-tight text-[#D9D3C7] tracking-wider uppercase font-bold pr-4 md:pr-0"
+                  className="text-[36px] sm:text-[52px] md:text-[80px] leading-tight text-[#D9D3C7] tracking-wider uppercase font-bold"
                   style={{ fontFamily: '"BBH Bartle", "Bebas Neue", sans-serif' }}
                 >
                   Priyank
@@ -700,14 +700,14 @@ export default function Home() {
                 everything together.
               </p>
 
-              <div className="flex flex-row flex-wrap gap-4 mt-6 relative z-10 justify-start w-full">
+              <div className="flex flex-row flex-wrap gap-3 sm:gap-4 mt-4 sm:mt-6 relative z-10 justify-start w-full">
                 {/* GitHub */}
                 <a
                   href="https://github.com/Priyankm23"
                   target="_blank"
                   rel="noreferrer"
                   title="GitHub"
-                  className="w-14 h-14 border border-1px border-[#D9D3C7] bg-transparent text-[#D9D3C7] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#1B1C1C]"
+                  className="w-12 h-12 sm:w-14 sm:h-14 border border-1px border-[#D9D3C7] bg-transparent text-[#D9D3C7] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#1B1C1C]"
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
@@ -719,7 +719,7 @@ export default function Home() {
                   target="_blank"
                   rel="noreferrer"
                   title="LinkedIn"
-                  className="w-14 h-14 border border-1px border-[#D9D3C7] bg-transparent text-[#D9D3C7] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#1B1C1C]"
+                  className="w-12 h-12 sm:w-14 sm:h-14 border border-1px border-[#D9D3C7] bg-transparent text-[#D9D3C7] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#1B1C1C]"
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
@@ -729,7 +729,7 @@ export default function Home() {
                 <a
                   href="mailto:priyankmoradiya41@gmail.com"
                   title="Email"
-                  className="w-14 h-14 border border-1px border-[#D9D3C7] bg-transparent text-[#D9D3C7] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#1B1C1C]"
+                  className="w-12 h-12 sm:w-14 sm:h-14 border border-1px border-[#D9D3C7] bg-transparent text-[#D9D3C7] flex items-center justify-center transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#1B1C1C]"
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
                     <rect x="2" y="4" width="20" height="16" rx="2" />
@@ -742,7 +742,7 @@ export default function Home() {
                   target="_blank"
                   rel="noreferrer"
                   title="Download Resume"
-                  className="h-14 px-5 border border-1px border-[#D9D3C7] bg-transparent text-[#b02600] flex items-center gap-2 font-mono-code font-extrabold text-[13px] sm:text-[14px] uppercase tracking-wider transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#b02600] hover:text-white hover:border-[#b02600]"
+                  className="h-12 sm:h-14 px-4 sm:px-5 border border-1px border-[#D9D3C7] bg-transparent text-[#b02600] flex items-center gap-2 font-mono-code font-extrabold text-[12px] sm:text-[14px] uppercase tracking-wider transition-all duration-150 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#b02600] hover:text-white hover:border-[#b02600]"
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-5 h-5">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -756,7 +756,7 @@ export default function Home() {
 
             {/* Right Column: Hero Portrait Image */}
             <div className="md:col-span-4 flex justify-center md:justify-center items-center relative z-10 w-full mt-6 md:mt-0 animate-reveal">
-              <div className="relative w-full max-w-[300px] sm:max-w-[340px] md:max-w-[390px] lg:max-w-[440px] aspect-[4/5] overflow-hidden shadow-[5px_5px_0px_0px_rgba(217,211,199,0.15)] bg-[#0a0a0a] md:-translate-x-6">
+              <div className="relative w-full max-w-[260px] sm:max-w-[300px] md:max-w-[390px] lg:max-w-[440px] aspect-[4/5] overflow-hidden shadow-[5px_5px_0px_0px_rgba(217,211,199,0.15)] bg-[#0a0a0a] md:-translate-x-6">
                 <img
                   src="/full_portrait1.png"
                   alt="Priyank Moradiya - Hero Portrait"
@@ -796,7 +796,16 @@ export default function Home() {
 
           <div className="max-w-7xl mx-auto w-full relative z-10 mt-6">
             <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide relative z-10">
-              FEATURED BUILDS
+              <span className="relative inline-block">
+                FEATURED BUILDS
+                <motion.span
+                  className="absolute left-[-4px] -bottom-1 h-[3px] bg-[#b02600]"
+                  initial={{ width: 0 }}
+                  whileInView={{ width: "calc(100% + 8px)" }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.2 }}
+                />
+              </span>
             </h2>
             <div className="h-px w-full bg-[#222222] my-4 relative z-10"></div>
             <p className="font-sans text-[#D9D3C7]/80 text-sm sm:text-base leading-relaxed max-w-xl mb-12 relative z-10">
@@ -835,8 +844,17 @@ export default function Home() {
         >
           <div className="max-w-7xl mx-auto w-full relative z-10">
             <div className="relative z-10 mt-10">
-              <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide">
-                TOOLS I TRUST
+              <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide relative">
+                <span className="relative inline-block">
+                  TOOLS I TRUST
+                  <motion.span
+                    className="absolute left-[-4px] -bottom-1 h-[3px] bg-[#b02600]"
+                    initial={{ width: 0 }}
+                    whileInView={{ width: "calc(100% + 8px)" }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.2 }}
+                  />
+                </span>
               </h2>
               <div className="h-px w-full bg-[#222222] my-4"></div>
               <p className="font-sans text-[#D9D3C7]/80 text-sm sm:text-base leading-relaxed max-w-xl mb-12">
@@ -930,9 +948,18 @@ export default function Home() {
             <div className="relative z-10 flex flex-col md:grid md:grid-cols-12 gap-gutter mt-16">
               {/* Heading Area */}
               <div className="scroll-reveal-left md:col-span-3 mb-8 md:mb-0">
-                <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide flex items-center drop-shadow-sm">
-                  COMMIT HISTORY
-                  <span className="text-primary ml-1 blink">_</span>
+                <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide flex items-center drop-shadow-sm relative">
+                  <span className="relative inline-block">
+                    COMMIT HISTORY
+                    <span className="text-primary ml-1 blink">_</span>
+                    <motion.span
+                      className="absolute left-[-4px] -bottom-1 h-[3px] bg-[#b02600]"
+                      initial={{ width: 0 }}
+                      whileInView={{ width: "calc(100% + 8px)" }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.2 }}
+                    />
+                  </span>
                 </h2>
                 <div className="h-px w-full bg-white/30 my-4"></div>
                 <p className="font-sans text-[#D9D3C7]/80 text-sm sm:text-base leading-relaxed max-w-sm">
@@ -1105,8 +1132,17 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter mt-16 relative z-10">
               {/* Heading */}
               <div className="md:col-span-4 mb-10 md:mb-0 relative md:sticky md:top-24 md:h-fit">
-                <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide">
-                  WHERE I'VE WORKED
+                <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide relative">
+                  <span className="relative inline-block">
+                    WHERE I'VE WORKED
+                    <motion.span
+                      className="absolute left-[-4px] -bottom-1 h-[3px] bg-[#b02600]"
+                      initial={{ width: 0 }}
+                      whileInView={{ width: "calc(100% + 8px)" }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.2 }}
+                    />
+                  </span>
                 </h2>
                 <div className="h-px w-full bg-[#222222] my-4"></div>
                 <p className="font-sans text-[#D9D3C7]/80 text-sm sm:text-base leading-relaxed max-w-sm">
@@ -1291,8 +1327,17 @@ export default function Home() {
               
               {/* Left Column: Heading & Context */}
               <div className="md:col-span-5 mb-10 md:mb-0 flex flex-col justify-start">
-                <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide">
-                  LET'S CONNECT
+                <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide relative">
+                  <span className="relative inline-block">
+                    LET'S CONNECT
+                    <motion.span
+                      className="absolute left-[-4px] -bottom-1 h-[3px] bg-[#b02600]"
+                      initial={{ width: 0 }}
+                      whileInView={{ width: "calc(100% + 8px)" }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.2 }}
+                    />
+                  </span>
                 </h2>
                 <div className="h-px w-full bg-[#222222] my-4"></div>
                 <p className="font-sans text-[#D9D3C7]/80 text-sm sm:text-base leading-relaxed max-w-sm mb-4">
@@ -1443,7 +1488,7 @@ export default function Home() {
                           <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="inline-flex items-center gap-2 px-6 py-3 border border-[#D9D3C7] bg-[#D9D3C7] text-[#0a0a0a] font-bold tracking-wider hover:bg-transparent hover:text-[#D9D3C7] transition-all uppercase cursor-pointer rounded-none shadow-[3px_3px_0px_0px_rgba(217,211,199,0.15)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="inline-flex items-center gap-2 px-4 py-2 border border-[#D9D3C7] bg-[#D9D3C7] text-[#0a0a0a] font-sans font-bold tracking-wider hover:bg-transparent hover:text-[#D9D3C7] transition-all uppercase cursor-pointer rounded-none shadow-[3px_3px_0px_0px_rgba(217,211,199,0.15)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] disabled:opacity-50 disabled:cursor-not-allowed text-xs"
                           >
                             {isSubmitting ? "SENDING..." : "SEND MESSAGE"}
                           </button>

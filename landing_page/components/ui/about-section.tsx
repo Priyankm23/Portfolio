@@ -140,7 +140,7 @@ export default function AboutSection3({
             </TimelineContent>
 
             {/* GPA, Portfolio visits and College name/Relocation below the video */}
-            <div className="flex flex-col gap-2 py-4 border-b border-[#222]/60 font-sans text-sm">
+            <div className="flex flex-col gap-3 py-5 border-b border-[#222]/60 font-sans text-base">
               <TimelineContent
                 as="div"
                 animationNum={3}
@@ -149,18 +149,18 @@ export default function AboutSection3({
                 className="flex flex-wrap items-center gap-x-4 gap-y-2 justify-between"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-primary font-bold">9.48</span>
-                  <span className="text-[#D9D3C7]">CGPA (B.Tech IT)</span>
+                  <span className="text-primary font-bold text-xl sm:text-2xl">9.48</span>
+                  <span className="text-[#D9D3C7] text-sm sm:text-base">CGPA (B.Tech IT)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-primary font-bold">
+                  <span className="text-primary font-bold text-xl sm:text-2xl">
                     {visitorCount !== null ? `${visitorCount}` : "1,200+"}
                   </span>
-                  <span className="text-[#D9D3C7]">portfolio visits</span>
+                  <span className="text-[#D9D3C7] text-sm sm:text-base">portfolio visits</span>
                 </div>
               </TimelineContent>
 
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 justify-between mt-1 text-xs sm:text-sm">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 justify-between mt-2 text-sm sm:text-base">
                 <TimelineContent
                   as="div"
                   animationNum={3}
@@ -168,8 +168,8 @@ export default function AboutSection3({
                   customVariants={revealVariants}
                   className="flex items-center gap-2"
                 >
-                  <span className="text-primary font-semibold">GCET</span>
-                  <span className="text-[#D9D3C7] uppercase">Anand, Gujarat</span>
+                  <span className="text-primary font-bold text-lg sm:text-xl">GCET</span>
+                  <span className="text-[#D9D3C7] text-sm sm:text-base">Anand, Gujarat</span>
                 </TimelineContent>
 
                 <TimelineContent
@@ -179,8 +179,8 @@ export default function AboutSection3({
                   customVariants={revealVariants}
                   className="flex items-center gap-2"
                 >
-                  <span className="text-primary font-bold">OPEN</span>
-                  <span className="text-[#D9D3C7]">to remote / relocation</span>
+                  <span className="text-primary font-bold text-lg sm:text-xl">OPEN</span>
+                  <span className="text-[#D9D3C7] text-sm sm:text-base">to remote / relocation</span>
                 </TimelineContent>
               </div>
             </div>
@@ -216,17 +216,18 @@ export default function AboutSection3({
                 className="text-[#D9D3C7] text-sm md:text-base leading-relaxed"
               >
                 <p className="font-medium">
-                  Ready to build reliable, optimized backend architectures for
-                  your services?
+                  Looking for opportunities to contribute to backend engineering teams and grow as a developer.
                 </p>
               </TimelineContent>
 
               <TimelineContent
-                as="a"
+                as="button"
                 animationNum={6}
                 timelineRef={heroRef}
                 customVariants={revealVariants}
-                href="mailto:priyankmoradiya41@gmail.com"
+                onClick={() => {
+                  document.getElementById('play')?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 className="bg-neutral-900 hover:bg-[#b02600] border border-neutral-800 hover:border-[#b02600] inline-flex items-center gap-2 hover:gap-4 transition-all duration-300 ease-in-out text-white px-5 py-3 rounded-lg cursor-pointer font-semibold shadow-md uppercase tracking-wider text-xs md:text-sm mt-2"
               >
                 LET'S TALK <ArrowRight className="w-4 h-4" />
