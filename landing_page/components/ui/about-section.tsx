@@ -149,11 +149,11 @@ export default function AboutSection3({
                 className="flex flex-wrap items-center gap-x-4 gap-y-2 justify-between"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-primary font-bold text-xl sm:text-2xl">9.48</span>
+                  <span className="text-primary font-bold text-lg sm:text-xl">9.48</span>
                   <span className="text-[#D9D3C7] text-sm sm:text-base">CGPA (B.Tech IT)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-primary font-bold text-xl sm:text-2xl">
+                  <span className="text-primary font-bold text-lg sm:text-xl">
                     {visitorCount !== null ? `${visitorCount}` : "1,200+"}
                   </span>
                   <span className="text-[#D9D3C7] text-sm sm:text-base">portfolio visits</span>
@@ -168,8 +168,8 @@ export default function AboutSection3({
                   customVariants={revealVariants}
                   className="flex items-center gap-2"
                 >
-                  <span className="text-primary font-bold text-lg sm:text-xl">GCET</span>
-                  <span className="text-[#D9D3C7] text-sm sm:text-base">Anand, Gujarat</span>
+                  <span className="text-primary font-bold text-base sm:text-lg">GCET</span>
+                  <span className="text-[#D9D3C7] text-sm sm:text-base" style={{ fontVariant: 'small-caps' }}>Anand, Gujarat</span>
                 </TimelineContent>
 
                 <TimelineContent
@@ -179,7 +179,7 @@ export default function AboutSection3({
                   customVariants={revealVariants}
                   className="flex items-center gap-2"
                 >
-                  <span className="text-primary font-bold text-lg sm:text-xl">OPEN</span>
+                  <span className="text-primary font-bold text-base sm:text-lg">OPEN</span>
                   <span className="text-[#D9D3C7] text-sm sm:text-base">to remote / relocation</span>
                 </TimelineContent>
               </div>

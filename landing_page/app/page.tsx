@@ -6,6 +6,7 @@ import { fetchPortfolioApi } from "@/lib/api";
 import { CoverflowCarousel } from "@/components/ui/coverflow-carousel";
 import { AnimatedMetric } from "@/components/ui/animated-metric";
 import { MenuHorizontal } from "@/components/ui/menu-horizontal";
+import { Component as TechStackCard } from "@/components/ui/tech-stack";
 import { NotificationList } from "@/components/ui/components-community-notification-list";
 import { ContainerScroll, CardSticky } from "@/components/ui/cards-stack";
 import AboutSection3 from "@/components/ui/about-section";
@@ -840,7 +841,7 @@ export default function Home() {
         {/* Tech Stack Section 03 - Tools I Trust */}
         <section
           id="stack"
-          className="relative px-margin-mobile md:px-margin-desktop pt-10 pb-16 z-10 bg-[#0a0a0a] text-zinc-100"
+          className="relative px-margin-mobile md:px-margin-desktop pt-10 pb-16 z-10 bg-black text-zinc-100"
         >
           <div className="max-w-7xl mx-auto w-full relative z-10">
             <div className="relative z-10 mt-10">
@@ -875,63 +876,16 @@ export default function Home() {
                       mass: 1.1,
                       delay: catIdx * 0.15
                     }}
-                    className="border border-[#2a2a2a] hover:border-[#D9D3C7] p-6 bg-[#151515] shadow-[4px_4px_0px_0px_rgba(217,211,199,0.1)] hover:shadow-[10px_10px_0px_0px_rgba(217,211,199,0.25)] transition-all duration-300 hover:-translate-y-2.5 text-[#D9D3C7] rounded-none flex flex-col justify-start relative overflow-hidden group"
+                    className="rounded-lg overflow-hidden"
                   >
-                    {/* Background Icon Watermark */}
-                    <motion.div 
-                      initial={{ opacity: 0, scale: 0.8, rotate: -8 }}
-                      whileInView={{ opacity: 0.12, scale: 1, rotate: 0 }}
-                      viewport={{ once: true, margin: "-100px" }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 90,
-                        damping: 14,
-                        delay: catIdx * 0.15 + 0.25
-                      }}
-                      className="absolute right-[-10px] bottom-[-10px] pointer-events-none group-hover:opacity-[0.25] group-hover:scale-105 transition-all duration-300 z-0"
-                    >
-                      {cat.category === "Frameworks" && (
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-28 h-28 text-[#b02600]">
-                          <polyline points="16 18 22 12 16 6" />
-                          <polyline points="8 6 2 12 8 18" />
-                        </svg>
-                      )}
-                      {cat.category === "Databases" && (
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-28 h-28 text-[#b02600]">
-                          <ellipse cx="12" cy="5" rx="9" ry="3" />
-                          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-                          <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3" />
-                        </svg>
-                      )}
-                      {cat.category === "DevOps & Tools" && (
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-28 h-28 text-[#b02600]">
-                          <polyline points="4 17 10 11 4 5" />
-                          <line x1="12" y1="19" x2="20" y2="19" />
-                        </svg>
-                      )}
-                    </motion.div>
-
-                    <h3 className="font-mono-code text-[14px] sm:text-[15px] font-bold text-zinc-100 uppercase border-b border-[#D9D3C7]/20 pb-2 mb-4 tracking-wider relative z-10">
-                      {cat.category}
-                    </h3>
-                    <div className={`relative z-10 ${cat.category === "DevOps & Tools" ? "grid grid-cols-2 gap-x-4 gap-y-3" : "flex flex-col gap-3"}`}>
-                      {cat.items.map((item, itemIdx) => (
-                        <div
-                          key={itemIdx}
-                          className="group/stack flex items-center gap-3.5 py-1.5 text-[#D9D3C7] hover:text-[#FF3800] transition-colors duration-200 cursor-pointer"
-                        >
-                          <span className="text-[#D9D3C7]/60 group-hover/stack:text-[#FF3800] group-hover/stack:scale-110 group-hover/stack:rotate-[5deg] transition-all duration-200 flex items-center justify-center">
-                            <BrandIcon
-                              slug={item.slug}
-                              fallback={item.fallback}
-                            />
-                          </span>
-                          <span className="font-sans text-base sm:text-[17px] font-semibold tracking-wide group-hover/stack:translate-x-1 transition-transform duration-200">
-                            {item.name}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                    <TechStackCard
+                      title={cat.category}
+                      techStack={cat.items.map((item) => ({
+                        name: item.name,
+                        slug: item.slug,
+                        fallback: item.fallback,
+                      }))}
+                    />
                   </motion.div>
                 ))}
               </div>
