@@ -156,14 +156,8 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [words.length]);
 
-  // States and fetching for visitor count & contact form
+  // States for visitor count
   const [visitorCount, setVisitorCount] = useState<number | null>(null);
-  const [contactName, setContactName] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [contactMessage, setContactMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
-  const [statusMessage, setStatusMessage] = useState("");
 
   // Fetch real GitHub contribution data
   const [githubCommits, setGithubCommits] = useState<number>(234);
@@ -342,45 +336,6 @@ export default function Home() {
   const parseDate = (dateStr: string) => {
     const [year, month, day] = dateStr.split("-").map(Number);
     return new Date(year, month - 1, day);
-  };
-
-  const handleContactSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus("idle");
-    setStatusMessage("");
-
-    try {
-      const apiBaseUrl = (
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
-      ).replace(/\/+$/, "");
-      
-      const response = await fetch(`${apiBaseUrl}/api/contact`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: contactName,
-          email: contactEmail,
-          message: contactMessage,
-        }),
-      });
-
-      if (response.ok) {
-        setSubmitStatus("success");
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        setSubmitStatus("error");
-        setStatusMessage(errorData.error || "Server returned an error status.");
-      }
-    } catch (err) {
-      console.error("Error submitting contact form:", err);
-      setSubmitStatus("error");
-      setStatusMessage("Failed to reach connection server.");
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const projects: Project[] = [
@@ -621,7 +576,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-surface text-on-surface font-body-md antialiased pt-16 pb-0 min-h-screen">
+    <div className="bg-[#0a0a0a] text-[#D9D3C7] font-body-md antialiased pt-16 pb-0 min-h-screen">
       {/* TopAppBar - Responsive Horizontal Navigation Header */}
       <header className="fixed top-0 z-50 flex h-16 w-full items-center justify-center border-b border-outline bg-black px-4 md:px-6 lg:px-8">
         <nav className="flex h-full w-full items-center justify-center overflow-x-auto whitespace-nowrap scrollbar-none">
@@ -800,7 +755,7 @@ export default function Home() {
               <span className="relative inline-block">
                 FEATURED BUILDS
                 <motion.span
-                  className="absolute left-[-4px] -bottom-1 h-[3px] bg-[#b02600]"
+                  className="absolute left-[-4px] -bottom-1 h-[1.5px] bg-[#b02600]"
                   initial={{ width: 0 }}
                   whileInView={{ width: "calc(100% + 8px)" }}
                   viewport={{ once: true }}
@@ -849,7 +804,7 @@ export default function Home() {
                 <span className="relative inline-block">
                   TOOLS I TRUST
                   <motion.span
-                    className="absolute left-[-4px] -bottom-1 h-[3px] bg-[#b02600]"
+                    className="absolute left-[-4px] -bottom-1 h-[1.5px] bg-[#b02600]"
                     initial={{ width: 0 }}
                     whileInView={{ width: "calc(100% + 8px)" }}
                     viewport={{ once: true }}
@@ -862,7 +817,7 @@ export default function Home() {
                 A curated set of technologies and developer tools I use to design, build, and deploy backend architectures.
               </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
                 {techStack.map((cat, catIdx) => (
                   <motion.div
                     key={catIdx}
@@ -907,7 +862,7 @@ export default function Home() {
                     COMMIT HISTORY
                     <span className="text-primary ml-1 blink">_</span>
                     <motion.span
-                      className="absolute left-[-4px] -bottom-1 h-[3px] bg-[#b02600]"
+                      className="absolute left-[-4px] -bottom-1 h-[1.5px] bg-[#b02600]"
                       initial={{ width: 0 }}
                       whileInView={{ width: "calc(100% + 8px)" }}
                       viewport={{ once: true }}
@@ -1090,7 +1045,7 @@ export default function Home() {
                   <span className="relative inline-block">
                     WHERE I'VE WORKED
                     <motion.span
-                      className="absolute left-[-4px] -bottom-1 h-[3px] bg-[#b02600]"
+                      className="absolute left-[-4px] -bottom-1 h-[1.5px] bg-[#b02600]"
                       initial={{ width: 0 }}
                       whileInView={{ width: "calc(100% + 8px)" }}
                       viewport={{ once: true }}
@@ -1156,21 +1111,17 @@ export default function Home() {
                       <li className="flex items-start gap-3">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
                         <span>
-                          Engineered synchronous inter-service RPC calls using{" "}
-                          <ExperienceHighlight>
-                            gRPC & API Gateway
-                          </ExperienceHighlight>
-                          , with RabbitMQ topic exchanges for asynchronous event-driven logging.
+                          Engineered synchronous inter-service RPC calls using gRPC & API Gateway, with RabbitMQ topic exchanges for asynchronous event-driven logging.
                         </span>
                       </li>
                       <li className="flex items-start gap-3">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
                         <span>
-                          Eliminated N+1 query bottlenecks on job browsing endpoints using{" "}
+                          Eliminated{" "}
                           <ExperienceHighlight>
-                            Redis caching
-                          </ExperienceHighlight>
-                          , sustaining throughput of{" "}
+                            N+1 query bottlenecks
+                          </ExperienceHighlight>{" "}
+                          on job browsing endpoints using Redis caching, sustaining throughput of{" "}
                           <ExperienceHighlight>
                             400–600 RPS
                           </ExperienceHighlight>{" "}
@@ -1219,31 +1170,31 @@ export default function Home() {
                       <li className="flex items-start gap-3">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
                         <span>
-                          Collaborated in a{" "}
-                          <ExperienceHighlight>
-                            25+ member Agile/Scrum team
-                          </ExperienceHighlight>{" "}
-                          across 4 sprints, managing automated testing suites and API documentation.
+                          Collaborated in a 25+ member Agile/Scrum team across 4 sprints, managing automated testing suites and API documentation.
                         </span>
                       </li>
                       <li className="flex items-start gap-3">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
                         <span>
-                          Built a time-series crypto pipeline using{" "}
+                          Built a time-series{" "}
                           <ExperienceHighlight>
-                            SQLite, Pandas & NumPy
+                            crypto pipeline
                           </ExperienceHighlight>{" "}
-                          with Ridge Regression return prediction models.
+                          using SQLite, Pandas & NumPy with{" "}
+                          <ExperienceHighlight>
+                            Ridge Regression
+                          </ExperienceHighlight>{" "}
+                          return prediction models.
                         </span>
                       </li>
                       <li className="flex items-start gap-3">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
                         <span>
-                          Integrated stress testing across market volatility scenarios, exposing endpoints via{" "}
+                          Integrated{" "}
                           <ExperienceHighlight>
-                            FastAPI
+                            stress testing
                           </ExperienceHighlight>{" "}
-                          and an interactive Streamlit dashboard.
+                          across market volatility scenarios, exposing endpoints via FastAPI and an interactive Streamlit dashboard.
                         </span>
                       </li>
                     </ul>
@@ -1271,21 +1222,21 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 06: Contact Form - Tailored to match new dark/beige theme */}
+        {/* Section 06: Connect — Clean social links, no form */}
         <section
           id="play"
           className="relative px-margin-mobile md:px-margin-desktop py-16 z-10 bg-[#0a0a0a] text-zinc-100"
         >
           <div className="max-w-7xl mx-auto w-full relative z-10">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter mt-8 relative z-10">
-              
-              {/* Left Column: Heading & Context */}
-              <div className="md:col-span-5 mb-10 md:mb-0 flex flex-col justify-start">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mt-8 relative z-10">
+
+              {/* Heading & Description */}
+              <div className="flex flex-col justify-start max-w-lg">
                 <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-[54px] !leading-[110%] font-bold text-zinc-100 uppercase tracking-wide relative">
                   <span className="relative inline-block">
                     LET'S CONNECT
                     <motion.span
-                      className="absolute left-[-4px] -bottom-1 h-[3px] bg-[#b02600]"
+                      className="absolute left-[-4px] -bottom-1 h-[1.5px] bg-[#b02600]"
                       initial={{ width: 0 }}
                       whileInView={{ width: "calc(100% + 8px)" }}
                       viewport={{ once: true }}
@@ -1294,28 +1245,32 @@ export default function Home() {
                   </span>
                 </h2>
                 <div className="h-px w-full bg-[#222222] my-4"></div>
-                <p className="font-sans text-[#D9D3C7]/80 text-sm sm:text-base leading-relaxed max-w-sm mb-4">
-                  Have a question, a project proposal, or just want to talk backend architecture and distributed systems? Drop a line and I'll get back to you shortly.
+                <p className="font-sans text-[#D9D3C7]/80 text-sm sm:text-base leading-relaxed max-w-sm">
+                  Have a question, a project idea, or just want to talk backend architecture? Reach out via email or any of these platforms — I respond within 24 hours.
                 </p>
+              </div>
 
+              {/* Contact Links */}
+              <div className="flex flex-col gap-5 items-start md:items-end">
+                {/* Email */}
                 <a
                   href="mailto:priyankmoradiya41@gmail.com"
-                  className="font-sans text-base sm:text-[17px] font-bold text-[#D9D3C7] hover:text-[#FF3800] transition-colors duration-200 block mb-6 w-fit"
+                  className="font-sans text-xl sm:text-[22px] md:text-2xl font-bold text-[#D9D3C7] hover:text-primary transition-colors duration-200 w-fit"
                 >
                   priyankmoradiya41@gmail.com
                 </a>
 
-                {/* Social Links */}
-                <div className="flex gap-4 mb-6">
+                {/* Social Icons Row */}
+                <div className="flex gap-4">
                   {/* GitHub */}
                   <a
                     href="https://github.com/Priyankm23"
                     target="_blank"
                     rel="noreferrer"
                     title="GitHub"
-                    className="w-12 h-12 border border-[#2a2a2a] bg-[#151515] text-[#D9D3C7] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,0.15)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#0a0a0a] hover:border-[#D9D3C7]"
+                    className="w-13 h-13 border border-[#2a2a2a] bg-[#151515] text-[#D9D3C7] flex items-center justify-center transition-colors duration-200 cursor-pointer hover:bg-[#D9D3C7] hover:text-[#0a0a0a] hover:border-[#D9D3C7]"
                   >
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                       <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
                     </svg>
                   </a>
@@ -1325,9 +1280,9 @@ export default function Home() {
                     target="_blank"
                     rel="noreferrer"
                     title="LinkedIn"
-                    className="w-12 h-12 border border-[#2a2a2a] bg-[#151515] text-[#D9D3C7] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,0.15)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#0a0a0a] hover:border-[#D9D3C7]"
+                    className="w-13 h-13 border border-[#2a2a2a] bg-[#151515] text-[#D9D3C7] flex items-center justify-center transition-colors duration-200 cursor-pointer hover:bg-[#D9D3C7] hover:text-[#0a0a0a] hover:border-[#D9D3C7]"
                   >
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                       <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                     </svg>
                   </a>
@@ -1337,119 +1292,31 @@ export default function Home() {
                     target="_blank"
                     rel="noreferrer"
                     title="X (Twitter)"
-                    className="w-12 h-12 border border-[#2a2a2a] bg-[#151515] text-[#D9D3C7] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-[3px_3px_0px_0px_rgba(217,211,199,0.15)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] hover:bg-[#D9D3C7] hover:text-[#0a0a0a] hover:border-[#D9D3C7]"
+                    className="w-13 h-13 border border-[#2a2a2a] bg-[#151515] text-[#D9D3C7] flex items-center justify-center transition-colors duration-200 cursor-pointer hover:bg-[#D9D3C7] hover:text-[#0a0a0a] hover:border-[#D9D3C7]"
                   >
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                     </svg>
                   </a>
+                  {/* Email Icon */}
+                  <a
+                    href="mailto:priyankmoradiya41@gmail.com"
+                    title="Email"
+                    className="w-13 h-13 border border-[#2a2a2a] bg-[#151515] text-[#D9D3C7] flex items-center justify-center transition-colors duration-200 cursor-pointer hover:bg-[#D9D3C7] hover:text-[#0a0a0a] hover:border-[#D9D3C7]"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6">
+                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                      <path d="M2 7l10 7 10-7" />
+                    </svg>
+                  </a>
                 </div>
-              </div>
 
-              {/* Right Column: Contact Form Card */}
-              <div className="md:col-span-7">
-                <div className="w-full bg-[#151515] border border-[#2a2a2a] p-6 sm:p-8 rounded-none shadow-[4px_4px_0px_0px_rgba(217,211,199,0.1)] transition-all duration-200 relative overflow-hidden">
-                  {/* WebGL Shader Background inside Card */}
-                  <ShaderBackground className="absolute inset-0 z-0 pointer-events-none opacity-30" />
-                  <form onSubmit={handleContactSubmit} className="flex flex-col gap-6 font-sans relative z-10">
-                    {submitStatus === "success" ? (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-center py-8 flex flex-col items-center gap-4"
-                      >
-                        <div className="w-16 h-16 rounded-full bg-emerald-950/40 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <h3 className="text-xl font-bold text-zinc-100 uppercase tracking-wider">
-                          MESSAGE SENT
-                        </h3>
-                        <p className="text-[#D9D3C7]/80 text-sm max-w-md">
-                          Thank you! Your message has been sent successfully. I will get in touch with you shortly.
-                        </p>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSubmitStatus("idle");
-                            setContactName("");
-                            setContactEmail("");
-                            setContactMessage("");
-                          }}
-                          className="mt-4 px-5 py-2 border border-[#D9D3C7] bg-[#D9D3C7] text-[#0a0a0a] text-xs font-bold uppercase tracking-wider hover:bg-transparent hover:text-[#D9D3C7] transition-colors"
-                        >
-                          Send Another Message
-                        </button>
-                      </motion.div>
-                    ) : (
-                      <>
-                        <div className="flex flex-col gap-2">
-                          <label htmlFor="contact-name" className="text-xs uppercase tracking-widest text-[#D9D3C7] font-semibold">
-                            Name
-                          </label>
-                          <input
-                            type="text"
-                            id="contact-name"
-                            required
-                            value={contactName}
-                            onChange={(e) => setContactName(e.target.value)}
-                            placeholder="Enter your name"
-                            disabled={isSubmitting}
-                            className="bg-black border border-[#2a2a2a] focus:border-[#D9D3C7] outline-none px-4 py-3 text-zinc-100 text-sm focus:ring-0 w-full rounded-none transition-colors duration-250 placeholder-zinc-600"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                          <label htmlFor="contact-email" className="text-xs uppercase tracking-widest text-[#D9D3C7] font-semibold">
-                            Email Address
-                          </label>
-                          <input
-                            type="email"
-                            id="contact-email"
-                            required
-                            value={contactEmail}
-                            onChange={(e) => setContactEmail(e.target.value)}
-                            placeholder="your.email@domain.com"
-                            disabled={isSubmitting}
-                            className="bg-black border border-[#2a2a2a] focus:border-[#D9D3C7] outline-none px-4 py-3 text-zinc-100 text-sm focus:ring-0 w-full rounded-none transition-colors duration-250 placeholder-zinc-600"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                          <label htmlFor="contact-message" className="text-xs uppercase tracking-widest text-[#D9D3C7] font-semibold">
-                            Message
-                          </label>
-                          <textarea
-                            id="contact-message"
-                            required
-                            rows={5}
-                            value={contactMessage}
-                            onChange={(e) => setContactMessage(e.target.value)}
-                            placeholder="Write your message here..."
-                            disabled={isSubmitting}
-                            className="bg-black border border-[#2a2a2a] focus:border-[#D9D3C7] outline-none px-4 py-3 text-zinc-100 text-sm focus:ring-0 w-full rounded-none resize-none transition-colors duration-250 placeholder-zinc-600"
-                          />
-                        </div>
-
-                        {submitStatus === "error" && (
-                          <div className="text-red-500 font-mono text-xs p-3 bg-red-950/20 border border-red-500/20">
-                            {statusMessage || "Failed to submit. Please try again."}
-                          </div>
-                        )}
-
-                        <div className="flex justify-end mt-2">
-                          <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="inline-flex items-center gap-2 px-4 py-2 border border-[#D9D3C7] bg-[#D9D3C7] text-[#0a0a0a] font-sans font-bold tracking-wider hover:bg-transparent hover:text-[#D9D3C7] transition-all uppercase cursor-pointer rounded-none shadow-[3px_3px_0px_0px_rgba(217,211,199,0.15)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] disabled:opacity-50 disabled:cursor-not-allowed text-xs"
-                          >
-                            {isSubmitting ? "SENDING..." : "SEND MESSAGE"}
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </form>
+                {/* Portfolio Visits Counter */}
+                <div className="flex items-center gap-1.5 text-xs font-sans font-semibold text-[#D9D3C7]/60 tracking-wider select-none mt-1">
+                  <span className="text-primary font-bold text-sm leading-none">
+                    {visitorCount !== null ? `${visitorCount}` : "1,200+"}
+                  </span>
+                  <span className="uppercase text-[10px] tracking-widest text-zinc-500">portfolio visits</span>
                 </div>
               </div>
 

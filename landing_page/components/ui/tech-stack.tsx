@@ -80,7 +80,7 @@ export const Component: React.FC<ComponentProps> = ({
   );
 
   return (
-    <div className='flex justify-center items-center py-4 w-full h-full'>
+    <div className='flex justify-center items-center py-1 md:py-4 w-full h-full'>
       <div
         className="relative bg-black/50 overflow-hidden w-full h-full min-h-[16rem] pb-3 rounded-lg shadow-lg border border-zinc-800 transition-all duration-300"
         onMouseMove={handleMouseMove}

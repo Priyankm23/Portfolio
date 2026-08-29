@@ -1,7 +1,6 @@
 "use client";
 import { TimelineContent } from "@/components/ui/timeline-animation";
 import { VerticalCutReveal } from "@/components/ui/vertical-cut-reveal";
-import { ArrowRight } from "lucide-react";
 import { useRef } from "react";
 
 interface AboutSectionProps {
@@ -51,7 +50,7 @@ export default function AboutSection3({
       className="pt-16 pb-8 px-margin-mobile md:px-margin-desktop bg-[#0a0a0a] text-[#D9D3C7] relative z-10"
       ref={heroRef}
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto w-full">
         {/* Section label above the content */}
         <div className="flex items-center mb-10 w-full">
           <div className="flex items-center gap-2 text-xl">
@@ -85,7 +84,7 @@ export default function AboutSection3({
                   delay: 0.5,
                 }}
               >
-                {`Crafting\nSystems\nThat\nMake\na\nDifference.`}
+                {`Crafting\nSystems\nThat Make\na\nDifference.`}
               </VerticalCutReveal>
             </h1>
 
@@ -97,16 +96,16 @@ export default function AboutSection3({
               className="flex flex-col gap-6 text-[#D9D3C7] font-sans text-[15px] sm:text-base leading-relaxed text-justify"
             >
               <p>
-                I am a backend developer focused on engineering optimized backend systems. While not claiming every system I create is perfect, every day I am learning and iterating to make services perform reliably under load.
+                I am a backend developer focused on engineering optimized backend systems. While not claiming every system I create is perfect, every day I am learning and iterating to make services <span className="bg-[#D9D3C7] text-primary px-1.5 py-0.5 font-semibold whitespace-nowrap">perform reliably</span> under load.
               </p>
               <p>
-                I love building REST API endpoints, designing relational database schemas, and defining Redis caching layers with single-flight request patterns. My microservices leverage gRPC for inter-service communication and RabbitMQ for async task offloading. Everything is containerized with Docker, verified via load testing (k6, Autocannon), unit/integration tested (Jest, Supertest, Pytest), and monitored using Pino logs and Sentry observability. The skills remain the same, only the learnings get adapted with the new and unique business logic across different projects.
+                My work revolves around finding <span className="bg-[#D9D3C7] text-primary px-1.5 py-0.5 font-semibold whitespace-nowrap">bottlenecks</span> in web systems and optimizing them until the end users are genuinely satisfied with the product. I build across API endpoints, database layers, caching strategies, real-time pipelines, and whatever the system demands. I test at scale, profile under pressure, and iterate until the numbers tell me to stop. I openly use <span className="bg-[#D9D3C7] text-primary px-1.5 py-0.5 font-semibold whitespace-nowrap">AI as part of my workflow</span> — where the work demands creative thinking or speed, I take the front seat; where it's repetitive and predictable, AI is guided with structured context through <span className="bg-[#D9D3C7] text-primary px-1.5 py-0.5 font-semibold whitespace-nowrap">skills, MCPs, and .md files</span> to get maximum leverage from the looping capability of agents and the reasoning of LLMs.
               </p>
               <p>
-                I started with Node.js for my backend foundation, explored FastAPI, and am currently diving deep into core Node.js concepts while contributing to open source, solving LeetCode SQL challenges, and always welcome tech discussions.
+                I started with Node.js for my backend foundation, explored FastAPI, and am currently diving deep into core Node.js concepts while contributing to <span className="bg-[#D9D3C7] text-primary px-1.5 py-0.5 font-semibold whitespace-nowrap">open source</span>, solving LeetCode SQL challenges, and always welcome tech discussions.
               </p>
-              <p className="pl-4 border-l-2 border-primary/60 italic text-[#D9D3C7]/80">
-                "Learning to optimize the system and on the journey to be honest about the failures and bad architectural design decisions because that's what would make the future systems better."
+              <p>
+                Learning to optimize the system and on the journey to be honest about the failures and bad architectural design decisions because that's what would make the future systems better.
               </p>
             </TimelineContent>
           </div>
@@ -139,99 +138,35 @@ export default function AboutSection3({
               </div>
             </TimelineContent>
 
-            {/* GPA, Portfolio visits and College name/Relocation below the video */}
-            <div className="flex flex-col gap-3 py-5 border-b border-[#222]/60 font-sans text-base">
-              <TimelineContent
-                as="div"
-                animationNum={3}
-                timelineRef={heroRef}
-                customVariants={revealVariants}
-                className="flex flex-wrap items-center gap-x-4 gap-y-2 justify-between"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-primary font-bold text-lg sm:text-xl">9.48</span>
-                  <span className="text-[#D9D3C7] text-sm sm:text-base">CGPA (B.Tech IT)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-primary font-bold text-lg sm:text-xl">
-                    {visitorCount !== null ? `${visitorCount}` : "1,200+"}
+            {/* Profile Bio Card */}
+            <div className="border border-[#222]/80 bg-black/30 rounded-lg p-5 mt-4 flex flex-col gap-4 font-sans">
+              <div className="flex items-center justify-between border-b border-[#222]/80 pb-3">
+                <div className="flex flex-col gap-0.5">
+                  <h3 className="text-primary font-bold text-xl sm:text-2xl tracking-wide uppercase leading-tight">
+                    PRIYANK MORADIYA
+                  </h3>
+                  <span className="text-[#D9D3C7]/60 text-[10px] tracking-widest uppercase font-semibold">
+                    Backend Developer
                   </span>
-                  <span className="text-[#D9D3C7] text-sm sm:text-base">portfolio visits</span>
                 </div>
-              </TimelineContent>
-
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 justify-between mt-2 text-sm sm:text-base">
-                <TimelineContent
-                  as="div"
-                  animationNum={3}
-                  timelineRef={heroRef}
-                  customVariants={revealVariants}
-                  className="flex items-center gap-2"
-                >
-                  <span className="text-primary font-bold text-base sm:text-lg">GCET</span>
-                  <span className="text-[#D9D3C7] text-sm sm:text-base" style={{ fontVariant: 'small-caps' }}>Anand, Gujarat</span>
-                </TimelineContent>
-
-                <TimelineContent
-                  as="div"
-                  animationNum={3}
-                  timelineRef={heroRef}
-                  customVariants={revealVariants}
-                  className="flex items-center gap-2"
-                >
-                  <span className="text-primary font-bold text-base sm:text-lg">OPEN</span>
-                  <span className="text-[#D9D3C7] text-sm sm:text-base">to remote / relocation</span>
-                </TimelineContent>
-              </div>
-            </div>
-
-            {/* Contact, Name, Role under stats */}
-            <div className="text-left font-sans flex flex-col items-start gap-4 mt-2">
-              <div className="flex flex-col gap-1">
-                <TimelineContent
-                  as="div"
-                  animationNum={4}
-                  timelineRef={heroRef}
-                  customVariants={revealVariants}
-                  className="text-primary text-2xl font-bold uppercase tracking-wider"
-                >
-                  PRIYANK MORADIYA
-                </TimelineContent>
-                <TimelineContent
-                  as="div"
-                  animationNum={4}
-                  timelineRef={heroRef}
-                  customVariants={revealVariants}
-                  className="text-[#D9D3C7] text-sm uppercase tracking-widest font-semibold"
-                >
-                  Backend Developer
-                </TimelineContent>
+                <span className="text-primary text-xl select-none animate-spin">✱</span>
               </div>
 
-              <TimelineContent
-                as="div"
-                animationNum={5}
-                timelineRef={heroRef}
-                customVariants={revealVariants}
-                className="text-[#D9D3C7] text-sm md:text-base leading-relaxed"
-              >
-                <p className="font-medium">
-                  Looking for opportunities to contribute to backend engineering teams and grow as a developer.
-                </p>
-              </TimelineContent>
+              <p className="text-[#D9D3C7]/90 text-sm sm:text-base leading-relaxed italic border-l-2 border-primary/60 pl-3">
+                "Looking for opportunities to contribute to backend engineering teams and grow as a developer."
+              </p>
 
-              <TimelineContent
-                as="button"
-                animationNum={6}
-                timelineRef={heroRef}
-                customVariants={revealVariants}
-                onClick={() => {
-                  document.getElementById('play')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="bg-neutral-900 hover:bg-[#b02600] border border-neutral-800 hover:border-[#b02600] inline-flex items-center gap-2 hover:gap-4 transition-all duration-300 ease-in-out text-white px-5 py-3 rounded-lg cursor-pointer font-semibold shadow-md uppercase tracking-wider text-xs md:text-sm mt-2"
-              >
-                LET'S TALK <ArrowRight className="w-4 h-4" />
-              </TimelineContent>
+              {/* Education & Status Metadata */}
+              <div className="flex flex-col gap-2.5 pt-3 border-t border-[#222]/80 text-xs sm:text-sm font-sans">
+                <div className="flex items-center gap-2.5 text-[#D9D3C7]/80">
+                  <span className="material-symbols-outlined text-[16px] text-primary select-none">school</span>
+                  <span>GCET, IT'27 - Anand, Gujarat</span>
+                </div>
+                <div className="flex items-center gap-2.5 text-[#D9D3C7]/80">
+                  <span className="material-symbols-outlined text-[16px] text-primary select-none">work</span>
+                  <span>Open for Internships, Roles & Opportunities</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
