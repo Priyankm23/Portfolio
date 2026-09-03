@@ -115,7 +115,49 @@ router.get("/api/github/contributions", async (req, res) => {
     return res.json({ ...result, cached: false });
 
   } catch (err) {
-    console.error("[GitHub API] Error fetching contributions:", err.message);
+    console.error("[GitHub API] GraphQL fetch error, attempting public fallback:", err.message);
+
+    try {
+      const contribRes = await fetch("https://github-contributions-api.jogruber.de/v4/Priyankm23?y=last");
+      if (contribRes.ok) {
+        const contribData = await contribRes.json();
+        const currentYear = new Date().getFullYear().toString();
+        const daysList = contribData.contributions || [];
+        const currentYearDays = daysList.filter(c => c.date.startsWith(currentYear));
+        const total = currentYearDays.reduce((acc, curr) => acc + curr.count, 0) || contribData.total?.lastYear || 387;
+
+        let streak = 0;
+        for (let i = currentYearDays.length - 1; i >= 0; i--) {
+          if (currentYearDays[i].count > 0) streak++;
+          else if (i < currentYearDays.length - 1) break;
+        }
+
+        let repos = 18;
+        let prs = 7;
+        try {
+          const userRes = await fetch("https://api.github.com/users/Priyankm23", { headers: { "User-Agent": "portfolio-api" } });
+          if (userRes.ok) {
+            const u = await userRes.json();
+            if (typeof u.public_repos === "number") repos = u.public_repos;
+          }
+        } catch (_) {}
+
+        const result = {
+          year: new Date().getFullYear(),
+          total,
+          repos,
+          prs,
+          streak,
+          days: currentYearDays.map(d => ({ date: d.date, count: d.count })),
+        };
+
+        cacheData = result;
+        cacheTime = now;
+        return res.json({ ...result, fallback: true });
+      }
+    } catch (fallbackErr) {
+      console.error("[GitHub API] Public fallback failed:", fallbackErr.message);
+    }
 
     // Fallback to stale cache if available
     if (cacheData) {

@@ -129,3 +129,83 @@ export function PixelArrow({ className = "size-[12px]", size, ...props }: PixelI
     </svg>
   );
 }
+
+/**
+ * Pixel Chip / Processor icon for Frameworks & Runtimes (16 x 16)
+ */
+export function PixelChip({ className = "size-4 text-primary", size, ...props }: PixelIconProps) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      width={size}
+      height={size}
+      className={className}
+      aria-hidden="true"
+      {...props}
+    >
+      <rect x="4" y="4" width="8" height="8" rx="0.6" />
+      <rect x="5.5" y="1" width="1.5" height="2" rx="0.3" />
+      <rect x="9" y="1" width="1.5" height="2" rx="0.3" />
+      <rect x="5.5" y="13" width="1.5" height="2" rx="0.3" />
+      <rect x="9" y="13" width="1.5" height="2" rx="0.3" />
+      <rect x="1" y="5.5" width="2" height="1.5" rx="0.3" />
+      <rect x="1" y="9" width="2" height="1.5" rx="0.3" />
+      <rect x="13" y="5.5" width="2" height="1.5" rx="0.3" />
+      <rect x="13" y="9" width="2" height="1.5" rx="0.3" />
+      <rect x="6" y="6" width="4" height="4" fill="#111111" rx="0.4" />
+      <rect x="7" y="7" width="2" height="2" fill="currentColor" rx="0.2" />
+    </svg>
+  );
+}
+
+/**
+ * Pixel Database Disc Stack icon for Databases & ORMs (16 x 16)
+ */
+export function PixelDatabase({ className = "size-4 text-primary", size, ...props }: PixelIconProps) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      width={size}
+      height={size}
+      className={className}
+      aria-hidden="true"
+      {...props}
+    >
+      <rect x="3" y="1.5" width="10" height="2.5" rx="0.6" />
+      <rect x="1.5" y="2" width="13" height="1.5" rx="0.3" />
+      <rect x="3" y="6.5" width="10" height="2.5" rx="0.6" />
+      <rect x="1.5" y="7" width="13" height="1.5" rx="0.3" />
+      <rect x="3" y="11.5" width="10" height="2.5" rx="0.6" />
+      <rect x="1.5" y="12" width="13" height="1.5" rx="0.3" />
+      <rect x="2" y="3.5" width="1.5" height="8.5" rx="0.3" />
+      <rect x="12.5" y="3.5" width="1.5" height="8.5" rx="0.3" />
+    </svg>
+  );
+}
+
+/**
+ * Pixel DevOps / Distributed Cluster Nodes icon for DevOps & Cloud (16 x 16)
+ */
+export function PixelDevOps({ className = "size-4 text-primary", size, ...props }: PixelIconProps) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      width={size}
+      height={size}
+      className={className}
+      aria-hidden="true"
+      {...props}
+    >
+      <rect x="6.5" y="6.5" width="3" height="3" rx="0.5" />
+      <rect x="6.5" y="1" width="3" height="3" rx="0.5" />
+      <rect x="1.5" y="11.5" width="3" height="3" rx="0.5" />
+      <rect x="11.5" y="11.5" width="3" height="3" rx="0.5" />
+      <rect x="7.25" y="3.5" width="1.5" height="3.5" rx="0.2" />
+      <rect x="3.8" y="8.8" width="3.2" height="1.5" rx="0.2" transform="rotate(-30 5.4 9.5)" />
+      <rect x="9" y="8.8" width="3.2" height="1.5" rx="0.2" transform="rotate(30 10.6 9.5)" />
+    </svg>
+  );
+}

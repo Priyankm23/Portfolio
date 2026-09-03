@@ -2,6 +2,7 @@
 import { TimelineContent } from "@/components/ui/timeline-animation";
 import { VerticalCutReveal } from "@/components/ui/vertical-cut-reveal";
 import { PixelDiamond } from "@/components/ui/pixel-icons";
+import { OrbitPoster } from "@/components/ui/orbit-poster";
 import { useRef } from "react";
 
 interface AboutSectionProps {
@@ -117,9 +118,9 @@ export default function AboutSection3({
             </TimelineContent>
           </div>
 
-          {/* Right Column: Video, Stats, and Contact */}
+          {/* Right Column: Interactive Orbit Poster, Stats, and Contact */}
           <div className="flex flex-col gap-6 w-full">
-            {/* Video Component */}
+            {/* Interactive Orbit Poster Component replacing the video */}
             <TimelineContent
               as="figure"
               animationNum={1}
@@ -127,34 +128,16 @@ export default function AboutSection3({
               customVariants={scaleVariants}
               className="relative z-20 group w-full"
             >
-              {/* Minimalistic, panoramic short-height video with no borders or rounded corners */}
-              <div
-                className="w-full bg-[#0a0a0a] overflow-hidden"
-                style={{
-                  aspectRatio: "2.5 / 1",
-                }}
-              >
-                <video
-                  src="/video2.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <OrbitPoster />
             </TimelineContent>
 
             {/* Profile Bio */}
             <div className="mt-2 flex flex-col gap-4 font-sans">
               <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                <div className="flex flex-col gap-0.5">
+                <div className="flex flex-col">
                   <h3 className="text-primary font-bold text-xl sm:text-2xl tracking-wide uppercase leading-tight">
                     PRIYANK MORADIYA
                   </h3>
-                  <span className="text-[#D9D3C7]/60 text-[10px] tracking-widest uppercase font-semibold">
-                    Backend Developer
-                  </span>
                 </div>
                 <span className="text-primary text-xl select-none animate-spin">✱</span>
               </div>

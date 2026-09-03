@@ -3,6 +3,7 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { Terminal } from 'lucide-react';
+import { PixelChip } from '@/components/ui/pixel-icons';
 
 export interface Tech {
   name: string;
@@ -59,25 +60,7 @@ export const Component: React.FC<ComponentProps> = ({
     y.set(event.clientY - rect.top);
   };
 
-  const defaultIcon = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="size-4.5 text-zinc-400 shrink-0"
-    >
-      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
-      <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
-      <path d="m10 13-2 2 2 2"></path>
-      <path d="m14 17 2-2-2-2"></path>
-    </svg>
-  );
+  const defaultIcon = <PixelChip className="size-4 text-primary shrink-0" />;
 
   return (
     <div
