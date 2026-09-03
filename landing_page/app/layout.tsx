@@ -1,6 +1,10 @@
 import type { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
+import '@fontsource/redaction-35/400.css'
+import '@fontsource/redaction-35/400-italic.css'
+import '@fontsource/redaction-50/400-italic.css'
+import '@fontsource/redaction-50/700-italic.css'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -34,7 +38,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=Bebas+Neue&family=BBH+Bartle&family=Bruno+Ace+SC&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=Bebas+Neue&family=BBH+Bartle&family=Bruno+Ace+SC&family=Syncopate:wght@400;700&display=swap"
           rel="stylesheet"
         />
         <link

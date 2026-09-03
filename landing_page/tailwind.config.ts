@@ -13,6 +13,7 @@ const config: Config = {
         label: ['"Bebas Neue"', 'sans-serif'],
         mono: ['"IBM Plex Mono"', 'monospace'],
         sans: ['"IBM Plex Mono"', 'monospace'],
+        redaction: ['"Redaction 35"', '"Redaction 50"', 'serif'],
       },
       colors: {
         bg: '#0a0a0a',

@@ -30,7 +30,6 @@ export default function WorkPage() {
                githubUrl="https://github.com/Priyankm23/Cadence-backend"
                liveUrl="https://cadence-meeting-intelligence.vercel.app/"
                image="/cadence.png"
-               logoUrl="/cadence_logo.png"
              />
 
             {/* Markivo */}
@@ -43,7 +42,6 @@ export default function WorkPage() {
               githubUrl="https://github.com/Priyankm23/marketflow"
               liveUrl="https://marketflow-your-one-stop-shop.vercel.app/"
               image="/marketflow.png"
-              logoUrl="/markivo_logo.png"
             />
 
              {/* SafeTrail */}
@@ -56,7 +54,6 @@ export default function WorkPage() {
                githubUrl="https://github.com/Priyankm23/safetrail"
                liveUrl="https://safetrail-your-safety-in-your-mobile.vercel.app/"
                image="/safetrail.png"
-               logoUrl="/safetrail_logo.png"
              />
 
              {/* Bandit CLI - Commented out for now */}

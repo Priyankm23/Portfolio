@@ -1,6 +1,7 @@
 "use client";
 import { TimelineContent } from "@/components/ui/timeline-animation";
 import { VerticalCutReveal } from "@/components/ui/vertical-cut-reveal";
+import { PixelDiamond } from "@/components/ui/pixel-icons";
 import { useRef } from "react";
 
 interface AboutSectionProps {
@@ -16,15 +17,14 @@ export default function AboutSection3({
     visible: (i: number) => ({
       y: 0,
       opacity: 1,
-      filter: "blur(0px)",
       transition: {
-        delay: i * 0.4,
+        delay: i * 0.2,
         duration: 0.5,
+        ease: [0.25, 0.46, 0.45, 0.94],
       },
     }),
     hidden: {
-      filter: "blur(10px)",
-      y: -20,
+      y: 15,
       opacity: 0,
     },
   };
@@ -32,29 +32,36 @@ export default function AboutSection3({
   const scaleVariants = {
     visible: (i: number) => ({
       opacity: 1,
-      filter: "blur(0px)",
+      y: 0,
       transition: {
-        delay: i * 0.4,
+        delay: i * 0.2,
         duration: 0.5,
+        ease: [0.25, 0.46, 0.45, 0.94],
       },
     }),
     hidden: {
-      filter: "blur(10px)",
       opacity: 0,
+      y: 15,
     },
   };
 
   return (
     <section
       id="about"
-      className="pt-16 pb-8 px-margin-mobile md:px-margin-desktop bg-[#0a0a0a] text-[#D9D3C7] relative z-10"
+      className="pt-20 pb-20 md:pt-28 md:pb-28 px-margin-mobile md:px-margin-desktop bg-[#0a0a0a] text-[#D9D3C7] relative z-10 overflow-hidden"
       ref={heroRef}
     >
+      {/* Hoplite ASCII Art Texture Layer with smooth vertical feathered blend */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[url(/landing/ascii-art.webp)] bg-cover bg-center opacity-10 mix-blend-screen [mask-image:linear-gradient(to_bottom,transparent_0%,black_20%,black_80%,transparent_100%)]"
+      />
+
       <div className="max-w-7xl mx-auto w-full">
         {/* Section label above the content */}
         <div className="flex items-center mb-10 w-full">
           <div className="flex items-center gap-2 text-xl">
-            <span className="text-primary animate-spin">✱</span>
+            <PixelDiamond className="size-4 text-primary animate-pulse" />
             <TimelineContent
               as="span"
               animationNum={0}
@@ -138,9 +145,9 @@ export default function AboutSection3({
               </div>
             </TimelineContent>
 
-            {/* Profile Bio Card */}
-            <div className="border border-[#222]/80 bg-black/30 rounded-lg p-5 mt-4 flex flex-col gap-4 font-sans">
-              <div className="flex items-center justify-between border-b border-[#222]/80 pb-3">
+            {/* Profile Bio */}
+            <div className="mt-2 flex flex-col gap-4 font-sans">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
                 <div className="flex flex-col gap-0.5">
                   <h3 className="text-primary font-bold text-xl sm:text-2xl tracking-wide uppercase leading-tight">
                     PRIYANK MORADIYA
@@ -157,7 +164,7 @@ export default function AboutSection3({
               </p>
 
               {/* Education & Status Metadata */}
-              <div className="flex flex-col gap-2.5 pt-3 border-t border-[#222]/80 text-xs sm:text-sm font-sans">
+              <div className="flex flex-col gap-2.5 pt-3 border-t border-white/10 text-xs sm:text-sm font-sans">
                 <div className="flex items-center gap-2.5 text-[#D9D3C7]/80">
                   <span className="material-symbols-outlined text-[16px] text-primary select-none">school</span>
                   <span>GCET, IT'27 - Anand, Gujarat</span>

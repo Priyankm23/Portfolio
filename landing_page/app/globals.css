@@ -159,6 +159,10 @@
   font-family: 'Bruno Ace SC', 'Bebas Neue', sans-serif;
 }
 
+.font-syncopate {
+  font-family: 'Syncopate', sans-serif;
+}
+
 
 .blink {
   animation: blink-animation 1s steps(2, start) infinite;
@@ -197,6 +201,10 @@
 }
 .heat-4 {
   background-color: #ff7043;
+}
+
+.font-redaction {
+  font-family: "Redaction 35", "Redaction 50", serif;
 }
 
 @layer base {
